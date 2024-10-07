@@ -146,24 +146,30 @@ const SignUp = ({ setSignUp }) => {
                 })
                 setLoading(false)
             }
-            else {
-                setFormData({
-                    name: '',
-                    email: '',
-                    password: '',
-                    phone: ''
-                });
-                swal({
-                    icon: 'Failed',
-                    text: `Failed! Email Already Exist`,
-                    timer: 2000
-                })
-                setLoading(false)
-            }
+        
         }
          catch (error) {
-            setErrorMessage(error.response?.data?.message || error.message);
-            setTimeout(() => setErrorMessage(''), 5000);
+            setFormData({
+                name: '',
+                email: '',
+                password: '',
+                phone: ''
+            });
+            swal({
+                icon: 'error',
+                text: `Failed! Email Already Exist`,
+                timer: 2000
+            });
+            setLoading(false);
+            setPasswordValidation({
+                carLength: false,
+                specailChar: false,
+                upperLowerCase: false,
+                numeric: false
+            });
+            setEmailError({
+                emailError: false
+            })
         }
     }
 

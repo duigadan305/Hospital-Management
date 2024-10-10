@@ -7,10 +7,7 @@ import com.medicate.HospitalManagement.entity.User;
 import com.medicate.HospitalManagement.service.Interface.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -29,4 +26,12 @@ public class AuthController {
         Response response = userService.login(loginRequest);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
+
+    @GetMapping("/forgotPassword/{email}")
+    public ResponseEntity<Response> forgotPassword(@PathVariable("email") String email) {
+        Response response = userService.sendOtp(email);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
+
 }

@@ -31,6 +31,14 @@ export default class authApiService {
     return response.data;
   }
 
+  static async forgotPassword(email) {
+    const response = await axios.get(
+      `${this.BASE_URL}/auth/forgotPassword/{email}`,
+      email
+    );
+    return response.data;
+  }
+
   /**AUTHENTICATION CHECKER */
   static logout() {
     localStorage.removeItem("token");

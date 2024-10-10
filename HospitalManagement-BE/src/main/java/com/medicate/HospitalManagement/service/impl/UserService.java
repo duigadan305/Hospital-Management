@@ -11,12 +11,15 @@ import com.medicate.HospitalManagement.service.Interface.IUserService;
 import com.medicate.HospitalManagement.utils.JWTUtils;
 import com.medicate.HospitalManagement.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class UserService implements IUserService {
@@ -28,6 +31,8 @@ public class UserService implements IUserService {
     private JWTUtils jwtUtils;
     @Autowired
     private AuthenticationManager authenticationManager;
+    @Autowired
+    private JavaMailSender mailSender;
 
     @Override
     public Response register(User user) {
@@ -144,7 +149,7 @@ public class UserService implements IUserService {
         return response;
     }*/
 
-   /* @Override
+    @Override
     public Response getUserById(String userId) {
         Response response = new Response();
 
@@ -165,9 +170,9 @@ public class UserService implements IUserService {
             response.setMessage("Error getting all users " + e.getMessage());
         }
         return response;
-    }*/
+    }
 
-    /*@Override
+    @Override
     public Response getMyInfo(String email) {
         Response response = new Response();
 
@@ -188,5 +193,49 @@ public class UserService implements IUserService {
             response.setMessage("Error getting all users " + e.getMessage());
         }
         return response;
-    }*/
+    }
+
+    @Override
+    public Response sendOtp(String email) {
+        Response response = new Response();
+
+        try {
+            User user = userRepository.findByEmail(email).orElseThrow(() -> new OurException("User Not Found"));
+            UserDTO userDTO = Utils.mapUserEntityToUserDTO(user);
+            response.setStatusCode(200);
+            response.setMessage("successful");
+            response.setUser(userDTO);
+            String otp = generateOtp(); // Hàm tạo OTP
+
+            // Gửi OTP qua email
+            sendEmailWithOtp(email, otp); // Hàm gửi OTP qua email
+
+        } catch (OurException e) {
+            response.setStatusCode(404);
+            response.setMessage(e.getMessage());
+
+        } catch (Exception e) {
+
+            response.setStatusCode(500);
+            response.setMessage("Error getting all users " + e.getMessage());
+        }
+        return response;
+    }
+
+    private String generateOtp() {
+        Random random = new Random();
+        int otp = 100000 + random.nextInt(900000); // OTP là số ngẫu nhiên từ 100000 đến 999999
+        return String.valueOf(otp);
+    }
+
+    private void sendEmailWithOtp(String email, String otp) {
+        // Tạo email mới
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("Your OTP Code");
+        message.setText("Your OTP code is: " + otp + "\nThis OTP will expire in 5 minutes.");
+
+        // Gửi email
+        mailSender.send(message);
+    }
 }

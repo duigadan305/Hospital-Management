@@ -39,6 +39,7 @@ const SignIn = ({ handleResponse }) => {
     const onHandleForgotPassword = async (e) => {
         e.preventDefault();
         // resetPassword({ email: forgotEmail })
+        authApiService.forgotPassword(forgotEmail);
         setForgotEmail("");
         setShowForgotPassword(false);
     }

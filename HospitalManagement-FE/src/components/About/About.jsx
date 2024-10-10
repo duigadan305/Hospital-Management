@@ -19,7 +19,7 @@ const About = () => {
     const doctors = doctorData?.doctors;
 
     let doctorContent = null;
-    if (!DoctorIsLoading && doctorIsError) doctorContent = <div>Something Went Wrong !</div>
+    // if (!DoctorIsLoading && doctorIsError) doctorContent = <div>Something Went Wrong !</div>
     if (!DoctorIsLoading && !doctorIsError && doctors?.length === 0) doctorContent = <div><Empty /></div>
     if (!DoctorIsLoading && !doctorIsError && doctors?.length > 0) doctorContent =
         <>

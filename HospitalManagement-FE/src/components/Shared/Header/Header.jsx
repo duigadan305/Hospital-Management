@@ -8,6 +8,7 @@ import avatar from '../../../images/avatar.jpg';
 import { Button, message } from 'antd';
 import { loggedOut } from '../../../service/auth.service';
 import HeaderNav from './HeaderNav';
+import authApiService from '../../../service/authApiService';
 
 const Header = () => {
     const navigate = useNavigate();
@@ -15,6 +16,9 @@ const Header = () => {
     const [isLoggedIn, setIsLogged] = useState(false);
     const [show, setShow] = useState(true);
     const [open, setOpen] = useState(false);
+    const isAuthenticated = authApiService.isAuthenticated();
+    const isAdmin = authApiService.isAdmin();
+    const isUser = authApiService.isUser();
 
     // const lastScrollRef = useRef(0);
     const handleScroll = () => {
@@ -32,10 +36,10 @@ const Header = () => {
         return (() => window.removeEventListener('scroll', handleScroll));
     }, [])
 
-    useEffect(() => { authChecked && setIsLogged(true) }, [authChecked]);
+    useEffect(() => { isAuthenticated && setIsLogged(true) }, [isAuthenticated]);
 
     const hanldeSignOut = () => {
-        loggedOut();
+        authApiService.logout();
         message.success("Successfully Logged Out")
         setIsLogged(false)
         navigate('/')
@@ -65,7 +69,7 @@ const Header = () => {
                     <Link to={'/'} className="logo me-auto">
                         <img src={img} alt="" className="img-fluid" />
                     </Link>
-                    <HeaderNav isLoggedIn={isLoggedIn} data={data}
+                    <HeaderNav isLoggedIn={isAuthenticated} data={data}
                         avatar={avatar} content={content} open={open} setOpen={setOpen} />
                     <Link to={'/appointment'} className="appointment-btn scrollto"><span className="d-none d-md-inline">Make an</span> Appointment</Link>
                 </div>

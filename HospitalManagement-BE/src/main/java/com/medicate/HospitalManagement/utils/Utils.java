@@ -43,6 +43,7 @@ public class Utils {
         return userDTO;
     }
 
+
    /* public static RoomDTO mapRoomEntityToRoomDTO(Room room) {
         RoomDTO roomDTO = new RoomDTO();
 

@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { FaEnvelope, FaLock } from 'react-icons/fa';
+import { FaCheck, FaEnvelope, FaKey, FaKeyboard, FaLock, FaTimes } from 'react-icons/fa';
 import SocialSignUp from './SocialSignUp';
-import { useForm } from "react-hook-form";
 import Spinner from 'react-bootstrap/Spinner';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Toast } from 'react-bootstrap';
-import { useResetPasswordMutation, useUserLoginMutation } from '../../redux/api/authApi';
-import { message } from 'antd';
 import swal from 'sweetalert';
-import { useMessageEffect } from '../../utils/messageSideEffect';
 import authApiService from '../../service/authApiService';
 
 const SignIn = ({ handleResponse }) => {
     const [showForgotPassword, setShowForgotPassword] = useState(false);
+    const [isForgotPassword, setIsForgotPassword] = useState(true);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -22,13 +19,21 @@ const SignIn = ({ handleResponse }) => {
     // const { register, watch, formState: { errors } } = useForm();
     const navigate = useNavigate();
     // const [userLogin, { isError, isLoading, isSuccess, error }] = useUserLoginMutation();
-    const [forgotEmail, setForgotEmail] = useState('');
+    const [otp, setOtp] = useState('');
     // const [resetPassword, { isError: resetIsError, isSuccess: resetIsSuccess, error: resetError, isLoading: resetIsLoading }] = useResetPasswordMutation();
     const [formData, setFormData] = useState({
+        otp: '',
         email: '',
         password: '',
+        expiryTime: '',
+        checkedOtp: ''
     });
-
+    const [passwordValidation, setPasswordValidation] = useState({
+        carLength: false,
+        specailChar: false,
+        upperLowerCase: false,
+        numeric: false
+    })
     const from = location.state?.from?.pathname || '/';
 
     setTimeout(() => {
@@ -37,47 +42,111 @@ const SignIn = ({ handleResponse }) => {
 
 
     const onHandleForgotPassword = async (e) => {
-        e.preventDefault();
         // resetPassword({ email: forgotEmail })
-        authApiService.forgotPassword(forgotEmail);
-        setForgotEmail("");
-        setShowForgotPassword(false);
+        e.preventDefault();
+        try {
+            const response = await authApiService.forgotPassword(formData);  
+            console.log(response)
+            setFormData({
+                ...formData,
+                checkedOtp: response.otp,
+                expiryTime: response.expiryTime
+            }); 
+                // setShowForgotPassword(!showForgotPassword);
+            setIsForgotPassword(!isForgotPassword);
+            
+        } catch (error) {
+            swal({
+                icon: 'error',
+                text: `Failed! Email not exist`,
+                timer: 2000
+            });
+            setLoading(false);
+        }
     }
-    // useMessageEffect(resetIsLoading, resetIsSuccess, resetIsError, resetError, "Successfully Reset Password, Please check your Email!!")
-    // useEffect(() => {
-    //     if (isError) {
-    //         message.error(error?.data?.message)
-    //         setInfoError(error?.data?.message)
-    //     }
-    //     if (isSuccess) {
-    //         message.success('Successfully Logged in');
-    //         navigate('/')
-    //     }
-    // }, [isError, error, isSuccess, navigate])
-
-    const handleShowForgotPassword = () => {
-        setShowForgotPassword(!showForgotPassword);
+    const handleNewPass = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await authApiService.resetPassword(formData);      
+            setShowForgotPassword(!showForgotPassword);
+            setIsForgotPassword(!isForgotPassword);
+            setFormData({
+                ...formData,
+                password: ''
+            }); 
+            swal({
+                icon: 'success',
+                text: `Đổi mật khẩu thành công!`,
+                timer: 2000
+            });
+            
+        } catch (error) {
+            swal({
+                icon: 'error',
+                text: `Failed! OTP is incorrect`,
+                timer: 2000
+            });
+            setLoading(false);
+        }
     }
 
     const hanldeOnChange = (e) => {
-        setEmail(e.target.value)
+        let { name, value } = e.target;
+        hanldeValidation(name, value)
+        let isPassValid = true;
+        console.log(name);
+        if (value === 'password') {
+            isPassValid = ((value.length > 8)
+                && /[ `!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~]/.test(value)
+                && /^(?=.*[a-z])(?=.*[A-Z])/.test(value)
+                && /^(?=.*\d)/.test(value))
+        }
+
+        if (isPassValid) {
+            setFormData({ ...formData, [name]: value });
+        }
+    }
+
+    const hanldeValidation = (name, value) => {
+        if (name === 'password') {
+            setPasswordValidation({
+                carLength: (value.length > 8),
+                specailChar: /[ `!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~]/.test(value),
+                upperLowerCase: /^(?=.*[a-z])(?=.*[A-Z])/.test(value),
+                numeric: /^(?=.*\d)/.test(value),
+            })
+        }
+    }
+
+    const handleShowForgotPassword = () => {
+        setFormData({
+            email: '',
+            password: ''
+        });
+        setShowForgotPassword(!showForgotPassword);
+        setIsForgotPassword(!isForgotPassword);
+    }
+
+    const handleForgotPassword = () => {
+        setEmail("");
+        setPassword("");
+        setShowForgotPassword(!showForgotPassword);
+        setIsForgotPassword(false);
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const response = await authApiService.loginUser({email, password});
+            const response = await authApiService.loginUser(formData);
             if (response.statusCode === 200) {
                 localStorage.setItem('token', response.token);
                 localStorage.setItem('role', response.role);
                 navigate(from, { replace: true });
+                setEmail("");
+                setPassword("")
             }
         } catch (error) {
-            setFormData({
-                email: '',
-                password: '',
-            });
             swal({
                 icon: 'error',
                 text: `Failed! Email or password is incorrect`,
@@ -97,16 +166,59 @@ const SignIn = ({ handleResponse }) => {
                         <div>To Forgot Your Password Please Enter your email</div>
                         <div className="input-field">
                             <span className="fIcon"><FaEnvelope /></span>
-                            <input value={forgotEmail !== undefined && forgotEmail} onChange={(e) => setForgotEmail(e.target.value)} placeholder="Enter Your Email" type="email" required />
+                            <input name='email' value={formData.email} onChange={(e) => hanldeOnChange(e)} placeholder="Enter Your Email" type="email" required />
                         </div>
-                        <div onClick={handleShowForgotPassword} className='text-bold' style={{ cursor: "pointer", color: '#4C25F5' }}>Stil Remember Password ?</div>
-                        <button className="iBtn" type="submit" value="sign In" >
-                            {loading ? <Spinner animation="border" variant="info" /> : "Submit"}
-                        </button>
+                       
+                        {isForgotPassword ? 
+                            <>
+                                <div className="input-field">
+                                    <span className="fIcon"><FaKeyboard /></span>
+                                    <input name='otp' value={formData.otp} onChange={(e) => hanldeOnChange(e)} placeholder="Enter OTP" type="number" required />
+                                </div>
+                                <div className="input-field">
+                                    <span className="fIcon"><FaKey /></span>
+                                    <input name='password' value={formData.password} onChange={(e) => hanldeOnChange(e)} placeholder="Enter new password" type="password" required />
+                                </div>
+                                <div className="password-validatity mx-auto">
+                                    <div style={passwordValidation.carLength ? { color: "green" } : { color: "red" }}>
+                                        <p>{passwordValidation.numeric ? <FaCheck /> : <FaTimes />}
+                                            <span className="ms-2">Password Must Have atlast 8 character.</span></p>
+                                    </div>
+
+                                    <div style={passwordValidation.specailChar ? { color: "green" } : { color: "red" }}>
+                                        <p>{passwordValidation.numeric ? <FaCheck /> : <FaTimes />}
+                                            <span className="ms-2">Password Must Have a special cracter.</span></p>
+                                    </div>
+
+                                    <div style={passwordValidation.upperLowerCase ? { color: "green" } : { color: "red" }}>
+                                        <p>{passwordValidation.numeric ? <FaCheck /> : <FaTimes />}
+                                            <span className="ms-2">Password Must Have uppercase and lower case.</span></p>
+                                    </div>
+
+                                    <div style={passwordValidation.numeric ? { color: "green" } : { color: "red" }}>
+                                        <p>{passwordValidation.numeric ? <FaCheck /> : <FaTimes />}
+                                            <span className="ms-2">Password Must Have Number.</span></p>
+                                    </div>
+                                </div>
+                                <button onClick={handleNewPass}
+                                    className="btn btn-primary btn-block mt-2 iBtn"
+                                    disabled={
+                                        passwordValidation.carLength && passwordValidation.numeric && passwordValidation.upperLowerCase && passwordValidation.specailChar ? "" : true
+                                    }
+                                >
+                                    {loading ? <Spinner animation="border" variant="info" /> : "Submit"}
+                                </button>
+                            </> : 
+                            <button className="iBtn" type="submit" value="sign In" >
+                                {loading ? <Spinner animation="border" variant="info" /> : "Send OTP"}
+                            </button>
+
+                        } 
+                         <div onClick={handleShowForgotPassword} className='text-bold' style={{ cursor: "pointer", color: '#4C25F5' }}>Stil Remember Password ?</div>
                     </form>
                     :
                     <form className="sign-in-form" onSubmit={handleSubmit}>
-                        <Toast show={show} onClose={() => setShow(!show)} className="signInToast">
+                        {/* <Toast show={show} onClose={() => setShow(!show)} className="signInToast">
                             <Toast.Header>
                                 <strong className="mr-auto">Demo credential</strong>
                             </Toast.Header>
@@ -121,20 +233,20 @@ const SignIn = ({ handleResponse }) => {
                                     Please do not abuse the facility
                                 </div>
                             </Toast.Body>
-                        </Toast>
+                        </Toast> */}
                         <h2 className="title">Sign in</h2>
                         <div className="input-field">
                             <span className="fIcon"><FaEnvelope /></span>
-                            <input placeholder="Enter Your Email" type="email" name="name" onChange={(e) => setEmail(e.target.value)} required />
+                            <input placeholder="Enter Your Email" type="email" name="email" onChange={(e) => hanldeOnChange(e)} required />
                         </div>
                         {/* {errors.email && <span className="text-danger">This field is required</span>} */}
                         <div className="input-field">
                             <span className="fIcon"><FaLock /></span>
-                            <input type="password" placeholder="Enter Your Password" name="password" onChange={(e) => setPassword(e.target.value)} required/>
+                            <input  type="password" placeholder="Enter Your Password" name="password" onChange={(e) => hanldeOnChange(e)} required/>
                         </div>
                         {/* {errors.password && <span className="text-danger">This field is required</span>} */}
                         {infoError && <p className="text-danger">{infoError}</p>}
-                        <div onClick={handleShowForgotPassword} className='text-bold' style={{ cursor: "pointer", color: '#4C25F5' }}>Forgot Password ?</div>
+                        <div onClick={handleForgotPassword} className='text-bold' style={{ cursor: "pointer", color: '#4C25F5' }}>Forgot Password ?</div>
                         <button className="iBtn" type="submit" value="sign In" >
                             {loading ? <Spinner animation="border" variant="info" /> : "Sign In"}
                         </button>

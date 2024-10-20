@@ -25,7 +25,7 @@ const DashboardSidebar = () => {
                         <div className="profile-info text-center">
                             <Link to={'/'}><img src={data?.img ? data?.img : img} alt="" /></Link>
                             <div className='profile-details'>
-                                <h5 className='mb-0'>{data?.firstName + " " + data?.lastName}</h5>
+                                <h5 className='mb-0'>{data?.name}</h5>
                                 <div>
                                     <p className="mb-0">{data?.designation}</p>
                                 </div>
@@ -35,7 +35,7 @@ const DashboardSidebar = () => {
                         <div className="profile-info text-center">
                             <Link to={'/'}><img src={data?.img ? data?.img : img} alt="" /></Link>
                             <div className='profile-details'>
-                                <h5 className='mb-0'>{data?.firstName + " " + data?.lastName}</h5>
+                                <h5 className='mb-0'>{data?.name}</h5>
                                 <div className='mt-2'>
                                     <p className=' form-text m-0'>24 Jul 1983, 38 Years</p>
                                     <p className=' form-text m-0'> New Yourk , USA</p>
@@ -48,7 +48,7 @@ const DashboardSidebar = () => {
             </div>
             <nav className="dashboard-menu">
                 {
-                    role === 'patient' ?
+                    role === 'USER' ?
                         <ul>
                             <li>
                                 <NavLink to={'/dashboard'} activeClassName="active" end>

@@ -2,6 +2,7 @@ package com.medicate.HospitalManagement.controller;
 
 
 import com.medicate.HospitalManagement.dto.LoginRequest;
+import com.medicate.HospitalManagement.dto.RegisterRequest;
 import com.medicate.HospitalManagement.dto.Response;
 import com.medicate.HospitalManagement.entity.User;
 import com.medicate.HospitalManagement.service.Interface.IUserService;
@@ -27,11 +28,28 @@ public class AuthController {
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 
-    @GetMapping("/forgotPassword/{email}")
-    public ResponseEntity<Response> forgotPassword(@PathVariable("email") String email) {
-        Response response = userService.sendOtp(email);
+    @PostMapping("/forgotPassword")
+    public ResponseEntity<Response> forgotPassword(@RequestBody LoginRequest loginRequest) {
+        Response response = userService.sendOtp(loginRequest.getEmail());
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 
 
+    @PostMapping("/resetPassword")
+    public ResponseEntity<Response> resetPassword(@RequestBody LoginRequest loginRequest) {
+        Response response = userService.resetPassword(loginRequest);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
+    @PostMapping("/findUserByEmail/{email}")
+    public ResponseEntity<Response> getUserByEmail(@PathVariable("email") String email) {
+        Response response = userService.getMyInfo(email);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
+    @PostMapping("/register-confirm")
+    public ResponseEntity<Response> registerConfirm(@RequestBody RegisterRequest registerRequest) {
+        Response response = userService.confirmEmail(registerRequest);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
 }

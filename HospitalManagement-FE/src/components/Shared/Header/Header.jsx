@@ -19,7 +19,7 @@ const Header = () => {
     const isAuthenticated = authApiService.isAuthenticated();
     const isAdmin = authApiService.isAdmin();
     const isUser = authApiService.isUser();
-
+    console.log("hehe", data);
     // const lastScrollRef = useRef(0);
     const handleScroll = () => {
         const currentScroll = window.scrollY;
@@ -38,6 +38,7 @@ const Header = () => {
 
     useEffect(() => { isAuthenticated && setIsLogged(true) }, [isAuthenticated]);
 
+
     const hanldeSignOut = () => {
         authApiService.logout();
         message.success("Successfully Logged Out")
@@ -49,9 +50,9 @@ const Header = () => {
     const content = (
         <div className='nav-popover'>
             <div className='my-2'>
-                <h5 className='text-capitalize'>{data?.firstName + ' ' + data?.lastName}</h5>
+                <h5 className='text-capitalize'>{data.name}</h5>
                 <p className='my-0'>{data?.email}</p>
-                <Link to="/dashboard">Deshboard</Link>
+                <Link to="/dashboard">Dashboard</Link>
             </div>
             <Button variant="outline-danger" className='w-100' size="sm" onClick={hanldeSignOut}>
                 Logged Out

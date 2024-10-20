@@ -35,46 +35,6 @@ const SignUp = ({ setSignUp }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
 
-    // const handleSignUpSuccess = () => {
-    //     setLoading(false);
-    //     setUser(formField)
-    // }
-    // useEffect(() => {
-    //     // doctor account
-    //     if (dIsError && dError) {
-    //         message.error("Email Already Exist !!")
-    //         setLoading(false);
-    //     }
-
-    //     if (!dIsError && dIsSuccess) {
-    //         handleSignUpSuccess();
-    //         setLoading(false);
-    //         setLoading(false);
-    //         swal({
-    //             icon: 'success',
-    //             text: `Successfully Account Created Please Verify Your email`,
-    //             timer: 5000
-    //         })
-    //     }
-
-    //     // Patient account
-    //     if (pIsError && pError) {
-    //         message.error("Email Already Exist !!")
-    //         setLoading(false);
-    //     }
-    //     if (!pIsError && pIsSuccess) {
-    //         handleSignUpSuccess();
-    //         setLoading(false);
-    //         setSignUp(false);
-    //         swal({
-    //             icon: 'success',
-    //             text: `Successfully ${userType === 'doctor' ? 'Doctor' : 'Patient'} Account Created Please Login`,
-    //             timer: 2000
-    //         })
-    //     }
-
-    // }, [dIsError, dError, pError, pIsError, , pIsLoading, dIsLoading, pData, dData, setSignUp, setLoading, dIsSuccess])
-
     const [emailError, setEmailError] = useState({
         emailError: false
     })

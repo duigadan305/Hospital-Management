@@ -3,6 +3,7 @@ package com.medicate.HospitalManagement.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -20,4 +21,6 @@ public class Response {
     private List<UserDTO> userList;
     private List<PatientDTO> patientList;
     private List<DoctorDTO> doctorList;
+    private String otp;
+    private LocalDateTime expiryTime;
 }

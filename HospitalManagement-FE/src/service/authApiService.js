@@ -22,7 +22,7 @@ export default class authApiService {
     return response.data;
   }
 
-  /* This  login a registered user */
+  /* TQ F321RZZ44444444444444his  login a registered user */
   static async loginUser(loginDetails) {
     const response = await axios.post(
       `${this.BASE_URL}/auth/login`,
@@ -31,10 +31,21 @@ export default class authApiService {
     return response.data;
   }
 
-  static async forgotPassword(email) {
-    const response = await axios.get(
-      `${this.BASE_URL}/auth/forgotPassword/{email}`,
-      email
+  static async forgotPassword(loginDetails) {
+    const response = await axios.post(
+      `${this.BASE_URL}/auth/forgotPassword`,
+      loginDetails
+    );
+    return response.data;
+  }
+
+  /* This  login a registered user */
+  static async resetPassword(loginDetails) {
+    const response = await axios.post(
+      `${this.BASE_URL}/auth/
+      
+      `,
+      loginDetails
     );
     return response.data;
   }
@@ -59,5 +70,44 @@ export default class authApiService {
     const role = localStorage.getItem("role");
     return role === "USER";
   }
+
+  static async getAllUsers() {
+    const response = await axios.get(`${this.BASE_URL}/users/all`, {
+      headers: this.getHeader(),
+    });
+    return response.data;
+  }
+
+  static async getUserProfile() {
+    const response = await axios.get(
+      `${this.BASE_URL}/users/getLoggedInProfileInfo`,
+      {
+        headers: this.getHeader(),
+      }
+    );
+    return response.data;
+  }
+
+  /* This is the  to get a single user */
+  static async getUser(userId) {
+    const response = await axios.get(
+      `${this.BASE_URL}/users/getById/${userId}`,
+      {
+        headers: this.getHeader(),
+      }
+    );
+    return response.data;
+  }
+
+  static async getUserByEmail(email) {
+    const response = await axios.post(
+      `${this.BASE_URL}/auth/findUserByEmail/${email}`,
+      {
+        headers: this.getHeader(),
+      }
+    );
+    return response.data;
+  }
 }
+
 // export default new ApiService();

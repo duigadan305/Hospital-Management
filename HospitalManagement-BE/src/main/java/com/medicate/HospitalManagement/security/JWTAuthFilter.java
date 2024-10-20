@@ -1,6 +1,7 @@
 package com.medicate.HospitalManagement.security;
 
 
+import com.medicate.HospitalManagement.entity.User;
 import com.medicate.HospitalManagement.service.CustomerUserDetailsService;
 import com.medicate.HospitalManagement.utils.JWTUtils;
 import jakarta.servlet.FilterChain;
@@ -17,12 +18,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JWTAuthFilter extends OncePerRequestFilter {
 
     @Autowired
     private JWTUtils jwtUtils;
+    @Autowired
+    private Jwt
     @Autowired
     private CustomerUserDetailsService customUserDetailsService;
 
@@ -53,5 +58,15 @@ public class JWTAuthFilter extends OncePerRequestFilter {
             }
         }
         filterChain.doFilter(request, response);
+    }
+
+    public String createVerificationToken(User user) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("email", user.getEmail());
+        claims.put("name", user.getName());
+        claims.put("phone", user.getPhone());
+        claims.put("password", user.getPassword()); // Mã hóa mật khẩu trước khi lưu
+
+        return jwtUtils.generateToken(claims);
     }
 }

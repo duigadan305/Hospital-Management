@@ -7,13 +7,14 @@ import PatientDashboard from './PatientDashboard';
 
 const Dashboard = () => {
     const { role } = useAuthCheck();
+    console.log(role);
     return (
         <>
             <DashboardLayout>
                 {role === 'doctor' && <DoctorDashCard />}
 
                 <div className="row">
-                    {role === 'patient' &&
+                    {role === 'USER' &&
                         <div className="col-md-12 rounded" style={{ background: '#f8f9fa' }}>
                             <h5 className="text-title my-3">My Appointments</h5>
                             <PatientDashboard />

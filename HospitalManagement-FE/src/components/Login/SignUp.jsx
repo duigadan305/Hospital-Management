@@ -84,7 +84,7 @@ const SignUp = ({ setSignUp }) => {
         try {
             // Call the register method from ApiService
             const response = await authApiService.registerUser(formData);
-
+            console.log("hehe===>", formData)
             // Check if the response is successful
             if (response.statusCode === 200) {
                 // Clear the form fields after successful registration
@@ -101,7 +101,7 @@ const SignUp = ({ setSignUp }) => {
                 // }, 3000);
                 swal({
                     icon: 'success',
-                    text: `Successfully! Account Created Please Login`,
+                    text: `Check your email to verify your account!`,
                     timer: 2000
                 })
                 setLoading(false)

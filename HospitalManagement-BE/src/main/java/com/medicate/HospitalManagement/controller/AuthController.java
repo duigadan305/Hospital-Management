@@ -16,11 +16,17 @@ public class AuthController {
     @Autowired
     private IUserService userService;
 
-    @PostMapping("/register")
-    public ResponseEntity<Response> register(@RequestBody User user) {
-        Response response = userService.register(user);
+    @GetMapping("/register")
+    public ResponseEntity<Response> register(@RequestParam("token") String token) {
+        Response response = userService.register(token);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
+
+//    @PostMapping("/register")
+//    public ResponseEntity<Response> register(@RequestBody User user) {
+//        Response response = userService.register(user);
+//        return ResponseEntity.status(response.getStatusCode()).body(response);
+//    }
 
     @PostMapping("/login")
     public ResponseEntity<Response> login(@RequestBody LoginRequest loginRequest) {
@@ -48,8 +54,8 @@ public class AuthController {
     }
 
     @PostMapping("/register-confirm")
-    public ResponseEntity<Response> registerConfirm(@RequestBody RegisterRequest registerRequest) {
-        Response response = userService.confirmEmail(registerRequest);
+    public ResponseEntity<Response> registerConfirm(@RequestBody User user) {
+        Response response = userService.confirmEmail(user);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 }

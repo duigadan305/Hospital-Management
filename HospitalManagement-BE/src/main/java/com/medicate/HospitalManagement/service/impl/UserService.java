@@ -13,20 +13,23 @@ import com.medicate.HospitalManagement.repo.UserRepo;
 import com.medicate.HospitalManagement.service.Interface.IUserService;
 import com.medicate.HospitalManagement.utils.JWTUtils;
 import com.medicate.HospitalManagement.utils.Utils;
+import io.jsonwebtoken.Claims;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailAuthenticationException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class UserService implements IUserService {
@@ -44,12 +47,12 @@ public class UserService implements IUserService {
     private JavaMailSender mailSender;
     @Autowired
     private HttpSession httpSession; // Dùng để lưu trữ OTP vào session
-
+    @Autowired
+    private HttpServletResponse httpServletResponse;
     @Override
-    public Response confirmEmail(RegisterRequest registerRequest) {
+    public Response confirmEmail(User user) {
         Response response = new Response();
         try {
-            User user = registerRequest.getUser();
             if (user.getRole() == null || user.getRole().isBlank()) {
                 user.setRole("USER");
             }
@@ -58,10 +61,17 @@ public class UserService implements IUserService {
             }
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             UserDTO userDTO = Utils.mapUserEntityToUserDTO(user);
-            String token = UUID.randomUUID().toString();
-            String confirmationUrl = "?token=" + token;
+            Map<String, Object> claims = new HashMap<>();
+            claims.put("email", user.getEmail());
+            claims.put("password", user.getPassword());
+            claims.put("name", user.getName());
+            claims.put("phone", user.getPhone());
+            var token = jwtUtils.generateRegisterToken(claims);
+            String confirmationUrl = "http://localhost:4000/auth/register?token=" + token;
+            sendEmailConfirm(user.getEmail(), confirmationUrl, "Confirm you email");
             response.setStatusCode(200);
             response.setUser(userDTO);
+
         } catch (OurException e) {
             response.setStatusCode(400);
             response.setMessage(e.getMessage());
@@ -74,6 +84,45 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public Response register(String token) {
+        Response response = new Response();
+        try {
+            Claims claims = jwtUtils.decodeToken(token);
+            String email = claims.get("email", String.class);
+            String password = claims.get("password", String.class);
+            String name = claims.get("name", String.class);
+            String phone = claims.get("phone", String.class);
+            User user = new User();
+
+
+            if (userRepository.existsByEmail(email)) {
+                throw new OurException(email + "Already Exists");
+            }
+            user.setEmail(email);
+            user.setPassword(password);
+            user.setName(name);
+            user.setPhone(phone);
+            user.setRole("USER");
+            User savedUser = userRepository.save(user);
+            UserDTO userDTO = Utils.mapUserEntityToUserDTO(savedUser);
+            Patient patient = new Patient();
+            patient.setUser(savedUser);
+            patientRepository.save(patient);
+            response.setStatusCode(200);
+            response.setUser(userDTO);
+            httpServletResponse.sendRedirect("http://localhost:3000/login");
+        } catch (OurException e) {
+            response.setStatusCode(400);
+            response.setMessage(e.getMessage());
+        } catch (Exception e) {
+            response.setStatusCode(500);
+            response.setMessage("Error Occurred During USer Registration " + e.getMessage());
+
+        }
+        return response;
+    }
+
+    /*@Override
     public Response register(User user) {
         Response response = new Response();
         try {
@@ -100,7 +149,7 @@ public class UserService implements IUserService {
 
         }
         return response;
-    }
+    }*/
 
     @Override
     public Response login(LoginRequest loginRequest) {
@@ -335,4 +384,32 @@ public class UserService implements IUserService {
         }
         return response;
     }
+
+    public void sendEmailConfirm(String to, String confirmationUrl, String subject) {
+        // Sử dụng lớp SimpleMailMessage hoặc MimeMessageHelper để gửi email
+        MimeMessage message = mailSender.createMimeMessage();
+
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(to);
+            helper.setSubject(subject);
+
+            // Tạo nội dung email với HTML
+            String htmlContent = "<p>Dear user,</p>"
+                    + "<p>Please click the link below to confirm your registration:</p>"
+                    + "<a href=\"" + confirmationUrl + "\">Confirm your email</a>"
+                    + "<p>If you did not request this, please ignore this email.</p>";
+
+            // Set nội dung dưới dạng HTML
+            helper.setText(htmlContent, true);  // 'true' cho phép gửi email với HTML
+
+            // Gửi email
+            mailSender.send(message);
+
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            // Xử lý lỗi nếu có
+        }
+    }
+
 }

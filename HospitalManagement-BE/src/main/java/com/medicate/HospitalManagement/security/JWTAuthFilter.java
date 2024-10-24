@@ -27,8 +27,6 @@ public class JWTAuthFilter extends OncePerRequestFilter {
     @Autowired
     private JWTUtils jwtUtils;
     @Autowired
-    private Jwt
-    @Autowired
     private CustomerUserDetailsService customUserDetailsService;
 
 
@@ -67,6 +65,6 @@ public class JWTAuthFilter extends OncePerRequestFilter {
         claims.put("phone", user.getPhone());
         claims.put("password", user.getPassword()); // Mã hóa mật khẩu trước khi lưu
 
-        return jwtUtils.generateToken(claims);
+        return jwtUtils.generateRegisterToken(claims);
     }
 }

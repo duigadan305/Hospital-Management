@@ -93,6 +93,11 @@
 			<artifactId>jjwt-api</artifactId>
 			<version>0.12.5</version>
 		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId> <!-- or jjwt-gson for Gson support -->
+			<version>0.12.5</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3 -->
 		<dependency>
 			<groupId>com.amazonaws</groupId>

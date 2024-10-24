@@ -7,8 +7,9 @@ import com.medicate.HospitalManagement.dto.Response;
 import com.medicate.HospitalManagement.entity.User;
 
 public interface IUserService {
-    Response register(User loginRequest);
-    Response confirmEmail(RegisterRequest registerRequest);
+    Response register(String token);
+//    Response register(User loginRequest);
+    Response confirmEmail(User user);
 
     Response login(LoginRequest loginRequest);
 

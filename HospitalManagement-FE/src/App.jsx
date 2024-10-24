@@ -42,6 +42,7 @@ import ForgotPassword from './components/Login/ForgotPassword';
 import Dashboard from './components/Doctor/Dashboard/Dashboard';
 import PrivateOutlet from './components/Shared/PrivateOutlet';
 import NotFound from './components/UI/NotFound';
+import ConfirmEmail from './components/Login/ConfirmEmail';
 
 function App() {
   return (
@@ -65,6 +66,7 @@ function App() {
           <Route path='/dashboard/invoices' element={<DoctorInvoice />} />
         </Route>
         <Route path='/login' element={<SignInForm />} />
+        <Route path='/confirm-email' element={<ConfirmEmail />} />
         <Route path='/' element={<Home />} />
         <Route path='/blog' element={<Blog />} />
         <Route path='/blog/:id' element={<BlogDetails />} />

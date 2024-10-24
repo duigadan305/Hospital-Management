@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.security.SignatureException;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Map;
 import java.util.function.Function;
 
 @Service
@@ -24,6 +26,16 @@ public class JWTUtils {
         this.Key = new SecretKeySpec(keyBytes, "HmacSHA256");
     }
 
+    public String generateRegisterToken(Map<String, Object> claims) {
+        return Jwts.builder()
+                .claims(claims)
+                .subject((String) claims.get("name"))
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(Key)
+                .compact();
+    }
+
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
                 .subject(userDetails.getUsername())
@@ -31,6 +43,15 @@ public class JWTUtils {
                 .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(Key)
                 .compact();
+    }
+
+    public Claims decodeToken(String token) {
+
+        return Jwts.parser()
+                .setSigningKey(Key) // Thiết lập khóa ký để giải mã
+                .build() // Xây dựng parser
+                .parseClaimsJws(token) // Giải mã token
+                .getBody(); // Lấy phần body chứa thông tin claims
     }
 
     public String extractUsername(String token) {

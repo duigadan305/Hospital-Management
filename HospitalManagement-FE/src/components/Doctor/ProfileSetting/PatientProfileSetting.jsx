@@ -22,7 +22,7 @@ const PatientProfileSetting = () => {
     const [file, setFile] = useState(null);
 
     const onChange = (date, dateString) => { 
-        setDate(moment(dateString).format());
+        setDate(moment(dateString).format('YYYY-MM-DD'));
     };
 
     useEffect(() => {
@@ -55,8 +55,16 @@ const PatientProfileSetting = () => {
         const changedValue = Object.fromEntries(Object.entries(newObj).filter(([key, value]) => value !== ''));
         const formData = new FormData();
         selectedImage && formData.append('file', file);
-        const changeData = JSON.stringify(changedValue);
+        const changeData = {
+            ...changedValue,
+            user: {
+                id: userId,
+                name: changedValue.name,
+                phone: changedValue.phone
+            }
+        }
         formData.append('data', changeData)
+        console.log("dataaa=>", changeData)
         updatePatient({ data: formData, id: userId })
     };
 
@@ -80,56 +88,51 @@ const PatientProfileSetting = () => {
 
                     <div className="col-md-6">
                         <div className="form-group mb-2 card-label">
-                            <label>First Name <span className="text-danger">*</span></label>
-                            <input defaultValue={data?.firstName} {...register("firstName")} className="form-control" />
+                            <label className='form-label'>Họ và tên<span className="text-danger">*</span></label>
+                            <input defaultValue={data?.name} {...register("name")} className="form-control" />
                         </div>
-                    </div>
+                    </div>                   
                     <div className="col-md-6">
                         <div className="form-group mb-2 card-label">
-                            <label>Last Name <span className="text-danger">*</span></label>
-                            <input defaultValue={data?.lastName} {...register("lastName")} className="form-control" />
-                        </div>
-                    </div>
-                    <div className="col-md-6">
-                        <div className="form-group mb-2 card-label">
-                            <label>Email <span className="text-danger">*</span></label>
+                            <label className='form-label'>Email <span className="text-danger">*</span></label>
                             <input defaultValue={data?.email} disabled className="form-control" />
                         </div>
                     </div>
 
                     <div className="col-md-6">
                         <div className="form-group mb-2 card-label">
-                            <label>Date of Birth {moment(data?.dateOfBirth).format('LL')}</label>
+                            <label>Ngày sinh {moment(data?.dob).format('LL')}</label>
                             <DatePicker onChange={onChange} format={"YYYY-MM-DD"} style={{ width: '100%', padding: '6px' }} />
                         </div>
                     </div>
 
                     <div className="col-md-6">
                         <div className="form-group mb-2 card-label">
-                            <label>Phone Number</label>
-                            <input defaultValue={data?.mobile} {...register("mobile")} className="form-control" />
+                            <label className='form-label'>Số điện thoại</label>
+                            <input defaultValue={data?.phone} {...register("phone")} className="form-control" />
                         </div>
                     </div>
                     <div className="col-md-6">
                         <div className="form-group mb-2">
-                            <label>Gender</label>
+                            <label className='form-label'>Giới tính</label>
                             <select className="form-control select" onChange={handleChange} name='gender'>
-                                <option value={''}>Select</option>
-                                <option className='text-capitalize'>male</option>
-                                <option className='text-capitalize'>female</option>
-                                <option className='text-capitalize'>shemale</option>
+                                <option value={''}>Chọn</option>
+                                <option className='text-capitalize'>Nam</option>
+                                <option className='text-capitalize'>Nữ</option>
+                                <option className='text-capitalize'>Khác</option>
                             </select>
                         </div>
                     </div>
 
                     <div className="col-md-6">
                         <div className="form-group mb-2">
-                            <label className='form-label'>Blood Group</label>
+                            <label className='form-label'>Nhóm máu</label>
                             <select className="form-control select"
                                 onChange={handleChange}
                                 name='bloodGroup'
                                 value={selectBloodGroup}
                             >
+                                <option value={''}>Chọn</option>
                                 {
                                     bloodGrupOptions.map((option, index) => (
                                         <option key={index} value={option.value} className='text-capitalize'>{option.label}</option>
@@ -140,38 +143,32 @@ const PatientProfileSetting = () => {
                     </div>
 
                     <div className="col-md-6">
-                        <div className="form-group mb-2">
-                            <label className='form-label'>City</label>
+                        <div className="form-group mb-2 card-label">
+                            <label>Quốc gia</label>
+                            <input defaultValue={data?.country} {...register("country")} className="form-control" />
+                        </div>
+                    </div>
+                    <div className="col-md-6">
+                        <div className="form-group mb-2 card-label">
+                            <label>Tỉnh/Thành phố</label>
                             <input defaultValue={data?.city} {...register("city")} className="form-control" />
                         </div>
                     </div>
 
                     <div className="col-md-6">
                         <div className="form-group mb-2 card-label">
-                            <label>State</label>
+                            <label>Quận/Huyện</label>
                             <input defaultValue={data?.state} {...register("state")} className="form-control" />
                         </div>
                     </div>
                     <div className="col-md-6">
                         <div className="form-group mb-2 card-label">
-                            <label>Zip Code</label>
-                            <input defaultValue={data?.zipCode} {...register("zipCode")} className="form-control" />
-                        </div>
-                    </div>
-                    <div className="col-md-6">
-                        <div className="form-group mb-2 card-label">
-                            <label>Country</label>
-                            <input defaultValue={data?.country} {...register("country")} className="form-control" />
-                        </div>
-                    </div>
-                    <div className="col-md-6">
-                        <div className="form-group mb-2 card-label">
-                            <label>Address</label>
+                            <label>Địa chỉ</label>
                             <input defaultValue={data?.address} {...register("address")} className="form-control" />
                         </div>
                     </div>
                     <div className='text-center'>
-                        <button type="submit" className="btn btn-primary my-3" disabled={isLoading ? true : false}>{isLoading ? 'Updating..' : 'Save Changes'}</button>
+                        <button type="submit" className="btn btn-primary my-3" disabled={isLoading ? true : false}>{isLoading ? 'Updating..' : 'Cập nhật thông tin'}</button>
                     </div>
                 </form>
             </div>

@@ -20,6 +20,12 @@ public class PatientController {
     private IPatientService patientService;
 
 
+    @GetMapping("/getPatientByEmail/{email}")
+    public ResponseEntity<Response> getPatientByEmail(@PathVariable("email") String email) {
+        Response response = patientService.getPatientInfo(email);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
     @PostMapping("/updatePatientInfo")
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
     public ResponseEntity<Response> updatePatientInfo(@RequestBody PatientDTO patientDTO) {

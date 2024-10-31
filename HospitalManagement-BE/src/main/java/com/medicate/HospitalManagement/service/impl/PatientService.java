@@ -46,6 +46,8 @@ public class PatientService implements IPatientService {
     @Autowired
     private HttpServletResponse httpServletResponse;
 
+
+
     @Override
     public Response updatePatientInfo(PatientDTO patientDTO) {
         Response response = new Response();
@@ -79,6 +81,29 @@ public class PatientService implements IPatientService {
             response.setStatusCode(500);
             response.setMessage("Error Occurred During USer Registration " + e.getMessage());
 
+        }
+        return response;
+    }
+
+    @Override
+    public Response getPatientInfo(String email) {
+        Response response = new Response();
+
+        try {
+            Patient patient = patientRepository.findByUserEmail(email).orElseThrow(() -> new OurException("Patient Not Found"));
+            PatientDTO patientDTO = Utils.mapPatientEntityToPatientDTO(patient);
+            response.setStatusCode(200);
+            response.setPatient(patientDTO);
+            response.setMessage("successful");
+
+        } catch (OurException e) {
+            response.setStatusCode(404);
+            response.setMessage(e.getMessage());
+
+        } catch (Exception e) {
+
+            response.setStatusCode(500);
+            response.setMessage("Error getting all users " + e.getMessage());
         }
         return response;
     }

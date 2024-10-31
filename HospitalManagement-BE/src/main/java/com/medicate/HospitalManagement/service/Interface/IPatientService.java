@@ -8,4 +8,5 @@ import com.medicate.HospitalManagement.entity.User;
 
 public interface IPatientService {
     Response updatePatientInfo(PatientDTO patient);
+    Response getPatientInfo(String email);
 }

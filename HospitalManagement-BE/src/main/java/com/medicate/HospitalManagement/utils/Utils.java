@@ -8,7 +8,9 @@ package com.medicate.HospitalManagement.utils;
 //import com.hotelbooking.KingHotel.Entity.RoomImage;
 
 
+import com.medicate.HospitalManagement.dto.PatientDTO;
 import com.medicate.HospitalManagement.dto.UserDTO;
+import com.medicate.HospitalManagement.entity.Patient;
 import com.medicate.HospitalManagement.entity.User;
 
 import java.security.SecureRandom;
@@ -41,6 +43,23 @@ public class Utils {
         userDTO.setPhone(user.getPhone());
         userDTO.setRole(user.getRole());
         return userDTO;
+    }
+
+    public static PatientDTO mapPatientEntityToPatientDTO(Patient patient) {
+        PatientDTO patientDTO = new PatientDTO();
+        UserDTO userDTO = Utils.mapUserEntityToUserDTO(patient.getUser());
+        patientDTO.setId(patient.getId());
+        patientDTO.setName(patient.getUser().getName());
+        patientDTO.setDob(patient.getDob());
+        patientDTO.setGender(patient.getGender());
+        patientDTO.setBloodGroup(patient.getBloodGroup());
+        patientDTO.setCity(patient.getCity());
+        patientDTO.setCountry(patient.getCountry());
+        patientDTO.setAddress(patient.getAddress());
+
+        patientDTO.setUser(userDTO);
+        patientDTO.setBloodGroup(patient.getBloodGroup());
+        return patientDTO;
     }
 
 

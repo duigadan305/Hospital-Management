@@ -9,28 +9,80 @@ import { message } from 'antd';
 import ImageUpload from '../../UI/form/ImageUpload';
 import pImage from '../../../images/avatar.jpg';
 import { DatePicker } from 'antd';
+import PatientApiService from '../../../service/PatientApiService';
 
 const PatientProfileSetting = () => {
     const { data } = useAuthCheck();
+    console.log("dataProfile===>", data);
     const { register, handleSubmit } = useForm({});
     const [userId, setUserId] = useState('');
     const [selectBloodGroup, setSelectBloodGroup] = useState('');
+    const [selectedGender, setSelectedGender] = useState('');
     const [selectValue, setSelectValue] = useState({})
     const [updatePatient, { isSuccess, isError, error, isLoading }] = useUpdatePatientMutation();
     const [date, setDate] = useState(null);
     const [selectedImage, setSelectedImage] = useState(null);
     const [file, setFile] = useState(null);
+    const [patient, setPatient] = useState(null);
+    const [formData, setFormData] = useState({
+        address: '',
+        bloodGroup: '',
+        city: '',
+        country: '',
+        dob: '',
+        gender: '',
+        phone: '',
+        name: '',
+        user: {
+            name: '',
+            phone: '',
+            id: '',
+        },
+    });
+    useEffect(() => {
+        const fetchPatientInfo = async () => {
+            try {
+                const response = await PatientApiService.getPatientByEmail(data.email);
+                setPatient(response.patient); // Gán dữ liệu vào biến patient
+                setFormData({
+                    address: patient.address || '',
+                    bloodGroup: patient.bloodGroup || '',
+                    city: patient.city || '',
+                    country: patient.country || '',
+                    dob: patient.dob || '',
+                    gender: patient.gender || '',
+                    phone: patient.phone || '',
+                    name: patient.name || '',
+                    user: {
+                        name: patient.user.name || '',
+                        phone: patient.user.phone || '',
+                        id: patient.user.id || ''
+                    },
+                });
+            } catch (error) {
+                console.error("Lỗi khi lấy thông tin bệnh nhân:", error);
+            }
+        };
 
+        fetchPatientInfo();
+    }, [data.id]);
+    console.log("patient==>",patient);
     const onChange = (date, dateString) => { 
         setDate(moment(dateString).format('YYYY-MM-DD'));
     };
 
     useEffect(() => {
-        if (data) {
+        if (patient) {
             setUserId(data.id)
-            setSelectBloodGroup(data?.bloodGroup)
+            setSelectBloodGroup(patient?.bloodGroup)
         }
-    }, [data]);
+    }, [patient]);
+
+    useEffect(() => {
+        if (patient?.gender) {
+            setSelectedGender(patient.gender);
+        }
+    }, [patient]);
 
     useEffect(() => {
         if (!isLoading && isError) {
@@ -46,26 +98,40 @@ const PatientProfileSetting = () => {
         if (e.target.name === 'bloodGroup') {
             setSelectBloodGroup(e.target.value);
         }
+        if (e.target.name === 'gender') {
+            setSelectedGender(e.target.value);
+        }
     }
 
-    const onSubmit = (data) => {
-        const obj = data;
-        const newObj = { ...obj, ...selectValue };
-        date && (newObj['dateOfBirth'] = date);
-        const changedValue = Object.fromEntries(Object.entries(newObj).filter(([key, value]) => value !== ''));
-        const formData = new FormData();
-        selectedImage && formData.append('file', file);
-        const changeData = {
-            ...changedValue,
-            user: {
-                id: userId,
-                name: changedValue.name,
-                phone: changedValue.phone
-            }
+    const hanldeOnChange = (e) => {
+        let { name, value } = e.target;
+        if (e.target.name === 'bloodGroup') {
+            setSelectBloodGroup(e.target.value);
         }
-        formData.append('data', changeData)
-        console.log("dataaa=>", changeData)
-        updatePatient({ data: formData, id: userId })
+        if (e.target.name === 'gender') {
+            setSelectedGender(e.target.value);
+        }
+        setFormData({ ...formData, [name]: value });
+    }
+
+    console.log("formPatient==>",formData);
+
+    const onSubmit = async () => {
+        selectedImage && formData.append('file', file);
+        console.log("dataaa=>", formData)
+        try {
+            // Gọi API và đợi phản hồi
+            const response = await PatientApiService.updatePatientInfo(formData);
+    
+            // Kiểm tra phản hồi
+            if (response.status === 200) {
+                console.log("Cập nhật thành công!", response.data);
+            } else {
+                console.log("Có lỗi xảy ra!", response);
+            }
+        } catch (error) {
+            console.error("Lỗi khi cập nhật thông tin bệnh nhân:", error);
+        }
     };
 
     return (
@@ -89,7 +155,7 @@ const PatientProfileSetting = () => {
                     <div className="col-md-6">
                         <div className="form-group mb-2 card-label">
                             <label className='form-label'>Họ và tên<span className="text-danger">*</span></label>
-                            <input defaultValue={data?.name} {...register("name")} className="form-control" />
+                            <input defaultValue={data?.name} className="form-control" onChange={(e) => hanldeOnChange(e)} />
                         </div>
                     </div>                   
                     <div className="col-md-6">
@@ -101,25 +167,30 @@ const PatientProfileSetting = () => {
 
                     <div className="col-md-6">
                         <div className="form-group mb-2 card-label">
-                            <label>Ngày sinh {moment(data?.dob).format('LL')}</label>
-                            <DatePicker onChange={onChange} format={"YYYY-MM-DD"} style={{ width: '100%', padding: '6px' }} />
+                            <label>Ngày sinh {moment(patient?.dob).format('LL')}</label>
+                            <DatePicker name='dob' onChange={(e) => hanldeOnChange(e)} format={"YYYY-MM-DD"} style={{ width: '100%', padding: '6px' }} />
                         </div>
                     </div>
 
                     <div className="col-md-6">
                         <div className="form-group mb-2 card-label">
                             <label className='form-label'>Số điện thoại</label>
-                            <input defaultValue={data?.phone} {...register("phone")} className="form-control" />
+                            <input defaultValue={data?.phone} {...register("phone")} className="form-control" onChange={(e) => hanldeOnChange(e)}/>
                         </div>
                     </div>
                     <div className="col-md-6">
                         <div className="form-group mb-2">
                             <label className='form-label'>Giới tính</label>
-                            <select className="form-control select" onChange={handleChange} name='gender'>
+                            <select 
+                                className="form-control select" 
+                                onChange={(e) => hanldeOnChange(e)} 
+                                name='gender' 
+                                value={selectedGender}
+                            >
                                 <option value={''}>Chọn</option>
-                                <option className='text-capitalize'>Nam</option>
-                                <option className='text-capitalize'>Nữ</option>
-                                <option className='text-capitalize'>Khác</option>
+                                <option value="Nam" className='text-capitalize'>Nam</option>
+                                <option value="Nữ" className='text-capitalize'>Nữ</option>
+                                <option value="Khác" className='text-capitalize'>Khác</option>
                             </select>
                         </div>
                     </div>
@@ -128,7 +199,7 @@ const PatientProfileSetting = () => {
                         <div className="form-group mb-2">
                             <label className='form-label'>Nhóm máu</label>
                             <select className="form-control select"
-                                onChange={handleChange}
+                                onChange={(e) => hanldeOnChange(e)}
                                 name='bloodGroup'
                                 value={selectBloodGroup}
                             >
@@ -145,26 +216,20 @@ const PatientProfileSetting = () => {
                     <div className="col-md-6">
                         <div className="form-group mb-2 card-label">
                             <label>Quốc gia</label>
-                            <input defaultValue={data?.country} {...register("country")} className="form-control" />
+                            <input defaultValue={patient?.country} {...register("country")} className="form-control" onChange={(e) => hanldeOnChange(e)}/>
                         </div>
                     </div>
                     <div className="col-md-6">
                         <div className="form-group mb-2 card-label">
                             <label>Tỉnh/Thành phố</label>
-                            <input defaultValue={data?.city} {...register("city")} className="form-control" />
+                            <input defaultValue={patient?.city} {...register("city")} className="form-control" onChange={(e) => hanldeOnChange(e)}/>
                         </div>
                     </div>
 
                     <div className="col-md-6">
                         <div className="form-group mb-2 card-label">
-                            <label>Quận/Huyện</label>
-                            <input defaultValue={data?.state} {...register("state")} className="form-control" />
-                        </div>
-                    </div>
-                    <div className="col-md-6">
-                        <div className="form-group mb-2 card-label">
                             <label>Địa chỉ</label>
-                            <input defaultValue={data?.address} {...register("address")} className="form-control" />
+                            <input defaultValue={patient?.address} {...register("address")} className="form-control" onChange={(e) => hanldeOnChange(e)}/>
                         </div>
                     </div>
                     <div className='text-center'>

@@ -48,6 +48,17 @@ export default class PatientApiService {
     );
     return response.data;
   }
+
+  static async updatePatientInfo(patientDTO) {
+    const response = await axios.post(
+      `${this.BASE_URL}/patient/updatePatientInfo`,
+      patientDTO,
+      {
+        headers: this.getHeader(),
+      }
+    );
+    return response.data;
+  }
 }
 
 // export default new ApiService();

@@ -56,34 +56,54 @@ public class PatientService implements IPatientService {
             Patient patient = patientRepository.findByUserId(patientDTO.getUser().getId())
                     .orElseThrow(() -> new OurException("Patient Not found"));
 
-            // Cập nhật thông tin của bảng patient
-            patient.setGender(patientDTO.getGender());
-            patient.setBloodGroup(patientDTO.getBloodGroup());
-            patient.setCity(patientDTO.getCity());
-            patient.setCountry(patientDTO.getCountry());
-            patient.setAddress(patientDTO.getAddress());
-            patient.setDob(patientDTO.getDob());
+            // Cập nhật thông tin của bảng patient nếu giá trị trong patientDTO không null hoặc rỗng
+            if (patientDTO.getGender() != null && !patientDTO.getGender().isEmpty()) {
+                patient.setGender(patientDTO.getGender());
+            }
+            if (patientDTO.getBloodGroup() != null && !patientDTO.getBloodGroup().isEmpty()) {
+                patient.setBloodGroup(patientDTO.getBloodGroup());
+            }
+            if (patientDTO.getCity() != null && !patientDTO.getCity().isEmpty()) {
+                patient.setCity(patientDTO.getCity());
+            }
+            if (patientDTO.getCountry() != null && !patientDTO.getCountry().isEmpty()) {
+                patient.setCountry(patientDTO.getCountry());
+            }
+            if (patientDTO.getAddress() != null && !patientDTO.getAddress().isEmpty()) {
+                patient.setAddress(patientDTO.getAddress());
+            }
+            if (patientDTO.getDob() != null) { // Assuming dob is a date, check only for null
+                patient.setDob(patientDTO.getDob());
+            }
 
             // Cập nhật thông tin của bảng user
             User user = patient.getUser();
-            user.setName(patientDTO.getUser().getName());
-            user.setPhone(patientDTO.getUser().getPhone());
+            if (patientDTO.getUser().getName() != null && !patientDTO.getUser().getName().isEmpty()) {
+                user.setName(patientDTO.getUser().getName());
+            }
+            if (patientDTO.getUser().getPhone() != null && !patientDTO.getUser().getPhone().isEmpty()) {
+                user.setPhone(patientDTO.getUser().getPhone());
+            }
+
             UserDTO userDTO = Utils.mapUserEntityToUserDTO(user);
+
             // Lưu lại thông tin
             userRepository.save(user);
             patientRepository.save(patient);
+
             response.setStatusCode(200);
             response.setUser(userDTO);
+
         } catch (OurException e) {
             response.setStatusCode(400);
             response.setMessage(e.getMessage());
         } catch (Exception e) {
             response.setStatusCode(500);
-            response.setMessage("Error Occurred During USer Registration " + e.getMessage());
-
+            response.setMessage("Error Occurred During User Registration " + e.getMessage());
         }
         return response;
     }
+
 
     @Override
     public Response getPatientInfo(String email) {

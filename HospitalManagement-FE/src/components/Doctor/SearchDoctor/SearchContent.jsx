@@ -17,7 +17,7 @@ const SearchContent = ({ data }) => {
                         { data?.img && <img src={data?.img} className="" alt="User Image" />}
                     </div>
                     <div className="doc-info">
-                        <h5 className='mb-0'><Link to={`/doctors/profile/${data?.id}`}>Dr. {data?.firstName + ' ' + data?.lastName}</Link></h5>
+                        <h5 className='mb-0'><Link to={`/doctors/profile/${data?.id}`}>Dr. {data?.user.name}</Link></h5>
                         <p className='m-0 form-text'>{data?.designation}</p>
                         <p className="doc-department m-0"><img src={showImg} className="img-fluid" alt="Speciality" />Urology</p>
 
@@ -65,8 +65,7 @@ const SearchContent = ({ data }) => {
                         <ul>
                             <li><FaRegThumbsUp />  97%</li>
                             <li><FaComment /> 4 Feedback</li>
-                            <li><FaLocationArrow />{truncate(data?.clinicAddress, 20)}</li>
-                            <li><FaDollarSign /> {data?.price ? truncate(data?.price, 4) : 60} (Per Hour)</li>
+                            <li><FaLocationArrow />{truncate(data?.address, 20)}</li>
                         </ul>
                     </div>
                     <div className="clinic-booking">

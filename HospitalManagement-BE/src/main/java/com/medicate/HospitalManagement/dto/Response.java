@@ -17,7 +17,7 @@ public class Response {
     private String bookingConfirmCode;
     private UserDTO user;
     private PatientDTO patient;
-    private DoctorDTO booking;
+    private DoctorDTO doctor;
     private List<UserDTO> userList;
     private List<PatientDTO> patientList;
     private List<DoctorDTO> doctorList;

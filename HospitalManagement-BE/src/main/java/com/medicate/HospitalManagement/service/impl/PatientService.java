@@ -6,9 +6,11 @@ import com.medicate.HospitalManagement.dto.PatientDTO;
 import com.medicate.HospitalManagement.dto.Response;
 import com.medicate.HospitalManagement.dto.UserDTO;
 import com.medicate.HospitalManagement.entity.Patient;
+import com.medicate.HospitalManagement.entity.Specialty;
 import com.medicate.HospitalManagement.entity.User;
 import com.medicate.HospitalManagement.exception.OurException;
 import com.medicate.HospitalManagement.repo.PatientRepo;
+import com.medicate.HospitalManagement.repo.SpecialtyRepo;
 import com.medicate.HospitalManagement.repo.UserRepo;
 import com.medicate.HospitalManagement.service.Interface.IPatientService;
 import com.medicate.HospitalManagement.utils.JWTUtils;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -45,7 +48,8 @@ public class PatientService implements IPatientService {
     private HttpSession httpSession; // Dùng để lưu trữ OTP vào session
     @Autowired
     private HttpServletResponse httpServletResponse;
-
+    @Autowired
+    private SpecialtyRepo specialtyRepository;
 
 
     @Override

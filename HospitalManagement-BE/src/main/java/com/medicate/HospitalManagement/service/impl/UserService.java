@@ -6,9 +6,11 @@ import com.medicate.HospitalManagement.dto.RegisterRequest;
 import com.medicate.HospitalManagement.dto.Response;
 import com.medicate.HospitalManagement.dto.UserDTO;
 import com.medicate.HospitalManagement.entity.Patient;
+import com.medicate.HospitalManagement.entity.Specialty;
 import com.medicate.HospitalManagement.entity.User;
 import com.medicate.HospitalManagement.exception.OurException;
 import com.medicate.HospitalManagement.repo.PatientRepo;
+import com.medicate.HospitalManagement.repo.SpecialtyRepo;
 import com.medicate.HospitalManagement.repo.UserRepo;
 import com.medicate.HospitalManagement.service.Interface.IUserService;
 import com.medicate.HospitalManagement.utils.JWTUtils;
@@ -111,6 +113,35 @@ public class UserService implements IUserService {
             response.setStatusCode(200);
             response.setUser(userDTO);
             httpServletResponse.sendRedirect("http://localhost:3000/login");
+        } catch (OurException e) {
+            response.setStatusCode(400);
+            response.setMessage(e.getMessage());
+        } catch (Exception e) {
+            response.setStatusCode(500);
+            response.setMessage("Error Occurred During USer Registration " + e.getMessage());
+
+        }
+        return response;
+    }
+
+    @Override
+    public Response register1(User user) {
+        Response response = new Response();
+        try {
+            if (user.getRole() == null || user.getRole().isBlank()) {
+                user.setRole("USER");
+            }
+            if (userRepository.existsByEmail(user.getEmail())) {
+                throw new OurException(user.getEmail() + "Already Exists");
+            }
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            User savedUser = userRepository.save(user);
+            UserDTO userDTO = Utils.mapUserEntityToUserDTO(savedUser);
+            Patient patient = new Patient();
+            patient.setUser(savedUser);
+            patientRepository.save(patient);
+            response.setStatusCode(200);
+            response.setUser(userDTO);
         } catch (OurException e) {
             response.setStatusCode(400);
             response.setMessage(e.getMessage());

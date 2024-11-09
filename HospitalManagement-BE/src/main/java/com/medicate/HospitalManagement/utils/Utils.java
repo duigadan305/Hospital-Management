@@ -8,9 +8,13 @@ package com.medicate.HospitalManagement.utils;
 //import com.hotelbooking.KingHotel.Entity.RoomImage;
 
 
+import com.medicate.HospitalManagement.dto.DoctorDTO;
 import com.medicate.HospitalManagement.dto.PatientDTO;
+import com.medicate.HospitalManagement.dto.SpecialtyDTO;
 import com.medicate.HospitalManagement.dto.UserDTO;
+import com.medicate.HospitalManagement.entity.Doctor;
 import com.medicate.HospitalManagement.entity.Patient;
+import com.medicate.HospitalManagement.entity.Specialty;
 import com.medicate.HospitalManagement.entity.User;
 
 import java.security.SecureRandom;
@@ -45,6 +49,15 @@ public class Utils {
         return userDTO;
     }
 
+    public static SpecialtyDTO mapSpecialtyEntityToSpecialtyDTO(Specialty specialty) {
+        SpecialtyDTO specialtyDTO = new SpecialtyDTO();
+
+        specialtyDTO.setId(specialty.getId());
+        specialtyDTO.setName(specialty.getName());
+        specialtyDTO.setDescription(specialty.getDescription());
+        return specialtyDTO;
+    }
+
     public static PatientDTO mapPatientEntityToPatientDTO(Patient patient) {
         PatientDTO patientDTO = new PatientDTO();
         UserDTO userDTO = Utils.mapUserEntityToUserDTO(patient.getUser());
@@ -61,6 +74,24 @@ public class Utils {
         patientDTO.setBloodGroup(patient.getBloodGroup());
         return patientDTO;
     }
+
+    public static DoctorDTO mapDoctorEntityToDoctorDTO(Doctor doctor) {
+        DoctorDTO doctorDTO = new DoctorDTO();
+        UserDTO userDTO = Utils.mapUserEntityToUserDTO(doctor.getUser());
+        SpecialtyDTO specialtyDTO = Utils.mapSpecialtyEntityToSpecialtyDTO(doctor.getSpecialty());
+        doctorDTO.setId(doctor.getId());
+        doctorDTO.setDob(doctor.getDob());
+        doctorDTO.setGender(doctor.getGender());
+        doctorDTO.setBloodGroup(doctor.getBloodGroup());
+        doctorDTO.setCity(doctor.getCity());
+        doctorDTO.setCountry(doctor.getCountry());
+        doctorDTO.setAddress(doctor.getAddress());
+        doctorDTO.setSpecialty(specialtyDTO);
+        doctorDTO.setUser(userDTO);
+        doctorDTO.setBloodGroup(doctor.getBloodGroup());
+        return doctorDTO;
+    }
+
 
 
    /* public static RoomDTO mapRoomEntityToRoomDTO(Room room) {

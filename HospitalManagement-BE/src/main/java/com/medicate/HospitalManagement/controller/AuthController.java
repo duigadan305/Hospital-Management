@@ -22,11 +22,11 @@ public class AuthController {
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 
-//    @PostMapping("/register")
-//    public ResponseEntity<Response> register(@RequestBody User user) {
-//        Response response = userService.register(user);
-//        return ResponseEntity.status(response.getStatusCode()).body(response);
-//    }
+    @PostMapping("/register1")
+    public ResponseEntity<Response> register1(@RequestBody User user) {
+        Response response = userService.register1(user);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
 
     @PostMapping("/login")
     public ResponseEntity<Response> login(@RequestBody LoginRequest loginRequest) {

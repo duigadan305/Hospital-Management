@@ -1,36 +1,48 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 import { Slider, Button, DatePicker, Radio } from 'antd';
 import { FaSearch, FaRedoAlt } from "react-icons/fa";
 import Search from 'antd/es/input/Search';
-import { doctorSpecialistOptions } from '../../../constant/global';
+import CategoryApiService from '../../../service/CategoryApiService';
+// import { doctorSpecialistOptions } from '../../../constant/global';
 
-const SearchSidebar = ({ setSearchTerm, setSorByGender, setSpecialist, setPriceRange, resetFilter, query }) => {
-  const handleDateChange = (_date, _dateString) => { }
+const SearchSidebar = ({ setSearchTerm, setSorByGender, setSpecialist, resetFilter, query }) => {
   const options = [
     {
-      label: 'Male',
-      value: 'male',
+      label: 'Nam',
+      value: 'Male',
     },
     {
-      label: 'Female',
-      value: 'female',
+      label: 'Nữ',
+      value: 'Female',
     },
     {
-      label: 'Shemale',
-      value: 'shemale',
+      label: 'Khác',
+      value: 'Other',
     },
   ];
+
+  const [doctorSpecialistOptions, setDoctorSpecialistOptions] = useState([]);
+
+  useEffect(() => {
+    const fetchSpecialties = async () => {
+      try {
+        const specialties = await CategoryApiService.getAllSpecialty();
+        // Chuyển dữ liệu thành dạng phù hợp cho Radio.Group
+        const options = specialties.map(specialty => ({
+          label: specialty.name,
+          value: specialty.id,
+        }));
+        setDoctorSpecialistOptions(options);
+      } catch (error) {
+        console.error("Error fetching specialties:", error);
+      }
+    };
+
+    fetchSpecialties();
+  }, []);
+
   const onSelectGender = (e) => setSorByGender(e.target.value)
-
   const onSelectSepcialist = (e) => setSpecialist(e.target.value)
-
-  const onRangeChange = (range) => {
-    const obj = {
-      min: range[0],
-      max: range[1]
-    }
-    setPriceRange(obj)
-  }
   const onSearch = (value) => {
     setSearchTerm(value);
   }
@@ -43,14 +55,14 @@ const SearchSidebar = ({ setSearchTerm, setSorByGender, setSpecialist, setPriceR
           <Search placeholder="Search..." onSearch={onSearch} enterButton allowClear />
         </div>
 
-        <div className='mb-3'>
+        {/* <div className='mb-3'>
           <h6 style={{ color: '#05335c' }}>Date Range</h6>
           <DatePicker
             style={{ width: "100%" }}
             format="YYYY-MM-DD HH:mm:ss"
             onChange={handleDateChange}
           />
-        </div>
+        </div> */}
 
         <div className='mb-3'>
           <h6 style={{ color: '#05335c' }}>Gender</h6>
@@ -59,10 +71,10 @@ const SearchSidebar = ({ setSearchTerm, setSorByGender, setSpecialist, setPriceR
           </div>
         </div>
 
-        <div className='mb-3'>
+        {/* <div className='mb-3'>
           <h6 style={{ color: '#05335c' }}>Price Range</h6>
           <Slider range defaultValue={[75, 150]} onChange={onRangeChange} />
-        </div>
+        </div> */}
 
         <div className='mb-3'>
           <h6 style={{ color: '#05335c' }}>Select Specialist</h6>

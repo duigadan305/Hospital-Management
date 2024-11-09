@@ -2,6 +2,7 @@ package com.medicate.HospitalManagement.controller;
 
 
 import com.medicate.HospitalManagement.dto.Response;
+import com.medicate.HospitalManagement.entity.Specialty;
 import com.medicate.HospitalManagement.service.Interface.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,18 +11,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
     @Autowired
     private IUserService userService;
 
-   /* @GetMapping("/all")
-    @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Response> getAllUsers() {
-        Response response = userService.getAllUsers();
-        return ResponseEntity.status(response.getStatusCode()).body(response);
-    }*/
+
 
     @GetMapping("/getById/{userId}")
     public ResponseEntity<Response> getUserById(@PathVariable("userId") String userId) {

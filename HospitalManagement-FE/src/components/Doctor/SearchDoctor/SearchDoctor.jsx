@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Footer from '../../Shared/Footer/Footer';
 import SearchSidebar from './SearchSidebar';
 import SearchContent from './SearchContent';
-import { useDebounced } from '../../../utils/hooks/useDebounced';
-import { useGetDoctorsQuery } from '../../../redux/api/doctorApi';
 import { Empty } from 'antd';
 import { Pagination } from 'antd';
 import Header from '../../Shared/Header/Header';
 import SubHeader from '../../Shared/SubHeader';
+import CategoryApiService from '../../../service/CategoryApiService';
 
 const SearchDoctor = () => {
     const query = {};
@@ -18,41 +17,49 @@ const SearchDoctor = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [sortByGender, setSorByGender] = useState("");
     const [specialist, setSpecialist] = useState("");
-    const [priceRange, setPriceRange] = useState({});
+    const [doctorsData, setDoctorsData] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isError, setIsError] = useState(false);
 
-    query["limit"] = size;
-    query["page"] = page;
-    query["sortBy"] = sortBy;
-    query["sortOrder"] = sortOrder;
+    const fetchDoctors = async () => {
+        setIsLoading(true);
+        setIsError(false);
+        
+        const doctorRequest = {
+            gender: sortByGender || undefined,
+            user: { name: searchTerm || undefined },
+            specialty: { id: specialist || undefined },
+            page,
+            limit: size
+        };
+        console.log("request==>", doctorRequest);
+        
+        try {
+            const data = await CategoryApiService.getAllDoctors(doctorRequest);
+            setDoctorsData(data);
+        } catch (error) {
+            setIsError(true);
+            console.error("Error fetching doctors:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-    sortByGender !== '' && (query["gender"] = sortByGender);
-    specialist !== '' && (query["specialist"] = specialist);
+    console.log("search===>",doctorsData);
 
-    const priceDebounced = useDebounced({ searchQuery: priceRange, delay: 600 });
-    const debounced = useDebounced({ searchQuery: searchTerm, delay: 600 })
-
-    if (Object.keys(priceDebounced).length !== 0 && !!priceDebounced) {
-        const { min, max } = priceDebounced
-        query["min"] = min;
-        query["max"] = max;
-    }
-
+    // Gọi API mỗi khi các điều kiện tìm kiếm thay đổi
+    useEffect(() => {
+        fetchDoctors();
+    }, [page, size, searchTerm, sortByGender, specialist]);
+    
     const resetFilter = () =>{
         setPage(1);
         setSize(10);
         setSortOrder("");
         setSearchTerm("");
-        setSortOrder("");
         setSorByGender("");
         setSpecialist("");
-        setPriceRange({});
     }
-
-    if (!!debounced) { query.searchTerm = debounced }
-
-    const { data, isLoading, isError } = useGetDoctorsQuery({ ...query })
-    const doctorsData = data?.doctors;
-    const meta = data?.meta;
 
     //what to render
     let content = null;
@@ -84,7 +91,6 @@ const SearchDoctor = () => {
                             setSearchTerm={setSearchTerm}
                             setSorByGender={setSorByGender}
                             setSpecialist={setSpecialist}
-                            setPriceRange={setPriceRange}
                             resetFilter={resetFilter}
                             query={query}
                         />
@@ -94,7 +100,7 @@ const SearchDoctor = () => {
                                 <Pagination
                                     showSizeChanger
                                     onShowSizeChange={onShowSizeChange}
-                                    total={meta?.total}
+                                    total={""}
                                     pageSize={size}
                                 />
                             </div>

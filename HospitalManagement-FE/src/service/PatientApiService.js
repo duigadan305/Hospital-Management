@@ -59,6 +59,17 @@ export default class PatientApiService {
     );
     return response.data;
   }
+
+  static async sendComment(commentDTO) {
+    const response = await axios.post(
+      `${this.BASE_URL}/patient/sendComment`,
+      commentDTO,
+      {
+        headers: this.getHeader(),
+      }
+    );
+    return response.data;
+  }
 }
 
 // export default new ApiService();

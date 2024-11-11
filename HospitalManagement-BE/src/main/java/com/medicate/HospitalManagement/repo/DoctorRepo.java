@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import javax.print.Doc;
 import java.util.List;
+import java.util.Optional;
 
 public interface DoctorRepo extends JpaRepository<Doctor, Long> {
 
@@ -18,4 +19,6 @@ public interface DoctorRepo extends JpaRepository<Doctor, Long> {
     List<Doctor> findDoctorsByCriteria(@Param("name") String name,
                                        @Param("gender") String gender,
                                        @Param("specialtyId") Long specialtyId);
+
+    Optional<Doctor> findById(Integer id);
 }

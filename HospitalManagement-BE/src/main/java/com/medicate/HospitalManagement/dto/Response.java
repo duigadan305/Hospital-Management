@@ -18,9 +18,12 @@ public class Response {
     private UserDTO user;
     private PatientDTO patient;
     private DoctorDTO doctor;
+    private CommentDTO comment;
     private List<UserDTO> userList;
     private List<PatientDTO> patientList;
     private List<DoctorDTO> doctorList;
+    private List<CommentDTO> commentList;
     private String otp;
     private LocalDateTime expiryTime;
+    private Integer total;
 }

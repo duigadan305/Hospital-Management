@@ -8,14 +8,8 @@ package com.medicate.HospitalManagement.utils;
 //import com.hotelbooking.KingHotel.Entity.RoomImage;
 
 
-import com.medicate.HospitalManagement.dto.DoctorDTO;
-import com.medicate.HospitalManagement.dto.PatientDTO;
-import com.medicate.HospitalManagement.dto.SpecialtyDTO;
-import com.medicate.HospitalManagement.dto.UserDTO;
-import com.medicate.HospitalManagement.entity.Doctor;
-import com.medicate.HospitalManagement.entity.Patient;
-import com.medicate.HospitalManagement.entity.Specialty;
-import com.medicate.HospitalManagement.entity.User;
+import com.medicate.HospitalManagement.dto.*;
+import com.medicate.HospitalManagement.entity.*;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -92,106 +86,36 @@ public class Utils {
         return doctorDTO;
     }
 
-
-
-   /* public static RoomDTO mapRoomEntityToRoomDTO(Room room) {
-        RoomDTO roomDTO = new RoomDTO();
-
-        roomDTO.setId(room.getId());
-        roomDTO.setRoomType(room.getRoomType());
-        roomDTO.setRoomPrice(room.getRoomPrice());
-        roomDTO.setImageList(room.getRoomImages());
-        List<String> base64Images = new ArrayList<>();
-        for(RoomImage img : room.getRoomImages()){
-             String base64Image = Base64.getEncoder().encodeToString(img.getContent());
-             base64Images.add(base64Image);
-        }
-        roomDTO.setBase64Image(base64Images);
-        roomDTO.setRoomDescription(room.getRoomDescription());
-        return roomDTO;
-    }*/
-
-    /*public static BookingDTO mapBookingEntityToBookingDTO(Booking booking) {
-        BookingDTO bookingDTO = new BookingDTO();
-        // Map simple fields
-        bookingDTO.setId(booking.getId());
-        bookingDTO.setCheckInDate(booking.getCheckInDate());
-        bookingDTO.setCheckOutDate(booking.getCheckOutDate());
-        bookingDTO.setNumOfAdults(booking.getNumOfAdults());
-        bookingDTO.setNumOfChildren(booking.getNumOfChildren());
-        bookingDTO.setTotalGuest(booking.getTotalGuest());
-        bookingDTO.setBookingConfirmCode(booking.getBookingConfirmCode());
-        return bookingDTO;
-    }*/
-
-    /*public static RoomDTO mapRoomEntityToRoomDTOPlusBookings(Room room) {
-        RoomDTO roomDTO = new RoomDTO();
-
-        roomDTO.setId(room.getId());
-        roomDTO.setRoomType(room.getRoomType());
-        roomDTO.setRoomPrice(room.getRoomPrice());
-        roomDTO.setImageList(room.getRoomImages());
-        roomDTO.setRoomDescription(room.getRoomDescription());
-
-        if (room.getBookings() != null) {
-            roomDTO.setBookings(room.getBookings().stream().map(Utils::mapBookingEntityToBookingDTO).collect(Collectors.toList()));
-        }
-        return roomDTO;
-    }*/
-
-    /*public static BookingDTO mapBookingEntityToBookingDTOPlusBookedRooms(Booking booking, boolean mapUser) {
-
-        BookingDTO bookingDTO = new BookingDTO();
-        // Map simple fields
-        bookingDTO.setId(booking.getId());
-        bookingDTO.setCheckInDate(booking.getCheckInDate());
-        bookingDTO.setCheckOutDate(booking.getCheckOutDate());
-        bookingDTO.setNumOfAdults(booking.getNumOfAdults());
-        bookingDTO.setNumOfChildren(booking.getNumOfChildren());
-        bookingDTO.setTotalGuest(booking.getTotalGuest());
-        bookingDTO.setBookingConfirmCode(booking.getBookingConfirmCode());
-        if (mapUser) {
-            bookingDTO.setUser(Utils.mapUserEntityToUserDTO(booking.getUser()));
-        }
-        if (booking.getRoom() != null) {
-            RoomDTO roomDTO = new RoomDTO();
-
-            roomDTO.setId(booking.getRoom().getId());
-            roomDTO.setRoomType(booking.getRoom().getRoomType());
-            roomDTO.setRoomPrice(booking.getRoom().getRoomPrice());
-            roomDTO.setImageList(booking.getRoom().getRoomImages());
-            roomDTO.setRoomDescription(booking.getRoom().getRoomDescription());
-            bookingDTO.setRoom(roomDTO);
-        }
-        return bookingDTO;
-    }*/
-
-    /*public static UserDTO mapUserEntityToUserDTOPlusUserBookingsAndRoom(User user) {
-        UserDTO userDTO = new UserDTO();
-
-        userDTO.setId(user.getId());
-        userDTO.setName(user.getName());
-        userDTO.setEmail(user.getEmail());
-        userDTO.setPhone(user.getPhone());
-        userDTO.setRole(user.getRole());
-
-        if (!user.getBookings().isEmpty()) {
-            userDTO.setBookings(user.getBookings().stream().map(booking -> mapBookingEntityToBookingDTOPlusBookedRooms(booking, false)).collect(Collectors.toList()));
-        }
-        return userDTO;
-    }*/
+    public static CommentDTO mapCommentEntityToCommentDTO(Comment comment) {
+        CommentDTO commentDTO = new CommentDTO();
+        PatientDTO patientDTO = Utils.mapPatientEntityToPatientDTO(comment.getPatient());
+        DoctorDTO doctorDTO = Utils.mapDoctorEntityToDoctorDTO(comment.getDoctor());
+        commentDTO.setId(comment.getId());
+        commentDTO.setSubject(comment.getSubject());
+        commentDTO.setContent(comment.getContent());
+        commentDTO.setSendDate(comment.getSendDate());
+        commentDTO.setStar(comment.getStar());
+        commentDTO.setPatient(patientDTO);
+        commentDTO.setDoctor(doctorDTO);
+        return commentDTO;
+    }
 
 
     public static List<UserDTO> mapUserListEntityToUserListDTO(List<User> userList) {
         return userList.stream().map(Utils::mapUserEntityToUserDTO).collect(Collectors.toList());
     }
 
-   /* public static List<RoomDTO> mapRoomListEntityToRoomListDTO(List<Room> roomList) {
-        return roomList.stream().map(Utils::mapRoomEntityToRoomDTO).collect(Collectors.toList());
-    }*/
+    public static List<PatientDTO> mapPatientListEntityToPatientListDTO(List<Patient> patientList) {
+        return patientList.stream().map(Utils::mapPatientEntityToPatientDTO).collect(Collectors.toList());
+    }
 
-    /*public static List<BookingDTO> mapBookingListEntityToBookingListDTO(List<Booking> bookingList) {
-        return bookingList.stream().map(Utils::mapBookingEntityToBookingDTO).collect(Collectors.toList());
-    }*/
+    public static List<DoctorDTO> mapDoctorListEntityToDoctorListDTO(List<Doctor> doctorList) {
+        return doctorList.stream().map(Utils::mapDoctorEntityToDoctorDTO).collect(Collectors.toList());
+    }
+
+    public static List<CommentDTO> mapCommentListEntityToCommentListDTO(List<Comment> commentList) {
+        return commentList.stream().map(Utils::mapCommentEntityToCommentDTO).collect(Collectors.toList());
+    }
+
 
 }

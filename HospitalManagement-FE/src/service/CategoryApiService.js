@@ -26,6 +26,22 @@ export default class CategoryApiService {
     );
     return response.data;
   }
+
+  static async getDoctorById(doctorRequest) {
+    const response = await axios.post(
+      `${this.BASE_URL}/general/getDoctorById`,
+      doctorRequest
+    );
+    return response.data;
+  }
+
+  static async getAllReviewDoctor(doctorRequest) {
+    const response = await axios.post(
+      `${this.BASE_URL}/general/getAllReviewDoctor`,
+      doctorRequest
+    );
+    return response.data;
+  }
 }
 
 // export default new ApiService();

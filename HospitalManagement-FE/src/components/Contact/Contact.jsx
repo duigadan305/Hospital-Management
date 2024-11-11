@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Footer from '../Shared/Footer/Footer'
 import { useForm } from 'react-hook-form';
 import { FaLocationArrow, FaEnvelope, FaPhoneAlt } from "react-icons/fa";
@@ -7,23 +7,59 @@ import './index.css';
 import SubHeader from '../Shared/SubHeader';
 import { useContactMutation } from '../../redux/api/contactApi';
 import { message } from 'antd';
+import authApiService from '../../service/authApiService';
+import useAuthCheck from '../../redux/hooks/useAuthCheck';
+import PatientApiService from '../../service/PatientApiService';
 
 const Contact = () => {
-    const [contact, {isLoading, isError, error, isSuccess}]= useContactMutation();
-    const { register, handleSubmit, reset } = useForm({});
-    const onSubmit = (data) => {
-        contact(data);
-        reset();
-    };
+    const { authChecked, data } = useAuthCheck();
+    const isAuthenticated = authApiService.isAuthenticated();
+    const isAdmin = authApiService.isAdmin();
+    const isUser = authApiService.isUser();
+    const [{isLoading}]= useState(false);
+    const {register, handleSubmit, reset } = useForm({});
+    const [formData, setFormData] = useState({});
     
+    const checkAuthAndSetData = async () => {
+        if (isAuthenticated && data?.id) {
+            try {
+                const patientt = await PatientApiService.getPatientByEmail(data.email);
+                setFormData(prevFormData => ({
+                    ...prevFormData,
+                    patient: patientt.patient
+                }));
+            } catch (error) {
+                console.error("Error fetching patient:", error);
+            }
+        }
+    };
+    console.log("Login==>",data);
+    console.log("comment==>",formData);
+
+    const onSubmit = async () => {
+        try {
+            const response = await PatientApiService.sendComment(formData);
+            if (response.statusCode === 200) {
+                message.success("Gửi thành công!");
+                reset();
+                setFormData({}); // Clear form data after submission
+            } else {
+                message.error("Vui lòng đăng nhập để gửi tin nhắn!");
+            }
+        } catch (error) {
+            message.error("Vui lòng đăng nhập để gửi tin nhắn!");
+        }
+    };
+
+    const handleOnChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+    };
+
     useEffect(() => {
-        if(isSuccess){
-            message.success("Successfully Message Send !");
-        }
-        if(isError && error){
-            message.error(error?.data?.message);
-        }
-    }, [isSuccess, isError, error])
+        checkAuthAndSetData();
+    }, [authChecked, data, isAuthenticated]);
+
     return (
         <>
             <Header />
@@ -64,38 +100,18 @@ const Contact = () => {
                         <div className="col-lg-8">
                             <div className="mb-5 p-2 rounded" style={{ background: '#f8f9fa' }}>
                                 <form className="row form-row" onSubmit={handleSubmit(onSubmit)}>
-                                    <div className="col-md-6">
-                                        <div className="form-group mb-2 card-label">
-                                            <label>First Name</label>
-                                            <input required {...register("firstName")} className="form-control" placeholder='First Name'/>
-                                        </div>
-                                    </div>
-
-                                    <div className="col-md-6">
-                                        <div className="form-group mb-2 card-label">
-                                            <label>Last Name</label>
-                                            <input required {...register("lastName")} className="form-control" placeholder='Last Name'/>
-                                        </div>
-                                    </div>
-
-                                    <div className="col-md-12">
-                                        <div className="form-group mb-2 card-label">
-                                            <label>Email</label>
-                                            <input required {...register("email")} type='email' className="form-control" placeholder="Email" />
-                                        </div>
-                                    </div>
 
                                     <div className="col-md-12">
                                         <div className="form-group mb-2 card-label">
                                             <label>Subject</label>
-                                            <input required {...register("subject")} className="form-control" placeholder="Enter your subject"/>
+                                            <input {...register('subject')} name='subject' required onChange={(e) => handleOnChange(e)} className="form-control" placeholder="Enter your subject"/>
                                         </div>
                                     </div>
 
                                     <div className="col-md-12">
                                         <div className="form-group">
                                             <label className='form-label'>Message</label>
-                                            <textarea required {...register("text")} className="form-control mb-3" cols="30" rows="10" placeholder="enter your message"/>
+                                            <textarea {...register('message')}  name='content' required onChange={(e) => handleOnChange(e)} className="form-control mb-3" cols="30" rows="10" placeholder="enter your message"/>
                                         </div>
                                     </div>
 

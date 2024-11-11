@@ -12,12 +12,14 @@ const SearchDoctor = () => {
     const query = {};
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(10);
+    const [total, setTotal] = useState(0);
     const [sortBy, setSortBy] = useState("");
     const [sortOrder, setSortOrder] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [sortByGender, setSorByGender] = useState("");
     const [specialist, setSpecialist] = useState("");
     const [doctorsData, setDoctorsData] = useState([]);
+    const [filteredDoctors, setFilteredDoctors] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(false);
 
@@ -36,7 +38,8 @@ const SearchDoctor = () => {
         
         try {
             const data = await CategoryApiService.getAllDoctors(doctorRequest);
-            setDoctorsData(data);
+            setDoctorsData(data.doctorList);
+            setTotal(data.total);
         } catch (error) {
             setIsError(true);
             console.error("Error fetching doctors:", error);
@@ -52,6 +55,34 @@ const SearchDoctor = () => {
         fetchDoctors();
     }, [page, size, searchTerm, sortByGender, specialist]);
     
+    const applyFilters = () => {
+        let filtered = doctorsData;
+
+        if (sortByGender) {
+            filtered = filtered.filter(item => item.gender === sortByGender);
+        }
+
+        if (specialist) {
+            filtered = filtered.filter(item => item.specialty.id === specialist);
+        }
+
+        if (searchTerm) {
+            filtered = filtered.filter(item =>
+                item.user.name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+
+        return filtered;
+    };
+
+    useEffect(() => {
+        const filtered = applyFilters();
+        const startIndex = (page - 1) * size;
+        const endIndex = startIndex + size;
+        setFilteredDoctors(filtered.slice(startIndex, endIndex)); // Cắt dữ liệu
+        setTotal(filtered.length);
+    }, [page, size, doctorsData]);
+
     const resetFilter = () =>{
         setPage(1);
         setSize(10);
@@ -65,20 +96,25 @@ const SearchDoctor = () => {
     let content = null;
     if (isLoading) content = <>Loading ...</>;
     if (!isLoading && isError) content = <div>Something Went Wrong !</div>
-    if (!isLoading && !isError && doctorsData.length === 0) content = <div><Empty /></div>
-    if (!isLoading && !isError && doctorsData.length > 0) content =
+    if (!isLoading && !isError && filteredDoctors.length === 0) content = <div><Empty /></div>
+    if (!isLoading && !isError && filteredDoctors.length > 0) content =
         <>
             {
-                doctorsData && doctorsData?.map((item, id) => (
+                filteredDoctors && filteredDoctors?.map((item, id) => (
                     <SearchContent key={id + item.id} data={item} />
                 ))
             }
         </>
 
-    const onShowSizeChange = (current, pageSize) => {
-        setPage(page);
-        setSize(pageSize)
-    }
+const onPageChange = (page) => {
+    setPage(page);
+};
+
+// Handle page size change
+const onShowSizeChange = (current, pageSize) => {
+    setPage(1); // Reset to the first page when page size changes
+    setSize(pageSize);
+};
 
     return (
         <div>
@@ -98,10 +134,12 @@ const SearchDoctor = () => {
                             {content}
                             <div className='text-center mt-5 mb-5'>
                                 <Pagination
-                                    showSizeChanger
-                                    onShowSizeChange={onShowSizeChange}
-                                    total={""}
+                                    current={page}
                                     pageSize={size}
+                                    total={total}
+                                    showSizeChanger
+                                    onChange={onPageChange}
+                                    onShowSizeChange={onShowSizeChange}
                                 />
                             </div>
                         </div>

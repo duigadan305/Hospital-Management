@@ -1,17 +1,10 @@
 package com.medicate.HospitalManagement.service.impl;
 
 
-import com.medicate.HospitalManagement.dto.LoginRequest;
-import com.medicate.HospitalManagement.dto.PatientDTO;
-import com.medicate.HospitalManagement.dto.Response;
-import com.medicate.HospitalManagement.dto.UserDTO;
-import com.medicate.HospitalManagement.entity.Patient;
-import com.medicate.HospitalManagement.entity.Specialty;
-import com.medicate.HospitalManagement.entity.User;
+import com.medicate.HospitalManagement.dto.*;
+import com.medicate.HospitalManagement.entity.*;
 import com.medicate.HospitalManagement.exception.OurException;
-import com.medicate.HospitalManagement.repo.PatientRepo;
-import com.medicate.HospitalManagement.repo.SpecialtyRepo;
-import com.medicate.HospitalManagement.repo.UserRepo;
+import com.medicate.HospitalManagement.repo.*;
 import com.medicate.HospitalManagement.service.Interface.IPatientService;
 import com.medicate.HospitalManagement.utils.JWTUtils;
 import com.medicate.HospitalManagement.utils.Utils;
@@ -21,9 +14,12 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -37,19 +33,9 @@ public class PatientService implements IPatientService {
     @Autowired
     private PatientRepo patientRepository;
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private DoctorRepo doctorRepository;
     @Autowired
-    private JWTUtils jwtUtils;
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private JavaMailSender mailSender;
-    @Autowired
-    private HttpSession httpSession; // Dùng để lưu trữ OTP vào session
-    @Autowired
-    private HttpServletResponse httpServletResponse;
-    @Autowired
-    private SpecialtyRepo specialtyRepository;
+    private CommentRepo commentRepository;
 
 
     @Override
@@ -118,6 +104,51 @@ public class PatientService implements IPatientService {
             PatientDTO patientDTO = Utils.mapPatientEntityToPatientDTO(patient);
             response.setStatusCode(200);
             response.setPatient(patientDTO);
+            response.setMessage("successful");
+
+        } catch (OurException e) {
+            response.setStatusCode(404);
+            response.setMessage(e.getMessage());
+
+        } catch (Exception e) {
+
+            response.setStatusCode(500);
+            response.setMessage("Error getting all users " + e.getMessage());
+        }
+        return response;
+    }
+
+    @Override
+    public Response sendComment(CommentDTO comment) {
+        Response response = new Response();
+        Comment com = new Comment();
+        try {
+            PatientDTO patientDTO = new PatientDTO();
+            DoctorDTO doctorDTO = new DoctorDTO();
+            var patient = patientRepository.findById(comment.getPatient().getId());
+
+            if (patient.isPresent()) {
+                patientDTO = Utils.mapPatientEntityToPatientDTO(patient.get());
+                comment.setPatient(patientDTO);
+                com.setPatient(patient.get());
+            }
+
+            if (comment.getDoctor() != null) {
+                var doctor = doctorRepository.findById(comment.getDoctor().getId());
+                if(doctor.isPresent()){
+                    doctorDTO = Utils.mapDoctorEntityToDoctorDTO(doctor.get());
+                    comment.setDoctor(doctorDTO);
+                    com.setDoctor(doctor.get());
+                }
+            }
+
+            com.setSubject(comment.getSubject());
+            com.setContent(comment.getContent());
+            com.setSendDate(Timestamp.from(Instant.now()));
+
+            commentRepository.save(com);
+            response.setStatusCode(200);
+            response.setComment(comment);
             response.setMessage("successful");
 
         } catch (OurException e) {

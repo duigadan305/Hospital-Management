@@ -7,15 +7,43 @@ import StarRatings from 'react-star-ratings';
 import { useCreateReviewMutation, useGetDoctorReviewsQuery } from '../../../redux/api/reviewsApi';
 import { Button, Radio, message, Space, Rate } from 'antd';
 import { useForm } from 'react-hook-form';
+import CategoryApiService from '../../../service/CategoryApiService';
+import PatientApiService from '../../../service/PatientApiService';
+import useAuthCheck from '../../../redux/hooks/useAuthCheck';
+import authApiService from '../../../service/authApiService';
 const desc = ['terrible', 'bad', 'normal', 'good', 'wonderful'];
 
 const Review = ({ doctorId }) => {
+    const { authChecked, data } = useAuthCheck();
+    const isAuthenticated = authApiService.isAuthenticated();
     const { register, handleSubmit, } = useForm({});
     const [value, setValue] = useState(null);
     const [recommend, setRecommend] = useState(null);
     const [showError, setShowError] = useState(false);
+    const [{isLoading, isError}]= useState(false);
+    const [formData, setFormData] = useState({});
+    const [reviewData, setReviewData] = useState([]);
+    const drequest = {id: doctorId};
 
-    const { data, isError, isLoading } = useGetDoctorReviewsQuery(doctorId);
+    const checkAuthAndSetData = async () => {
+        const reviews = await CategoryApiService.getAllReviewDoctor(drequest);
+        setReviewData(reviews?.commentList);
+        if (isAuthenticated && data?.id) {
+            try {
+                const  doctorData = await CategoryApiService.getDoctorById(drequest);
+                const patientt = await PatientApiService.getPatientByEmail(data.email);
+                setFormData(prevFormData => ({
+                    ...prevFormData,
+                    patient: patientt.patient,
+                    doctor: doctorData.doctor
+                }));
+            } catch (error) {
+                console.error("Error fetching patient:", error);
+            }
+        }
+    };
+    
+    console.log("doctorId===>", doctorId);
     const [createReview, { isSuccess: createIsSuccess, isError: createTsError, error: createError, isLoading: createIsLoading }] = useCreateReviewMutation();
 
     const onChange = (e) => setRecommend(e.target.value);
@@ -41,6 +69,10 @@ const Review = ({ doctorId }) => {
     };
 
     useEffect(() => {
+        checkAuthAndSetData();
+    }, [authChecked, data, isAuthenticated]);
+
+    useEffect(() => {
         if (!createIsLoading && createTsError) {
             message.error(createError?.data?.message);
         }
@@ -53,11 +85,11 @@ const Review = ({ doctorId }) => {
 
     let content = null;
     if (!isLoading && isError) content = <div>Something Went Wrong !</div>
-    if (!isLoading && !isError && data?.length === 0) content = <div>Empty</div>
-    if (!isLoading && !isError && data?.length > 0) content =
+    if (!isLoading && !isError && reviewData?.length === 0) content = <div>Empty</div>
+    if (!isLoading && !isError && reviewData?.length > 0) content =
         <>
             {
-                data && data.map((item, key) => (
+                reviewData && reviewData.map((item, key) => (
                     <div className='mb-4' key={item?.id + key}>
                         <div className='d-flex gap-3 justify-content-between'>
                             <div className='d-flex gap-4'>
@@ -65,8 +97,8 @@ const Review = ({ doctorId }) => {
                                     <img className="" alt="" src={img} />
                                 </div>
                                 <div>
-                                    <h5 className="text-nowrap">{item?.patient?.firstName + ' ' + item?.patient?.lastName}</h5>
-                                    <p className="text-success"><FaRegThumbsUp /> {item?.isRecommended ? 'I recommend the doctor' : 'I do not recommend the doctor'}</p>
+                                    <h5 className="text-nowrap">{item?.patient?.name}</h5>
+                                    <p className="text-success"><FaRegThumbsUp /> {item?.subject}</p>
                                 </div>
                             </div>
 
@@ -81,11 +113,11 @@ const Review = ({ doctorId }) => {
                                         starSpacing="2px"
                                     />
                                 </div>
-                                <div className="">Reviewed {moment(item?.createdAt).startOf('day').fromNow()}</div>
+                                <div className="">Reviewed {moment(item?.sendDate).startOf('day').fromNow()}</div>
                             </div>
                         </div>
                         <div>
-                            <p className="mx-2 form-text">{item?.description}</p>
+                            <p className="mx-2 form-text">{item?.content}</p>
                         </div>
                     </div>
                 ))
@@ -115,17 +147,17 @@ const Review = ({ doctorId }) => {
                             </div>
                         </div>
                         <div className="form-group mb-3">
-                            <Radio.Group onChange={onChange} value={recommend}>
+                            <Radio.Group name='subject' onChange={onChange} value={recommend}>
                                 <Space direction="vertical">
-                                    <Radio value={1}>Recommend Doctor</Radio>
-                                    <Radio value={2}>Not Recommened Doctor</Radio>
+                                    <Radio value={"Đề xuất bác sĩ"}>Recommend Doctor</Radio>
+                                    <Radio value={"Không đề xuất bác sĩ"}>Not Recommened Doctor</Radio>
                                 </Space>
                             </Radio.Group>
                         </div>
 
                         <div className="form-group">
                             <label className='form-label'>Your review</label>
-                            <textarea className="form-control" {...register("description")} placeholder="Description..." rows={8} />
+                            <textarea name='content' className="form-control" {...register("description")} placeholder="Description..." rows={8} />
                         </div>
                         <hr />
                         <div className="submit-section">

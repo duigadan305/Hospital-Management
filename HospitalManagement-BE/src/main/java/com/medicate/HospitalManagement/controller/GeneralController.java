@@ -28,8 +28,20 @@ public class GeneralController {
     }
 
     @PostMapping("/allDoctors")
-    public ResponseEntity<List<DoctorDTO>> getAllDoctors(@RequestBody DoctorDTO doctorRequest) {
-        List<DoctorDTO> doctorList = generalService.getAllDoctors(doctorRequest);
-        return ResponseEntity.status(200).body(doctorList);
+    public ResponseEntity<Response> getAllDoctors(@RequestBody DoctorDTO doctorRequest) {
+        Response response = generalService.getAllDoctors(doctorRequest);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
+    @PostMapping("/getDoctorById")
+    public ResponseEntity<Response> getDoctorById(@RequestBody DoctorDTO doctorRequest) {
+        Response response = generalService.getDoctorById(doctorRequest);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
+    @PostMapping("/getAllReviewDoctor")
+    public ResponseEntity<Response> getAllReviewDoctor(@RequestBody DoctorDTO doctorRequest) {
+        Response response = generalService.getAllReviewDoctor(doctorRequest);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 }

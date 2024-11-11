@@ -2,24 +2,17 @@ package com.medicate.HospitalManagement.controller;
 
 
 import com.medicate.HospitalManagement.dto.CommentDTO;
-import com.medicate.HospitalManagement.dto.LoginRequest;
 import com.medicate.HospitalManagement.dto.PatientDTO;
 import com.medicate.HospitalManagement.dto.Response;
-import com.medicate.HospitalManagement.entity.Specialty;
 import com.medicate.HospitalManagement.service.Interface.IPatientService;
-import com.medicate.HospitalManagement.service.Interface.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/patient")
-public class PatientController {
+@RequestMapping("/doctor")
+public class DoctorController {
     @Autowired
     private IPatientService patientService;
 

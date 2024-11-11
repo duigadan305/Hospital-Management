@@ -1,19 +1,10 @@
 package com.medicate.HospitalManagement.service.impl;
 
 
-import com.medicate.HospitalManagement.dto.DoctorDTO;
-import com.medicate.HospitalManagement.dto.PatientDTO;
-import com.medicate.HospitalManagement.dto.Response;
-import com.medicate.HospitalManagement.dto.UserDTO;
-import com.medicate.HospitalManagement.entity.Doctor;
-import com.medicate.HospitalManagement.entity.Patient;
-import com.medicate.HospitalManagement.entity.Specialty;
-import com.medicate.HospitalManagement.entity.User;
+import com.medicate.HospitalManagement.dto.*;
+import com.medicate.HospitalManagement.entity.*;
 import com.medicate.HospitalManagement.exception.OurException;
-import com.medicate.HospitalManagement.repo.DoctorRepo;
-import com.medicate.HospitalManagement.repo.PatientRepo;
-import com.medicate.HospitalManagement.repo.SpecialtyRepo;
-import com.medicate.HospitalManagement.repo.UserRepo;
+import com.medicate.HospitalManagement.repo.*;
 import com.medicate.HospitalManagement.service.Interface.IGeneralService;
 import com.medicate.HospitalManagement.service.Interface.IPatientService;
 import com.medicate.HospitalManagement.utils.JWTUtils;
@@ -36,6 +27,8 @@ public class GeneralService implements IGeneralService {
     private DoctorRepo doctorRepository;
     @Autowired
     private SpecialtyRepo specialtyRepository;
+    @Autowired
+    private CommentRepo commentRepository;
 
 
     @Override
@@ -44,7 +37,8 @@ public class GeneralService implements IGeneralService {
     }
 
     @Override
-    public List<DoctorDTO> getAllDoctors(DoctorDTO doctorRequest) {
+    public Response getAllDoctors(DoctorDTO doctorRequest) {
+        Response response = new Response();
         String name = doctorRequest.getUser() != null ? doctorRequest.getUser().getName() : null;
         String gender = doctorRequest.getGender();
         Long specialtyId = doctorRequest.getSpecialty() != null ? doctorRequest.getSpecialty().getId() : null;
@@ -54,6 +48,31 @@ public class GeneralService implements IGeneralService {
             DoctorDTO doctorDTO = Utils.mapDoctorEntityToDoctorDTO(doctor);
             doctorDTOList.add(doctorDTO);
         }
-        return doctorDTOList;
+        response.setStatusCode(200);
+        response.setDoctorList(doctorDTOList);
+        response.setTotal(doctorDTOList.size());
+        return response;
+    }
+
+    @Override
+    public Response getDoctorById(DoctorDTO doctorRequest) {
+        Response response = new Response();
+        long id = doctorRequest.getId();
+        var doctor =  doctorRepository.findById(id);
+        DoctorDTO doctorDTO = Utils.mapDoctorEntityToDoctorDTO(doctor.get());
+        response.setStatusCode(200);
+        response.setDoctor(doctorDTO);
+        return response;
+    }
+
+    @Override
+    public Response getAllReviewDoctor(DoctorDTO doctorRequest) {
+        Response response = new Response();
+        long id = doctorRequest.getId();
+        List<Comment> commentList = commentRepository.findByDoctorId(id);
+        List<CommentDTO> commentDTOList = Utils.mapCommentListEntityToCommentListDTO(commentList);
+        response.setStatusCode(200);
+        response.setCommentList(commentDTOList);
+        return response;
     }
 }

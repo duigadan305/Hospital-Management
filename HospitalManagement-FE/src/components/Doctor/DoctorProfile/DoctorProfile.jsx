@@ -17,7 +17,6 @@ const DoctorProfile = () => {
     const { id } = useParams();
     const { data, isLoading, isError } = useGetDoctorQuery(id);
     let content = null;
-    if (!isLoading && isError) content = <div>{message.error('Something went Wrong!')}</div>
     if (!isLoading && !isError && data?.id === undefined) content = <Empty />
     if (!isLoading && !isError && data?.id) content = <SearchContent data={data} />
 

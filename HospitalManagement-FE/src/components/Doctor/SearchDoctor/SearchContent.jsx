@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
 import showImg from '../../../images/specialities/specialities-01.png'
 import StarRatings from 'react-star-ratings';
@@ -6,9 +6,44 @@ import { Tag } from 'antd';
 import './index.css';
 import { FaLocationArrow, FaRegThumbsUp, FaDollarSign, FaComment } from "react-icons/fa";
 import { truncate } from '../../../utils/truncate';
+import useAuthCheck from '../../../redux/hooks/useAuthCheck';
+import authApiService from '../../../service/authApiService';
+import CategoryApiService from '../../../service/CategoryApiService';
 
 const SearchContent = ({ data }) => {
-    const services = data?.services?.split(',')
+    const services = data?.services?.split(',');
+    const { authChecked, dataUser } = useAuthCheck();
+    const isAuthenticated = authApiService.isAuthenticated();
+    const [reviewData, setReviewData] = useState([]);
+    const getAllReviews = async () => {
+        try {
+            const reviews = await CategoryApiService.getAllReviewDoctor(data);
+            const commentList = reviews?.commentList || [];
+            
+            // Tổng số bình luận
+            const totalComments = commentList.length;
+            
+            // Số lượt thích với subject = "Đề xuất bác sĩ"
+            const likedCount = commentList.filter(review => review.subject === "Đề xuất bác sĩ").length;
+            
+            // Tính phần trăm lượt thích
+            const likedPercentage = totalComments > 0 ? Math.round((likedCount / totalComments) * 100) : 0;
+    
+            // Cập nhật state với dữ liệu cần thiết
+            setReviewData({
+                commentList: commentList,
+                count: totalComments,
+                likedPercentage: likedPercentage  // Giới hạn 2 chữ số thập phân
+            });
+        } catch (error) {
+            console.error("Error fetching reviews:", error);
+        }
+    };
+
+    useEffect(() => {
+        getAllReviews();
+    }, [authChecked, data, isAuthenticated]);
+
     return (
         <div className="mb-4 rounded" style={{ background: '#f3f3f3' }}>
             <div className='d-flex p-3 justify-content-between'>
@@ -32,7 +67,7 @@ const SearchContent = ({ data }) => {
                                     starSpacing="2px"
                                 />
                             </div>
-                            <div>(4)</div>
+                            <div>({reviewData.count})</div>
                         </div>
 
                         <div className="clinic-details">
@@ -63,8 +98,8 @@ const SearchContent = ({ data }) => {
                 <div className="doc-info-right me-3">
                     <div className="clini-infos">
                         <ul>
-                            <li><FaRegThumbsUp />  97%</li>
-                            <li><FaComment /> 4 Feedback</li>
+                            <li><FaRegThumbsUp />  {reviewData.likedPercentage}%</li>
+                            <li><FaComment /> {reviewData.count} Feedback</li>
                             <li><FaLocationArrow />{truncate(data?.address, 20)}</li>
                         </ul>
                     </div>

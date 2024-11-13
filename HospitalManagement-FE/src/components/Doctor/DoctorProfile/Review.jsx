@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
 import img from '../../../images/doc/doctor 3.jpg'
-import { FaRegThumbsUp } from "react-icons/fa";
+import { FaRegThumbsUp, FaRegThumbsDown } from "react-icons/fa";
 import moment from 'moment';
 import StarRatings from 'react-star-ratings';
 import { useCreateReviewMutation, useGetDoctorReviewsQuery } from '../../../redux/api/reviewsApi';
@@ -16,7 +16,7 @@ const desc = ['terrible', 'bad', 'normal', 'good', 'wonderful'];
 const Review = ({ doctorId }) => {
     const { authChecked, data } = useAuthCheck();
     const isAuthenticated = authApiService.isAuthenticated();
-    const { register, handleSubmit, } = useForm({});
+    const { register, handleSubmit, reset} = useForm({});
     const [value, setValue] = useState(null);
     const [recommend, setRecommend] = useState(null);
     const [showError, setShowError] = useState(false);
@@ -24,6 +24,7 @@ const Review = ({ doctorId }) => {
     const [formData, setFormData] = useState({});
     const [reviewData, setReviewData] = useState([]);
     const drequest = {id: doctorId};
+    const [showAll, setShowAll] = useState(false);
 
     const checkAuthAndSetData = async () => {
         const reviews = await CategoryApiService.getAllReviewDoctor(drequest);
@@ -54,19 +55,33 @@ const Review = ({ doctorId }) => {
         }
     }, [recommend, value]);
 
-    const onSubmit = (data) => {
-        const obj = {}
-        obj.isRecommended = recommend === 1 ? true : recommend === 2 ? false : null;
-        obj.description = data.description;
-        obj.star = value && value?.toString();
-        obj.doctorId = doctorId;
-        if (obj.description !== '') {
-            createReview({ data: obj });
-        } else {
-            message.error("Please Add Review Text !!");
+    const onSubmit = async () => {
+        try {
+            const response = await PatientApiService.sendComment(formData);
+            if (response.statusCode === 200) {
+                message.success("Gửi thành công!");
+                reset();
+                setFormData({}); // Clear form data after submission
+            } else {
+                message.error("Vui lòng đăng nhập để gửi tin nhắn!");
+            }
+        } catch (error) {
+            message.error("Vui lòng đăng nhập để gửi tin nhắn!");
         }
-
     };
+
+    const handleOnChangeStar = (value) => {
+        // Kiểm tra nếu name là 'star', nghĩa là từ Rate component
+        setFormData((prevFormData) => ({ ...prevFormData, star: value }));
+    };
+    
+    const handleOnChange = (e) => {
+        const { name, value } = e.target;
+        setShowError(true);
+        setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+    };
+
+    console.log("formmm=>", formData);
 
     useEffect(() => {
         checkAuthAndSetData();
@@ -84,12 +99,13 @@ const Review = ({ doctorId }) => {
     }, [createIsLoading, createTsError, createError, createIsSuccess])
 
     let content = null;
-    if (!isLoading && isError) content = <div>Something Went Wrong !</div>
     if (!isLoading && !isError && reviewData?.length === 0) content = <div>Empty</div>
-    if (!isLoading && !isError && reviewData?.length > 0) content =
-        <>
-            {
-                reviewData && reviewData.map((item, key) => (
+    if (!isLoading && !isError && reviewData?.length > 0) {
+        const displayedReviews = showAll ? reviewData : reviewData.slice(0, 5);
+    
+        content = (
+            <>
+                {displayedReviews.map((item, key) => (
                     <div className='mb-4' key={item?.id + key}>
                         <div className='d-flex gap-3 justify-content-between'>
                             <div className='d-flex gap-4'>
@@ -98,16 +114,18 @@ const Review = ({ doctorId }) => {
                                 </div>
                                 <div>
                                     <h5 className="text-nowrap">{item?.patient?.name}</h5>
-                                    <p className="text-success"><FaRegThumbsUp /> {item?.subject}</p>
+                                    <p className={item?.subject === "Đề xuất bác sĩ" ? "text-success" : ""}>
+                                        {item?.subject === "Đề xuất bác sĩ" ? <FaRegThumbsUp /> : <FaRegThumbsDown />} 
+                                        {" "}{item?.subject}
+                                    </p>
                                 </div>
                             </div>
-
                             <div className='text-end'>
                                 <div>
                                     <StarRatings
                                         rating={5}
                                         starRatedColor="#f4c150"
-                                        numberOfStars={5}
+                                        numberOfStars={item.star}
                                         name='rating'
                                         starDimension="15px"
                                         starSpacing="2px"
@@ -120,58 +138,57 @@ const Review = ({ doctorId }) => {
                             <p className="mx-2 form-text">{item?.content}</p>
                         </div>
                     </div>
-                ))
-            }
-        </>
+                ))}
+                {reviewData.length > 5 && (
+                    <div className="text-center">
+                        <button className="more-btn" onClick={() => setShowAll(!showAll)}>
+                            {showAll ? "Show less" : "Show all feedback"}
+                        </button>
+                    </div>
+                )}
+            </>
+        );
+    }
     return (
         <>
             <div>
                 <div className="w-100 mb-3 rounded py-3 px-2" style={{ background: '#f8f9fa' }}>
                     {content}
                 </div>
-
-                <div className="text-center">
-                    <Link to={'/'} className='more-btn'>Show all feedback <strong>(167)</strong></Link>
-                </div>
-
+    
                 <div className="mt-5">
                     <h4>Write a review..</h4>
-
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="form-group mb-3">
                             <div className='d-flex flex-column'>
                                 <label className='form-label'>Your Review {value ? <strong>{desc[value - 1]}</strong> : ''}</label>
                                 <Space>
-                                    <Rate tooltips={desc} onChange={setValue} value={value} />
+                                    <Rate name='star' tooltips={desc} onChange={handleOnChangeStar} value={formData.star} />
                                 </Space>
                             </div>
                         </div>
                         <div className="form-group mb-3">
-                            <Radio.Group name='subject' onChange={onChange} value={recommend}>
+                            <Radio.Group name='subject' onChange={handleOnChange} value={formData.subject}>
                                 <Space direction="vertical">
                                     <Radio value={"Đề xuất bác sĩ"}>Recommend Doctor</Radio>
-                                    <Radio value={"Không đề xuất bác sĩ"}>Not Recommened Doctor</Radio>
+                                    <Radio value={"Không đề xuất bác sĩ"}>Not Recommended Doctor</Radio>
                                 </Space>
                             </Radio.Group>
                         </div>
-
                         <div className="form-group">
                             <label className='form-label'>Your review</label>
-                            <textarea name='content' className="form-control" {...register("description")} placeholder="Description..." rows={8} />
+                            <textarea onInput={(e) => handleOnChange(e)} name='content' className="form-control" {...register("content")} placeholder="Description..." rows={8} />
                         </div>
                         <hr />
                         <div className="submit-section">
                             <Button htmlType='submit' size='medium' type='primary' disabled={!showError}>Add Review</Button>
                         </div>
                     </form>
-
                 </div>
-
             </div>
-
-
         </>
-    )
+    );
+    
 }
 
 export default Review

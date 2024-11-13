@@ -144,6 +144,7 @@ public class PatientService implements IPatientService {
 
             com.setSubject(comment.getSubject());
             com.setContent(comment.getContent());
+            com.setStar(comment.getStar());
             com.setSendDate(Timestamp.from(Instant.now()));
 
             commentRepository.save(com);

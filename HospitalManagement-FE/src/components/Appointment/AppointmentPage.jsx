@@ -9,7 +9,7 @@ import useAuthCheck from "../../redux/hooks/useAuthCheck";
 import { useCreateAppointmentByUnauthenticateUserMutation } from "../../redux/api/appointmentApi";
 import { useDispatch } from "react-redux";
 import { addInvoice } from "../../redux/feature/invoiceSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import PatientApiService from "../../service/PatientApiService";
 import swal from 'sweetalert';
 
@@ -43,6 +43,9 @@ const AppointmentPage = () => {
   const [reason, setReason] = useState('');
   const [patientData, setPatientData] = useState({});
   const navigation = useNavigate();
+  const doctorId = useParams();
+
+  console.log("id bsi==>", doctorId.doctorId);
 
   const [createAppointmentByUnauthenticateUser, {data: appointmentData, isError, isSuccess, isLoading, error}] = useCreateAppointmentByUnauthenticateUserMutation()
 
@@ -110,6 +113,7 @@ const AppointmentPage = () => {
         setSelectedDoctor={setSelectedDoctor}
         selectTime={selectTime}
         setSelectTime={setSelectTime}
+        doctorId={doctorId.doctorId}
       />
     },
     {

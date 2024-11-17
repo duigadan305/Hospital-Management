@@ -80,7 +80,7 @@ function App() {
         <Route path='/doctors/profile/:id' element={<DoctorProfile />} />
         <Route path='/dashboard/blogs/:id' element={<BlogsEdit />} />
         <Route path='/dashboard/blogs/create' element={<AddBlog />} />
-        <Route path='/booking/:doctorId' element={<DoctorBooking />} />
+        <Route path='/booking/:doctorId' element={<AppointmentPage />} />
         <Route path='/booking/success/:id' element={<BookingSuccess />} />
         <Route path='/booking/invoice/:id' element={<BookingInvoice />} />
         {/* Admin Dashboard  */}

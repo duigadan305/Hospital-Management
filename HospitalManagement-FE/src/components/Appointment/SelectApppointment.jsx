@@ -10,7 +10,7 @@ import CategoryApiService from '../../service/CategoryApiService';
 import Schedule from './Schedule';
 import DoctorApiService from '../../service/DoctorApiService';
 
-const SelectApppointment = ({ selectTime, setSelectTime, selectedDoctor, setSelectedDoctor }) => {
+const SelectApppointment = ({ selectTime, setSelectTime, selectedDoctor, setSelectedDoctor, doctorId }) => {
     const handleSelectTime = (date) => { setSelectTime(date) }
     const [doctorSpecialistOptions, setDoctorSpecialistOptions] = useState([]);
     const [doctorsData, setDoctorsData] = useState([]);
@@ -18,6 +18,7 @@ const SelectApppointment = ({ selectTime, setSelectTime, selectedDoctor, setSele
     const [filteredDoctors, setFilteredDoctors] = useState([]);
     const [appointmentData, setAppointmentData] = useState([]);
     const [selectedSlot, setSelectedSlot] = useState(null);  // Lưu slot đã chọn
+    const [doctorData, setDoctorData] = useState({});
     
     useEffect(() => {
       const fetchSpecialties = async () => {
@@ -27,6 +28,12 @@ const SelectApppointment = ({ selectTime, setSelectTime, selectedDoctor, setSele
         try {
           const specialties = await CategoryApiService.getAllSpecialty();
           const data = await CategoryApiService.getAllDoctors(doctorRequest);
+          if(doctorId){
+            const drequest = {id: doctorId};
+            const data1 = await CategoryApiService.getDoctorById(drequest);
+            setDoctorData(data1.doctor);
+            setSelectedSpecialty(data1.doctor.specialty.id);
+          }
           setDoctorsData(data.doctorList);
           // Chuyển dữ liệu thành dạng phù hợp cho Radio.Group
           const options = specialties.map(specialty => ({
@@ -120,7 +127,7 @@ const SelectApppointment = ({ selectTime, setSelectTime, selectedDoctor, setSele
                         <div className='info-date-card row'>
                             <div className="col-12 mb-3 specialty-box">
                                 <label htmlFor="specialty" className="form-label">Chọn chuyên khoa</label>
-                                <select id="specialty" className="form-select" onChange={handleSpecialtyChange}>
+                                <select id="specialty" className="form-select" onChange={handleSpecialtyChange} value={selectedSpecialty}>
                                     <option value="">Chọn chuyên khoa</option>
                                     {doctorSpecialistOptions.map(specialty => (
                                         <option key={specialty.value} value={specialty.value}>{specialty.label}</option>
@@ -130,7 +137,7 @@ const SelectApppointment = ({ selectTime, setSelectTime, selectedDoctor, setSele
 
                             <div className="col-12 doctor-box">
                                 <label htmlFor="doctor" className="form-label">Chọn bác sĩ</label>
-                                <select id="doctor" className="form-select" disabled={!selectedSpecialty} onChange={handleDoctorChange}>
+                                <select id="doctor" className="form-select" disabled={!selectedSpecialty} onChange={handleDoctorChange} value={doctorData.id}>
                                     <option value="">Chọn bác sĩ</option>
                                     {filteredDoctors.map(doctor => (
                                         <option key={doctor.id} value={doctor.id}>{doctor.user.name}</option>

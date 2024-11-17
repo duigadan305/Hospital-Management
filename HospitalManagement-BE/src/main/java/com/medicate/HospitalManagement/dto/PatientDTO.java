@@ -13,6 +13,10 @@ public class PatientDTO {
     private Long id;
     private String name;
     private String gender;
+    private String job;
+    private String ethnicity;
+    private String workPlace;
+    private String healthInsuranceNumber;
     private String bloodGroup;
     private String city;
     private String country;

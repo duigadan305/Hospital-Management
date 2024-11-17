@@ -63,9 +63,11 @@ public class Utils {
         patientDTO.setCity(patient.getCity());
         patientDTO.setCountry(patient.getCountry());
         patientDTO.setAddress(patient.getAddress());
-
+        patientDTO.setEthnicity(patient.getEthnicity());
+        patientDTO.setJob(patient.getJob());
+        patientDTO.setWorkPlace(patient.getWorkPlace());
+        patientDTO.setHealthInsuranceNumber(patient.getHealthInsuranceNumber());
         patientDTO.setUser(userDTO);
-        patientDTO.setBloodGroup(patient.getBloodGroup());
         return patientDTO;
     }
 
@@ -100,6 +102,17 @@ public class Utils {
         return commentDTO;
     }
 
+    public static AppointmentDTO mapAppointmentEntityToAppointmentDTO(Appointment appointment) {
+        AppointmentDTO appointmentDTO = new AppointmentDTO();
+        PatientDTO patientDTO = Utils.mapPatientEntityToPatientDTO(appointment.getPatient());
+        DoctorDTO doctorDTO = Utils.mapDoctorEntityToDoctorDTO(appointment.getDoctor());
+        appointmentDTO.setId(appointment.getId());
+        appointmentDTO.setAppointmentTime(appointment.getAppointmentTime());
+        appointmentDTO.setPatient(patientDTO);
+        appointmentDTO.setDoctor(doctorDTO);
+        return appointmentDTO;
+    }
+
 
     public static List<UserDTO> mapUserListEntityToUserListDTO(List<User> userList) {
         return userList.stream().map(Utils::mapUserEntityToUserDTO).collect(Collectors.toList());
@@ -117,5 +130,7 @@ public class Utils {
         return commentList.stream().map(Utils::mapCommentEntityToCommentDTO).collect(Collectors.toList());
     }
 
-
+    public static List<AppointmentDTO> mapAppointmentListEntityToAppointmentListDTO(List<Appointment> appointmentList) {
+        return appointmentList.stream().map(Utils::mapAppointmentEntityToAppointmentDTO).collect(Collectors.toList());
+    }
 }

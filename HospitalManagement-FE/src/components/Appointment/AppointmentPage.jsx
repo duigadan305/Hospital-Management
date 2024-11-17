@@ -4,13 +4,14 @@ import Header from "../Shared/Header/Header";
 import CheckoutPage from "../Booking/BookingCheckout/CheckoutPage";
 import PersonalInformation from "../Booking/PersonalInformation";
 import { Button, Steps, message } from "antd";
-import moment from "moment";
 import SelectApppointment from "./SelectApppointment";
 import useAuthCheck from "../../redux/hooks/useAuthCheck";
 import { useCreateAppointmentByUnauthenticateUserMutation } from "../../redux/api/appointmentApi";
 import { useDispatch } from "react-redux";
 import { addInvoice } from "../../redux/feature/invoiceSlice";
 import { useNavigate } from "react-router-dom";
+import PatientApiService from "../../service/PatientApiService";
+import swal from 'sweetalert';
 
 let initialValue = {
   paymentMethod: 'paypal',
@@ -38,7 +39,9 @@ const AppointmentPage = () => {
   const [selectValue, setSelectValue] = useState(initialValue);
   const [IsDisable, setIsDisable] = useState(true);
   const [isConfirmDisable, setIsConfirmDisable] = useState(true);
-  const [patientId, setPatientId] = useState('');
+  const [selectedDoctor, setSelectedDoctor] = useState('');
+  const [reason, setReason] = useState('');
+  const [patientData, setPatientData] = useState({});
   const navigation = useNavigate();
 
   const [createAppointmentByUnauthenticateUser, {data: appointmentData, isError, isSuccess, isLoading, error}] = useCreateAppointmentByUnauthenticateUserMutation()
@@ -56,28 +59,35 @@ const AppointmentPage = () => {
     setIsConfirmDisable(isConfirmInputEmpty);
   }, [selectValue, isCheck]);
   
-  const handleConfirmSchedule = () => {
-    const obj = {};
-    obj.patientInfo = {
-      firstName: selectValue.firstName,
-      lastName: selectValue.lastName,
-      email: selectValue.email,
-      phone: selectValue.phone,
-      patientId: role !== '' && role === 'patient' ? data.id : undefined,
-      scheduleDate: selectedDate,
-      scheduleTime: selectTime,
+
+  const handleConfirmSchedule = async (e) => {
+    e.preventDefault();
+    const apData = {
+      patient: patientData,
+      doctor: { id: selectedDoctor },
+      appointmentTime: selectTime,
+      reason: reason
+  };
+    try {
+        // Call the register method from ApiService
+        const response = await PatientApiService.bookAppointment(apData);
+        console.log("apData===>", apData)
+        // Check if the response is successful
+        if (response.statusCode === 200) {
+            // Clear the form fields after successful registration
+            
+            swal({
+                icon: 'success',
+                text: `Đặt lịch hẹn thành công`,
+                timer: 5000
+            })
+            setCurrent(0);
+        }
+    
     }
-    obj.payment = {
-      paymentType: selectValue.paymentType,
-      paymentMethod: selectValue.paymentMethod,
-      cardNumber: selectValue.cardNumber,
-      cardExpiredYear: selectValue.cardExpiredYear,
-      cvv: selectValue.cvv,
-      expiredMonth: selectValue.expiredMonth,
-      nameOnCard: selectValue.nameOnCard
+     catch (error) {
     }
-    createAppointmentByUnauthenticateUser(obj)
-  }
+}
 
   useEffect(() => {
     if (isSuccess) {
@@ -91,36 +101,41 @@ const AppointmentPage = () => {
     }
 }, [isSuccess, isError, isLoading, appointmentData])
 
-  const handleDateChange = (date) => { setSelectedDate(moment(date).format('YYYY-MM-DD HH:mm:ss')) }
 
   const steps = [
     {
-      title: 'Select Appointment Date & Time',
+      title: 'Chọn thời gian hẹn khám',
       content: <SelectApppointment
-        handleDateChange={handleDateChange}
-        selectedDate={selectedDate}
+        selectedDoctor={selectedDoctor}
+        setSelectedDoctor={setSelectedDoctor}
         selectTime={selectTime}
         setSelectTime={setSelectTime}
       />
     },
     {
-      title: 'Patient Information',
-      content: <PersonalInformation handleChange={handleChange} selectValue={selectValue} setPatientId={setPatientId}/>
+      title: 'Thông tin bệnh nhân',
+      content: <PersonalInformation 
+      patientData={patientData} 
+      setPatientData={setPatientData}
+      reason={reason}
+      setReason={setReason}
+      />
     },
     {
-      title: 'Payment',
+      title: 'Xác nhận lịch hẹn',
       content: <CheckoutPage
-        handleChange={handleChange}
-        selectValue={selectValue}
-        isCheck={isCheck}
-        setIsChecked={setIsChecked}
-        data={false}
-        selectedDate={selectedDate}
+        patientData={patientData}
+        setPatientData={setPatientData}
+        selectedDoctor={selectedDoctor}
+        setSelectedDoctor={setSelectedDoctor}
         selectTime={selectTime}
+        setSelectTime={setSelectTime}
+        reason={reason}
+        setReason={setReason}
       />,
     },
   ]
-
+  console.log("appodata=>",selectedDoctor," ",selectTime);
   const items = steps.map((item) => ({
     key: item.title,
     title: item.title,
@@ -136,10 +151,10 @@ const AppointmentPage = () => {
           <div className='text-end mx-3' >
             {current < steps.length - 1 && (
               <Button type="primary" size="large"
-                disabled={current === 0 ? (selectTime ? false : true) : IsDisable || !selectTime}
+                disabled={current === 0 ? ((selectedDoctor && selectTime) ? false : true) : (patientData ? false : true) || !selectTime}
                 onClick={() => next()}>Next</Button>)}
 
-            {current === steps.length - 1 && (<Button type="primary" size="large" disabled={isConfirmDisable} loading={isLoading} onClick={handleConfirmSchedule}>Confirm</Button>)}
+            {current === steps.length - 1 && (<Button type="primary" size="large" loading={isLoading} onClick={handleConfirmSchedule}>Confirm</Button>)}
             {current > 0 && (<Button style={{ margin: '0 8px', }} size="large" onClick={() => prev()} >Previous</Button>)}
           </div>
         </div>

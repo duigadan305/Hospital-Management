@@ -107,4 +107,149 @@
     border: none; /* Loại bỏ viền mặc định */
     width: 100%; /* Chiều rộng tối đa cho lịch */
 }
+
+/* General styling */
+  
+  button {
+    cursor: pointer;
+    padding: 8px 15px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  button.selected {
+    background-color: #28a745;
+  }
+  
+  button:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+  }
+  
+  /* Week navigation */
+  .week-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .week-navigation button {
+    background-color: #f8f9fa;
+    color: #007bff;
+    font-size: 16px;
+    padding: 5px 10px;
+  }
+  
+  .week-navigation span {
+    font-size: 18px;
+  }
+  
+  /* Time schedule table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  th, td {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #ddd;
+  }
+  
+  th {
+    background-color: #f1f1f1;
+  }
+  
+  td button {
+    width: 100%;
+    height: 40px;
+    background-color: #fff;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    color: #007bff;
+  }
+  
+  td button:hover {
+    background-color: #f1f1f1;
+  }
+  
+  td button.selected {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  /* Styling for the info section */
+  .info-part {
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+  }
+  
+  .info-head-date {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  
+  .icon-box {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .icon-box .d-flex {
+    margin-bottom: 15px;
+  }
+  
+  .icon-box .icon {
+    font-size: 20px;
+    margin-right: 10px;
+    color: #007bff;
+  }
+
+  /* Tăng chiều cao hàng */
+.rbc-month-row {
+  height: 4rem; /* Tăng chiều cao hàng trong chế độ xem tháng */
+}
+
+/* Tăng kích thước sự kiện */
+.rbc-event {
+  font-size: 1rem; /* Tăng kích thước chữ của sự kiện */
+  /* Tăng kích thước padding của sự kiện */
+}
+
+/* Tăng kích thước font trong tiêu đề */
+.rbc-time-content {
+  font-size: 1rem;
+}
+
+/* Làm cho các ô trong lịch ngày và tuần lớn hơn */
+.rbc-time-slot {
+  min-height: 2.5rem; /* Chiều cao các ô */
+}
+
+.selected-event {
+  background-color: #007bff !important;
+  border: 2px solid #0056b3;
+  color: #fff !important;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 8px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.rbc-events-container{
+  margin-right: 20px;
+}
   

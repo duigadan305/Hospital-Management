@@ -1,6 +1,7 @@
 package com.medicate.HospitalManagement.controller;
 
 
+import com.medicate.HospitalManagement.dto.AppointmentDTO;
 import com.medicate.HospitalManagement.dto.DoctorDTO;
 import com.medicate.HospitalManagement.dto.LoginRequest;
 import com.medicate.HospitalManagement.dto.Response;
@@ -8,6 +9,7 @@ import com.medicate.HospitalManagement.entity.Doctor;
 import com.medicate.HospitalManagement.entity.Specialty;
 import com.medicate.HospitalManagement.entity.User;
 import com.medicate.HospitalManagement.service.Interface.IGeneralService;
+import com.medicate.HospitalManagement.service.Interface.IPatientService;
 import com.medicate.HospitalManagement.service.Interface.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,8 @@ import java.util.List;
 public class GeneralController {
     @Autowired
     private IGeneralService generalService;
+    @Autowired
+    private IPatientService patientService;
 
     @GetMapping("/allSpecialty")
     public ResponseEntity<List<Specialty>> getAllSpecialty() {
@@ -42,6 +46,12 @@ public class GeneralController {
     @PostMapping("/getAllReviewDoctor")
     public ResponseEntity<Response> getAllReviewDoctor(@RequestBody DoctorDTO doctorRequest) {
         Response response = generalService.getAllReviewDoctor(doctorRequest);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
+    @PostMapping("/bookAppointment")
+    public ResponseEntity<Response> bookAppointment(@RequestBody AppointmentDTO appointmentDTO) {
+        Response response = patientService.bookAppointment(appointmentDTO);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 }

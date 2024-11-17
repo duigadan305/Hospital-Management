@@ -1,10 +1,7 @@
 package com.medicate.HospitalManagement.controller;
 
 
-import com.medicate.HospitalManagement.dto.CommentDTO;
-import com.medicate.HospitalManagement.dto.LoginRequest;
-import com.medicate.HospitalManagement.dto.PatientDTO;
-import com.medicate.HospitalManagement.dto.Response;
+import com.medicate.HospitalManagement.dto.*;
 import com.medicate.HospitalManagement.entity.Specialty;
 import com.medicate.HospitalManagement.service.Interface.IPatientService;
 import com.medicate.HospitalManagement.service.Interface.IUserService;
@@ -41,6 +38,12 @@ public class PatientController {
     @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
     public ResponseEntity<Response> sendComment(@RequestBody CommentDTO commentDTO) {
         Response response = patientService.sendComment(commentDTO);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
+    @PostMapping("/bookAppointment")
+    public ResponseEntity<Response> bookAppointment(@RequestBody AppointmentDTO appointmentDTO) {
+        Response response = patientService.bookAppointment(appointmentDTO);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 

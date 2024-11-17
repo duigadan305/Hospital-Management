@@ -36,6 +36,10 @@ public class PatientService implements IPatientService {
     private DoctorRepo doctorRepository;
     @Autowired
     private CommentRepo commentRepository;
+    @Autowired
+    private AppointmentRepo appointmentRepository;
+    @Autowired
+    private TreatmentDetailRepo treatmentDetailRepository;
 
 
     @Override
@@ -163,4 +167,39 @@ public class PatientService implements IPatientService {
         }
         return response;
     }
+
+    @Override
+    public Response bookAppointment(AppointmentDTO appointmentDTO) {
+        Response response = new Response();
+        Appointment appointment = new Appointment();
+        TreatmentDetail treatmentDetail = new TreatmentDetail();
+        try {
+
+            var patient = patientRepository.findById(appointmentDTO.getPatient().getId());
+            appointment.setPatient(patient.get());
+            var doctor = doctorRepository.findById(appointmentDTO.getDoctor().getId());
+            appointment.setDoctor(doctor.get());
+            appointment.setAppointmentTime(appointmentDTO.getAppointmentTime());
+            appointment.setStatus("Tiếp nhận");
+            Appointment ap = appointmentRepository.save(appointment);
+            treatmentDetail.setAppointment(ap);
+            treatmentDetail.setReason(appointmentDTO.getReason());
+            treatmentDetailRepository.save(treatmentDetail);
+            response.setStatusCode(200);
+            response.setAppointment(appointmentDTO);
+            response.setMessage("successful");
+
+        } catch (OurException e) {
+            response.setStatusCode(404);
+            response.setMessage(e.getMessage());
+
+        } catch (Exception e) {
+
+            response.setStatusCode(500);
+            response.setMessage("Error getting all users " + e.getMessage());
+        }
+        return response;
+    }
+
+
 }

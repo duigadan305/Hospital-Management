@@ -21,10 +21,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class PatientService implements IPatientService {
@@ -68,6 +65,18 @@ public class PatientService implements IPatientService {
             }
             if (patientDTO.getDob() != null) { // Assuming dob is a date, check only for null
                 patient.setDob(patientDTO.getDob());
+            }
+            if (patientDTO.getEthnicity() != null) { // Assuming dob is a date, check only for null
+                patient.setEthnicity(patientDTO.getEthnicity());
+            }
+            if (patientDTO.getJob() != null) { // Assuming dob is a date, check only for null
+                patient.setJob(patientDTO.getJob());
+            }
+            if (patientDTO.getWorkPlace() != null) { // Assuming dob is a date, check only for null
+                patient.setWorkPlace(patientDTO.getWorkPlace());
+            }
+            if (patientDTO.getHealthInsuranceNumber() != null) { // Assuming dob is a date, check only for null
+                patient.setHealthInsuranceNumber(patientDTO.getHealthInsuranceNumber());
             }
 
             // Cập nhật thông tin của bảng user
@@ -180,13 +189,37 @@ public class PatientService implements IPatientService {
             var doctor = doctorRepository.findById(appointmentDTO.getDoctor().getId());
             appointment.setDoctor(doctor.get());
             appointment.setAppointmentTime(appointmentDTO.getAppointmentTime());
-            appointment.setStatus("Tiếp nhận");
+            appointment.setStatus("Pending");
+            appointment.setType("First");
             Appointment ap = appointmentRepository.save(appointment);
             treatmentDetail.setAppointment(ap);
             treatmentDetail.setReason(appointmentDTO.getReason());
             treatmentDetailRepository.save(treatmentDetail);
             response.setStatusCode(200);
             response.setAppointment(appointmentDTO);
+            response.setMessage("successful");
+
+        } catch (OurException e) {
+            response.setStatusCode(404);
+            response.setMessage(e.getMessage());
+
+        } catch (Exception e) {
+
+            response.setStatusCode(500);
+            response.setMessage("Error getting all users " + e.getMessage());
+        }
+        return response;
+    }
+
+    @Override
+    public Response getAllAppointment(AppointmentDTO appointment) {
+        Response response = new Response();
+        List<Appointment> appointmentList = new ArrayList<>();
+        try {
+            appointmentList = appointmentRepository.findByPatientId(appointment.getPatient().getId());
+            List<AppointmentDTO> appointmentDTOList = Utils.mapAppointmentListEntityToAppointmentListDTO(appointmentList, treatmentDetailRepository);
+            response.setStatusCode(200);
+            response.setAppointmentList(appointmentDTOList);
             response.setMessage("successful");
 
         } catch (OurException e) {

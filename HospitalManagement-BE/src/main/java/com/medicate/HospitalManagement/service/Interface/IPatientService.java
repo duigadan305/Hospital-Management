@@ -12,4 +12,5 @@ public interface IPatientService {
     Response getPatientInfo(String email);
     Response sendComment(CommentDTO comment);
     Response bookAppointment(AppointmentDTO appointment);
+    Response getAllAppointment(AppointmentDTO appointment);
 }

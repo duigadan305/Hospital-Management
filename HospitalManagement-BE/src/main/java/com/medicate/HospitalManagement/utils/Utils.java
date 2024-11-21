@@ -10,6 +10,8 @@ package com.medicate.HospitalManagement.utils;
 
 import com.medicate.HospitalManagement.dto.*;
 import com.medicate.HospitalManagement.entity.*;
+import com.medicate.HospitalManagement.repo.TreatmentDetailRepo;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 public class Utils {
     private static final String ALPHANUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final SecureRandom secureRandom = new SecureRandom();
+    private static TreatmentDetailRepo treatmentDetailRepository;
 
     public static String generateRandomConfirmationCode(int length) {
         StringBuilder stringBuilder = new StringBuilder();
@@ -102,12 +105,18 @@ public class Utils {
         return commentDTO;
     }
 
-    public static AppointmentDTO mapAppointmentEntityToAppointmentDTO(Appointment appointment) {
+    public static AppointmentDTO mapAppointmentEntityToAppointmentDTO(Appointment appointment, TreatmentDetailRepo treatmentDetailRepository) {
         AppointmentDTO appointmentDTO = new AppointmentDTO();
         PatientDTO patientDTO = Utils.mapPatientEntityToPatientDTO(appointment.getPatient());
         DoctorDTO doctorDTO = Utils.mapDoctorEntityToDoctorDTO(appointment.getDoctor());
         appointmentDTO.setId(appointment.getId());
         appointmentDTO.setAppointmentTime(appointment.getAppointmentTime());
+        var treatmentDetail = treatmentDetailRepository.findByAppointmentId(appointment.getId());
+        if (treatmentDetail != null) {
+            appointmentDTO.setReason(treatmentDetail.get().getReason());
+        }
+        appointmentDTO.setStatus(appointment.getStatus());
+        appointmentDTO.setType(appointment.getType());
         appointmentDTO.setPatient(patientDTO);
         appointmentDTO.setDoctor(doctorDTO);
         return appointmentDTO;
@@ -130,7 +139,7 @@ public class Utils {
         return commentList.stream().map(Utils::mapCommentEntityToCommentDTO).collect(Collectors.toList());
     }
 
-    public static List<AppointmentDTO> mapAppointmentListEntityToAppointmentListDTO(List<Appointment> appointmentList) {
-        return appointmentList.stream().map(Utils::mapAppointmentEntityToAppointmentDTO).collect(Collectors.toList());
+    public static List<AppointmentDTO> mapAppointmentListEntityToAppointmentListDTO(List<Appointment> appointmentList, TreatmentDetailRepo treatmentDetailRepository) {
+        return appointmentList.stream().map(appointment -> mapAppointmentEntityToAppointmentDTO(appointment, treatmentDetailRepository)).collect(Collectors.toList());
     }
 }

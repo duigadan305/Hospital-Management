@@ -21,6 +21,27 @@ export default class DoctorApiService {
     );
     return response.data;
   }
+
+  static async getDoctorByEmail(email) {
+    const response = await axios.get(
+      `${this.BASE_URL}/doctor/getDoctorByEmail/${email}`,
+      {
+        headers: this.getHeader(),
+      }
+    );
+    return response.data;
+  }
+
+  static async handleAppointment(AppointmentDTO) {
+    const response = await axios.post(
+      `${this.BASE_URL}/doctor/handleAppointment`,
+      AppointmentDTO,
+      {
+        headers: this.getHeader(),
+      }
+    );
+    return response.data;
+  }
 }
 
 // export default new ApiService();

@@ -7,7 +7,8 @@ import { Toast } from 'react-bootstrap';
 import swal from 'sweetalert';
 import authApiService from '../../service/authApiService';
 
-const SignIn = ({ handleResponse }) => {
+const SignIn = ({state }) => {
+    const handleResponse = useState();
     const [showForgotPassword, setShowForgotPassword] = useState(false);
     const [isForgotPassword, setIsForgotPassword] = useState(true);
     const [email, setEmail] = useState('');
@@ -34,7 +35,12 @@ const SignIn = ({ handleResponse }) => {
         upperLowerCase: false,
         numeric: false
     })
-    const from = location.state?.from?.pathname || '/';
+    // const state = from || '/';
+    const from = state?.from;
+    console.log("from==>",from);
+    // console.log("from2==>",from2);
+    // const from3 = from || '/admin/dashboard';
+    // console.log("from3==>",from3);
 
     setTimeout(() => {
         setShow(false);
@@ -142,7 +148,13 @@ const SignIn = ({ handleResponse }) => {
             if (response.statusCode === 200) {
                 localStorage.setItem('token', response.token);
                 localStorage.setItem('role', response.role);
-                navigate(from, { replace: true });
+                if(response.role === "USER"){
+                    from ? (navigate(from , { replace: true })) : (navigate('/' , { replace: true }));
+                } else if (response.role === "DOCTOR"){
+                    from ? (navigate(from , { replace: true })) : (navigate('/dashboard' , { replace: true }));
+                } else {
+                    from ? (navigate(from , { replace: true })) : (navigate('/admin/dashboards' , { replace: true }));
+                }
                 setEmail("");
                 setPassword("")
             }

@@ -1,6 +1,7 @@
 package com.medicate.HospitalManagement.repo;
 
 import com.medicate.HospitalManagement.entity.Doctor;
+import com.medicate.HospitalManagement.entity.Patient;
 import com.medicate.HospitalManagement.entity.Specialty;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,4 +22,6 @@ public interface DoctorRepo extends JpaRepository<Doctor, Long> {
                                        @Param("specialtyId") Long specialtyId);
 
     Optional<Doctor> findById(Integer id);
+
+    Optional<Doctor> findByUserEmail(String email);
 }

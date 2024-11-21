@@ -23,4 +23,16 @@ public class DoctorController {
         Response response = doctorService.getAppointmentByDoctorID(appointmentDTO);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
+
+    @GetMapping("/getDoctorByEmail/{email}")
+    public ResponseEntity<Response> getDoctorByEmail(@PathVariable("email") String email) {
+        Response response = doctorService.getDoctorInfo(email);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
+    @PostMapping("/handleAppointment")
+    public ResponseEntity<Response> handleAppointment(@RequestBody AppointmentDTO appointmentDTO) {
+        Response response = doctorService.handleAppointment(appointmentDTO);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
 }

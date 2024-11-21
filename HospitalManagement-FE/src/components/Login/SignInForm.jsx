@@ -6,9 +6,13 @@ import register from '../../images/doc/register.svg';
 import SignIn from './SignIn';
 import './SignInForm.css';
 import SignUp from './SignUp';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const SignInForm = () => {
     const [isSignUp, setSignUp] = useState(false);
+    const location = useLocation();
+    const navigate = useNavigate();
+    const state = location?.state;
     return (
         <div className={`${isSignUp ? "signin-signup-container sign-up-mode" : "signin-signup-container"}`}>
             <Link to="/">
@@ -16,7 +20,7 @@ const SignInForm = () => {
             </Link>
             <div className="forms-container">
                 <div className="signIn-singUp">
-                    <SignIn />
+                    <SignIn state = {state}/>
                     <SignUp setSignUp={setSignUp} />
                 </div>
             </div>

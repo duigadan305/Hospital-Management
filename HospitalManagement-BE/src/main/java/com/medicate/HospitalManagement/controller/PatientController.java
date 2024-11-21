@@ -47,4 +47,10 @@ public class PatientController {
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 
+    @PostMapping("/getAllAppointment")
+    public ResponseEntity<Response> getAllAppointment(@RequestBody AppointmentDTO appointmentDTO) {
+        Response response = patientService.getAllAppointment(appointmentDTO);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
 }

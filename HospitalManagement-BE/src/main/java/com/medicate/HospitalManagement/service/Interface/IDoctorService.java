@@ -8,4 +8,6 @@ import com.medicate.HospitalManagement.dto.Response;
 
 public interface IDoctorService {
     Response getAppointmentByDoctorID(AppointmentDTO appointment);
+    Response getDoctorInfo(String email);
+    Response handleAppointment(AppointmentDTO appointment);
 }

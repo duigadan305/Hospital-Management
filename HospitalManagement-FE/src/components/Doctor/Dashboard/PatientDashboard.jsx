@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import img from '../../../images/doc/doctor 3.jpg';
 import moment from 'moment';
 import { useGetPatientAppointmentsQuery, useGetPatientInvoicesQuery } from '../../../redux/api/appointmentApi';
@@ -9,11 +9,56 @@ import { Link } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { FaRegEye } from "react-icons/fa";
 import { clickToCopyClipBoard } from '../../../utils/copyClipBoard';
+import PatientApiService from '../../../service/PatientApiService';
+import useAuthCheck from '../../../redux/hooks/useAuthCheck';
+import authApiService from '../../../service/authApiService';
 
 const PatientDashboard = () => {
-    const { data, isLoading: pIsLoading } = useGetPatientAppointmentsQuery();
+    const { data1, isLoading: pIsLoading } = useGetPatientAppointmentsQuery();
     const { data: prescriptionData, prescriptionIsLoading } = useGetPatientPrescriptionQuery();
     const { data: invoices, isLoading: InvoicesIsLoading } = useGetPatientInvoicesQuery();
+
+    const { authChecked, data } = useAuthCheck();
+    const isAuthenticated = authApiService.isAuthenticated();
+    const [appointmentData, setAppointmentData] = useState([]);
+    const [patientData, setPatientData] = useState({});
+    
+    console.log("vaodayyyy", data);
+    const checkAuthAndSetData = async () => {
+        if (isAuthenticated && data?.id) {
+            try {
+                const patientt = await PatientApiService.getPatientByEmail(data.email);
+                setPatientData(patientt.patient);
+                console.log("ttttt=>", patientt.patient);
+            } catch (error) {
+                console.error("Error fetching patient:", error);
+            }
+        }
+    };
+    useEffect(() => {
+        checkAuthAndSetData();
+    }, [authChecked, data, isAuthenticated]);
+
+    useEffect(() => {
+        const fetchAppointment = async () => {
+          const appointmentRequest = {
+              patient: { id: patientData?.id || undefined }
+          };
+          try {
+            if(patientData){
+                console.log("idpatienttt==>", patientData);
+                const data = await PatientApiService.getAllAppointment(appointmentRequest);
+                setAppointmentData(data.appointmentList);
+            }
+          } catch (error) {
+            console.error("Error fetching appointment:", error);
+          }
+        };
+    
+        fetchAppointment();
+      }, [patientData]);
+
+    console.log("henj=>", appointmentData);
     
     const InvoiceColumns = [
         {
@@ -159,56 +204,58 @@ const PatientDashboard = () => {
     ];
     const appointmentColumns = [
         {
-            title: 'Doctor',
+            title: 'Bác sĩ khám',
             key: 20,
-            width: 150,
-            render: function (data) {
+            width: 70,
+            render: function (appointmentData) {
                 return <>
                     <div className="avatar avatar-sm mr-2 d-flex gap-2">
                         <div>
                             <img className="avatar-img rounded-circle" src={img} alt="" />
                         </div>
                         <div>
-                            <h6 className='text-nowrap mb-0'>{data?.doctor?.firstName + ' ' + data?.doctor?.lastName}</h6>
-                            <p className='form-text'>{data?.doctor?.designation}</p>
+                            <h6 className='text-nowrap mb-0'>{appointmentData?.doctor?.user?.name}</h6>
+                            <p className='form-text'>{appointmentData?.doctor?.specialty?.name}</p>
                         </div>
                     </div>
                 </>
             }
         },
         {
-            title: 'App Date',
+            title: 'Thời gian hẹn',
             key: 22,
-            width: 100,
-            render: function (data) {
+            width: 70,
+            render: function (appointmentData) {
                 return (
-                    <div>{moment(data?.scheduleDate).format("LL")} <span className="d-block text-info">{data?.scheduleTime}</span></div>
+                    <div style={{ textAlign: 'left' }}>{appointmentData?.appointmentTime}</div>
                 )
             }
         },
         {
-            title: 'Booking Date',
+            title: 'Lý do khám',
             key: 22,
-            width: 100,
-            render: function (data) {
-                return <div>{moment(data?.createdAt).format("LL")}</div>
+            width: 200,
+            render: function (appointmentData) {
+                return <div style={{ textAlign: 'left' }}>{appointmentData?.reason}</div>
             }
         },
         {
-            title: 'Status',
+            title: 'Trạng thái',
             key: 24,
-            width: 100,
-            render: function (data) {
-                return <Tag color="#f50">{data?.status}</Tag>
+            width: 50,
+            render: function (appointmentData) {
+                return <div style={{ textAlign: 'left' }}>
+                <Tag color="#f50">{appointmentData?.status}</Tag>
+            </div>
             }
         },
         {
-            title: 'Action',
+            title: 'Hành động',
             key: 25,
-            width: 100,
-            render: function (data) {
+            width: 60,
+            render: function (appointmentData) {
                 return (
-                    <Link to={`/dashboard/appointments/${data.id}`}>
+                    <Link to={`/dashboard/appointments/${appointmentData.id}`}>
                         <Button type='primary'>View</Button>
                     </Link>
                 )
@@ -219,11 +266,11 @@ const PatientDashboard = () => {
     const items = [
         {
             key: '1',
-            label: 'Appointment',
+            label: 'Lịch sử hẹn khám',
             children: <CustomTable
                 loading={pIsLoading}
                 columns={appointmentColumns}
-                dataSource={data}
+                dataSource={appointmentData}
                 showPagination={true}
                 pageSize={10}
                 showSizeChanger={true}

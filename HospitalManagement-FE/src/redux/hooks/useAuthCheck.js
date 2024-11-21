@@ -38,7 +38,7 @@ export default function useAuthCheck() {
             setData(response.user); // Gán dữ liệu người dùng vào state
             setRole(role); // Gán role vào state
             setAuthChecked(pIsSuccess && !pIsError); // Cập nhật trạng thái xác thực
-          } else if (role === "doctor") {
+          } else if (role === "DOCTOR") {
             setUserId(response.user.id); // Gán userId vào state
             setIsSkip(false); // Set trạng thái isSkip
             setData(response.user); // Gán dữ liệu người dùng vào state

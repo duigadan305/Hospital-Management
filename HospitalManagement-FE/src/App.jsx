@@ -64,6 +64,25 @@ function App() {
           <Route path='/dashboard/profile-setting' element={<ProfileSetting />} />
           <Route path='/dashboard/favourite' element={<PatientFavouriteDoctor />} />
           <Route path='/dashboard/invoices' element={<DoctorInvoice />} />
+
+          <Route path='/appointment' element={<AppointmentPage />} />
+          <Route path='/track-appointment' element={<TrackAppointment />} />
+          <Route path='/booking/:doctorId' element={<AppointmentPage />} />
+
+
+          <Route path='/dashboard/blogs/:id' element={<BlogsEdit />} />
+          <Route path='/dashboard/blogs/create' element={<AddBlog />} />
+          <Route path='/booking/success/:id' element={<BookingSuccess />} />
+          <Route path='/booking/invoice/:id' element={<BookingInvoice />} />
+
+          <Route path='/admin/dashboard' element={<AdminDashboard />} />
+          <Route path='/admin/appointments' element={<AdminAppointments />} />
+          <Route path='/admin/doctors' element={<Doctors />} />
+          <Route path='/admin/patients' element={<Patients />} />
+          <Route path='/admin/profile' element={<Profile />} />
+          <Route path='/admin/reviews' element={<AdminReviews />} />
+          <Route path='/admin/transaction' element={<Transactions />} />
+          <Route path='/admin/specialites' element={<Specialites />} />
         </Route>
         <Route path='/login' element={<SignInForm />} />
         <Route path='/confirm-email' element={<ConfirmEmail />} />
@@ -74,24 +93,12 @@ function App() {
         <Route path='/about' element={<About />} />
         <Route path='/service' element={<Service />} />
         <Route path='/reset-password/:userId/:uniqueString' element={<ForgotPassword />} />
-        <Route path='/appointment' element={<AppointmentPage />} />
-        <Route path='/track-appointment' element={<TrackAppointment />} />
+       
         <Route path='/doctors' element={<SearchDoctor />} />
         <Route path='/doctors/profile/:id' element={<DoctorProfile />} />
-        <Route path='/dashboard/blogs/:id' element={<BlogsEdit />} />
-        <Route path='/dashboard/blogs/create' element={<AddBlog />} />
-        <Route path='/booking/:doctorId' element={<AppointmentPage />} />
-        <Route path='/booking/success/:id' element={<BookingSuccess />} />
-        <Route path='/booking/invoice/:id' element={<BookingInvoice />} />
+        
         {/* Admin Dashboard  */}
-        <Route path='/admin/dashboard' element={<AdminDashboard />} />
-        <Route path='/admin/appointments' element={<AdminAppointments />} />
-        <Route path='/admin/doctors' element={<Doctors />} />
-        <Route path='/admin/patients' element={<Patients />} />
-        <Route path='/admin/profile' element={<Profile />} />
-        <Route path='/admin/reviews' element={<AdminReviews />} />
-        <Route path='/admin/transaction' element={<Transactions />} />
-        <Route path='/admin/specialites' element={<Specialites />} />
+       
 
         <Route path='*' element={<NotFound/>}/>
       </Routes>

@@ -81,6 +81,17 @@ export default class PatientApiService {
     );
     return response.data;
   }
+
+  static async getAllAppointment(appointmentDTO) {
+    const response = await axios.post(
+      `${this.BASE_URL}/patient/getAllAppointment`,
+      appointmentDTO,
+      {
+        headers: this.getHeader(),
+      }
+    );
+    return response.data;
+  }
 }
 
 // export default new ApiService();

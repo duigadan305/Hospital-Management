@@ -11,7 +11,7 @@ const Dashboard = () => {
     return (
         <>
             <DashboardLayout>
-                {role === 'doctor' && <DoctorDashCard />}
+                {role === 'DOCTOR' && <DoctorDashCard />}
 
                 <div className="row">
                     {role === 'USER' &&
@@ -20,7 +20,7 @@ const Dashboard = () => {
                             <PatientDashboard />
                         </div>
                     }
-                    {role === 'doctor' &&
+                    {role === 'DOCTOR' &&
                         <div className="col-md-12 rounded" style={{ background: '#f8f9fa' }}>
                             <h5 className="text-title py-3">Appointments</h5>
                             <DashboardPage />

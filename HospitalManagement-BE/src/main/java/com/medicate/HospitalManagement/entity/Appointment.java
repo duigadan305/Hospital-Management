@@ -22,6 +22,9 @@ public class Appointment {
 
     private String status;
 
+    //type: First, FollowUp
+    private String type;
+
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "doctor_id")
     @JsonIgnore

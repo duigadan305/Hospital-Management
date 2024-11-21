@@ -37,8 +37,8 @@ public class DoctorService implements IDoctorService {
         Response response = new Response();
         List<Appointment> appointmentList = new ArrayList<>();
         try {
-            appointmentList = appointmentRepository.findByDoctorIdAndStatus(appointment.getDoctor().getId(), "Tiếp nhận");
-            List<AppointmentDTO> appointmentDTOList = Utils.mapAppointmentListEntityToAppointmentListDTO(appointmentList);
+            appointmentList = appointmentRepository.findByDoctorId(appointment.getDoctor().getId());
+            List<AppointmentDTO> appointmentDTOList = Utils.mapAppointmentListEntityToAppointmentListDTO(appointmentList, treatmentDetailRepository);
             response.setStatusCode(200);
             response.setAppointmentList(appointmentDTOList);
             response.setMessage("successful");
@@ -53,5 +53,55 @@ public class DoctorService implements IDoctorService {
             response.setMessage("Error getting all users " + e.getMessage());
         }
         return response;
+    }
+
+    @Override
+    public Response getDoctorInfo(String email) {
+        Response response = new Response();
+
+        try {
+            Doctor doctor = doctorRepository.findByUserEmail(email).orElseThrow(() -> new OurException("Patient Not Found"));
+            DoctorDTO doctorDTO = Utils.mapDoctorEntityToDoctorDTO(doctor);
+            response.setStatusCode(200);
+            response.setDoctor(doctorDTO);
+            response.setMessage("successful");
+
+        } catch (OurException e) {
+            response.setStatusCode(404);
+            response.setMessage(e.getMessage());
+
+        } catch (Exception e) {
+
+            response.setStatusCode(500);
+            response.setMessage("Error getting all users " + e.getMessage());
+        }
+        return response;
+    }
+
+    @Override
+    public Response handleAppointment(AppointmentDTO appointment) {
+        Response response = new Response();
+
+        try {
+            Appointment ap = appointmentRepository.findById(appointment.getId())
+                    .orElseThrow(() -> new OurException("Appointment Not found"));
+            if(appointment.getStatus() != null && appointment.getStatus() != ""){
+                ap.setStatus(appointment.getStatus());
+            }
+            appointmentRepository.save(ap);
+            response.setStatusCode(200);
+            response.setMessage("successful");
+
+        } catch (OurException e) {
+            response.setStatusCode(404);
+            response.setMessage(e.getMessage());
+
+        } catch (Exception e) {
+
+            response.setStatusCode(500);
+            response.setMessage("Error getting all users " + e.getMessage());
+        }
+        return response;
+
     }
 }

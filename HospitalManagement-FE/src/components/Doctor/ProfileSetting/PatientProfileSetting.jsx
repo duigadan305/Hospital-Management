@@ -31,8 +31,10 @@ const PatientProfileSetting = () => {
         country: '',
         dob: '',
         gender: '',
-        phone: '',
-        name: '',
+        ethnicity: '',
+        job: '',
+        workPlace: '',
+        healthInsuranceNumber: '',
         user: {
             name: '',
             phone: '',
@@ -44,19 +46,22 @@ const PatientProfileSetting = () => {
             try {
                 const response = await PatientApiService.getPatientByEmail(data.email);
                 setPatient(response.patient); // Gán dữ liệu vào biến patient
+                const patientt = response.patient;
                 setFormData({
-                    address: patient.address || '',
-                    bloodGroup: patient.bloodGroup || '',
-                    city: patient.city || '',
-                    country: patient.country || '',
-                    dob: patient.dob || '',
-                    gender: patient.gender || '',
-                    phone: patient.phone || '',
-                    name: patient.name || '',
+                    address: patientt.address || '',
+                    bloodGroup: patientt.bloodGroup || '',
+                    city: patientt.city || '',
+                    country: patientt.country || '',
+                    dob: patientt.dob || '',
+                    gender: patientt.gender || '',
+                    ethnicity: patientt.ethnicity || '',
+                    job: patientt.job || '',
+                    workPlace: patientt.workPlace || '',
+                    healthInsuranceNumber: patientt.healthInsuranceNumber || '',
                     user: {
-                        name: patient.user.name || '',
-                        phone: patient.user.phone || '',
-                        id: patient.user.id || ''
+                        name: patientt.user.name || '',
+                        phone: patientt.user.phone || '',
+                        id: patientt.user.id || ''
                     },
                 });
             } catch (error) {
@@ -67,9 +72,6 @@ const PatientProfileSetting = () => {
         fetchPatientInfo();
     }, [data.id]);
     console.log("patient==>",patient);
-    const onChange = (date, dateString) => { 
-        setDate(moment(dateString).format('YYYY-MM-DD'));
-    };
 
     useEffect(() => {
         if (patient) {
@@ -93,26 +95,71 @@ const PatientProfileSetting = () => {
         }
     }, [isLoading, isError, error, isSuccess])
 
-    const handleChange = (e) => {
-        setSelectValue({ ...selectValue, [e.target.name]: e.target.value })
-        if (e.target.name === 'bloodGroup') {
-            setSelectBloodGroup(e.target.value);
-        }
-        if (e.target.name === 'gender') {
-            setSelectedGender(e.target.value);
-        }
-    }
-
-    const hanldeOnChange = (e) => {
-        let { name, value } = e.target;
-        if (e.target.name === 'bloodGroup') {
-            setSelectBloodGroup(e.target.value);
-        }
-        if (e.target.name === 'gender') {
-            setSelectedGender(e.target.value);
-        }
-        setFormData({ ...formData, [name]: value });
-    }
+    // const hanldeOnChange = (e, fieldName) => {
+    //     if (fieldName === 'dob') {
+    //         // Xử lý cho DatePicker
+    //         setFormData({ ...formData, [fieldName]: e?.format("YYYY-MM-DD") || null });
+    //     }else if (['name', 'phone'].includes(fieldName)) {
+    //         // Nếu thuộc 'user', cập nhật vào formData.user
+    //         let { name, value } = e.target;
+    //         setFormData(prevState => ({
+    //             ...prevState,
+    //             user: {
+    //                 ...prevState.user,
+    //                 [fieldName]: value,
+    //             },
+    //         }));
+    //         setFormData({ ...formData, [name]: value });
+    //     }
+    //      else {
+    //         let { name, value } = e.target;
+    //         if (e.target.name === 'bloodGroup') {
+    //             setSelectBloodGroup(e.target.value);
+    //         }
+    //         if (e.target.name === 'gender') {
+    //             setSelectedGender(e.target.value);
+    //         }
+    //         setFormData({ ...formData, [name]: value });
+    //     }
+    // }
+    const hanldeOnChange = (e, fieldName) => {
+        setFormData(prevState => {
+            // Trường hợp đặc biệt: DatePicker
+            if (fieldName === 'dob') {
+                return {
+                    ...prevState,
+                    dob: e?.format("YYYY-MM-DD") || null,
+                };
+            }
+    
+            // Trường hợp đặc biệt: Cập nhật 'user'
+            if (['name', 'phone'].includes(fieldName)) {
+                return {
+                    ...prevState,
+                    user: {
+                        ...prevState.user, // Giữ nguyên giá trị hiện tại
+                        [fieldName]: e.target.value,
+                    },
+                };
+            }
+    
+            // Các trường hợp còn lại
+            const { name, value } = e.target;
+    
+            // Xử lý các trường đặc biệt như 'bloodGroup' hoặc 'gender'
+            if (name === 'bloodGroup') {
+                setSelectBloodGroup(value);
+            }
+            if (name === 'gender') {
+                setSelectedGender(value);
+            }
+    
+            return {
+                ...prevState,
+                [name]: value,
+            };
+        });
+    };
 
     console.log("formPatient==>",formData);
 
@@ -152,38 +199,39 @@ const PatientProfileSetting = () => {
                         </div>
                     </div>
 
-                    <div className="col-md-6">
+                    <div className="col-md-4">
                         <div className="form-group mb-2 card-label">
                             <label className='form-label'>Họ và tên<span className="text-danger">*</span></label>
-                            <input defaultValue={data?.name} className="form-control" onChange={(e) => hanldeOnChange(e)} />
+                            <input defaultValue={data?.name} {...register("name")} className="form-control" onChange={(e) => hanldeOnChange(e, "name")} />
                         </div>
                     </div>                   
-                    <div className="col-md-6">
+                    <div className="col-md-4">
                         <div className="form-group mb-2 card-label">
                             <label className='form-label'>Email <span className="text-danger">*</span></label>
                             <input defaultValue={data?.email} disabled className="form-control" />
                         </div>
                     </div>
 
-                    <div className="col-md-6">
+                    <div className="col-md-4">
                         <div className="form-group mb-2 card-label">
-                            <label>Ngày sinh {moment(patient?.dob).format('LL')}</label>
-                            <DatePicker name='dob' onChange={(e) => hanldeOnChange(e)} format={"YYYY-MM-DD"} style={{ width: '100%', padding: '6px' }} />
+                            <label className='form-label'>Số điện thoại</label>
+                            <input defaultValue={data?.phone} {...register("phone")} className="form-control" onChange={(e) => hanldeOnChange(e, "phone")}/>
                         </div>
                     </div>
 
-                    <div className="col-md-6">
+                    <div className="col-md-4">
                         <div className="form-group mb-2 card-label">
-                            <label className='form-label'>Số điện thoại</label>
-                            <input defaultValue={data?.phone} {...register("phone")} className="form-control" onChange={(e) => hanldeOnChange(e)}/>
+                            <label className='form-label'>Ngày sinh {moment(patient?.dob).format('DD/MM/YYYY')}</label>
+                            <DatePicker {...register("dob")} onChange={(e) => hanldeOnChange(e, "dob")} format={"YYYY-MM-DD"} style={{ width: '100%', padding: '6px' }} />
                         </div>
                     </div>
-                    <div className="col-md-6">
-                        <div className="form-group mb-2">
+
+                    <div className="col-md-4">
+                        <div className="form-group mb-2 card-label">
                             <label className='form-label'>Giới tính</label>
                             <select 
                                 className="form-control select" 
-                                onChange={(e) => hanldeOnChange(e)} 
+                                onChange={(e) => hanldeOnChange(e, "gender")} 
                                 name='gender' 
                                 value={selectedGender}
                             >
@@ -195,11 +243,11 @@ const PatientProfileSetting = () => {
                         </div>
                     </div>
 
-                    <div className="col-md-6">
-                        <div className="form-group mb-2">
+                    <div className="col-md-4">
+                        <div className="form-group mb-2 card-label">
                             <label className='form-label'>Nhóm máu</label>
                             <select className="form-control select"
-                                onChange={(e) => hanldeOnChange(e)}
+                                onChange={(e) => hanldeOnChange(e, "bloodGroup")}
                                 name='bloodGroup'
                                 value={selectBloodGroup}
                             >
@@ -213,25 +261,51 @@ const PatientProfileSetting = () => {
                         </div>
                     </div>
 
-                    <div className="col-md-6">
+                    <div className="col-md-4">
                         <div className="form-group mb-2 card-label">
-                            <label>Quốc gia</label>
-                            <input defaultValue={patient?.country} {...register("country")} className="form-control" onChange={(e) => hanldeOnChange(e)}/>
+                            <label>Dân tộc</label>
+                            <input defaultValue={patient?.ethnicity} {...register("ethnicity")} className="form-control" onChange={(e) => hanldeOnChange(e, "ethnicity")}/>
                         </div>
                     </div>
-                    <div className="col-md-6">
+                    <div className="col-md-4">
+                        <div className="form-group mb-2 card-label">
+                            <label>Nghề nghiệp</label>
+                            <input defaultValue={patient?.job} {...register("job")} className="form-control" onChange={(e) => hanldeOnChange(e, "job")}/>
+                        </div>
+                    </div>
+
+                    <div className="col-md-4">
+                        <div className="form-group mb-2 card-label">
+                            <label>Nơi làm việc</label>
+                            <input defaultValue={patient?.workPlace} {...register("workPlace")} className="form-control" onChange={(e) => hanldeOnChange(e, "workPlace")}/>
+                        </div>
+                    </div>
+                    <div className="col-md-3">
+                        <div className="form-group mb-2 card-label">
+                            <label>Quốc gia</label>
+                            <input defaultValue={patient?.country} {...register("country")} className="form-control" onChange={(e) => hanldeOnChange(e, "country")}/>
+                        </div>
+                    </div>
+                    <div className="col-md-3">
                         <div className="form-group mb-2 card-label">
                             <label>Tỉnh/Thành phố</label>
-                            <input defaultValue={patient?.city} {...register("city")} className="form-control" onChange={(e) => hanldeOnChange(e)}/>
+                            <input defaultValue={patient?.city} {...register("city")} className="form-control" onChange={(e) => hanldeOnChange(e, "city")}/>
                         </div>
                     </div>
 
                     <div className="col-md-6">
                         <div className="form-group mb-2 card-label">
-                            <label>Địa chỉ</label>
-                            <input defaultValue={patient?.address} {...register("address")} className="form-control" onChange={(e) => hanldeOnChange(e)}/>
+                            <label>Địa chỉ cư trú</label>
+                            <input defaultValue={patient?.address} {...register("address")} className="form-control" onChange={(e) => hanldeOnChange(e, "address")}/>
                         </div>
                     </div>
+                    <div className="col-md-4">
+                        <div className="form-group mb-2 card-label">
+                            <label>Số BHYT</label>
+                            <input defaultValue={patient?.healthInsuranceNumber} {...register("healthInsuranceNumber")} className="form-control" onChange={(e) => hanldeOnChange(e, "healthInsuranceNumber")}/>
+                        </div>
+                    </div>
+                    
                     <div className='text-center'>
                         <button type="submit" className="btn btn-primary my-3" disabled={isLoading ? true : false}>{isLoading ? 'Updating..' : 'Cập nhật thông tin'}</button>
                     </div>

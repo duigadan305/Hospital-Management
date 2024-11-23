@@ -10,6 +10,7 @@ import ImageUpload from '../../UI/form/ImageUpload';
 import pImage from '../../../images/avatar.jpg';
 import { DatePicker } from 'antd';
 import PatientApiService from '../../../service/PatientApiService';
+import swal from 'sweetalert';
 
 const PatientProfileSetting = () => {
     const { data } = useAuthCheck();
@@ -171,8 +172,12 @@ const PatientProfileSetting = () => {
             const response = await PatientApiService.updatePatientInfo(formData);
     
             // Kiểm tra phản hồi
-            if (response.status === 200) {
-                console.log("Cập nhật thành công!", response.data);
+            if (response.statusCode === 200) {
+                swal({
+                    icon: 'success',
+                    text: `Cập nhật thông tin thành công!`,
+                    timer: 2000
+                });
             } else {
                 console.log("Có lỗi xảy ra!", response);
             }

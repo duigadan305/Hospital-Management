@@ -13,16 +13,27 @@ import {
     FaLock,
     FaHouseUser
 } from "react-icons/fa";
+import DoctorApiService from '../../../service/DoctorApiService';
 
 const DashboardSidebar = () => {
     const { data, role } = useAuthCheck();
     const [patientData, setPatientData] = useState({});
+    const [doctorData, setDoctorData] = useState({});
     const checkAuthAndSetData = async () => {
-        if ( data) {
+        if (role == "USER"&&data) {
             try {
                 const patientt = await PatientApiService.getPatientByEmail(data.email);
                 setPatientData(patientt.patient);
                 console.log("ttttt=>", patientt.patient);
+            } catch (error) {
+                console.error("Error fetching patient:", error);
+            }
+        }
+        if (role == "DOCTOR"&&data) {
+            try {
+                const dataa = await DoctorApiService.getDoctorByEmail(data.email);
+                setDoctorData(dataa.doctor);
+                console.log("ttttt=>", dataa.doctor);
             } catch (error) {
                 console.error("Error fetching patient:", error);
             }
@@ -74,6 +85,12 @@ const DashboardSidebar = () => {
                                     <span>Hồ sơ bệnh án</span>
                                 </NavLink>
                             </li> }
+                            <li>
+                                <NavLink to={`/patient-invoice-detail/${patientData?.id}`} activeClassName="active">
+                                    <FaUserCog className="icon" />
+                                    <span>Hóa đơn</span>
+                                </NavLink>
+                            </li>
                             <li>
                                 <NavLink to={'/dashboard/patient-profile'} activeClassName="active">
                                     <FaUserCog className="icon" />
@@ -143,7 +160,7 @@ const DashboardSidebar = () => {
                                 </NavLink>
                             </li>
                             <li>
-                                <NavLink to={'/dashboard/reviews'} activeClassName="active" end>
+                                <NavLink to={`/dashboard/reviews/${doctorData.id}`} activeClassName="active" end>
                                     <FaRegStar className="icon" />
                                     <span>Đánh giá</span>
                                 </NavLink>

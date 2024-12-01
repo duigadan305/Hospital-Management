@@ -55,12 +55,12 @@ const DoctorDashboard = () => {
 
     useEffect(() => {
         const fetchAppointment = async () => {
-          const appointmentRequest = {
-              doctor: { id: doctorData?.id || undefined }
-          };
-          try {
+            try {
+              const appointmentRequest = {
+                  doctor: { id: doctorData?.id || undefined }
+              };
             if(doctorData){
-                console.log("iddoctorr==>", doctorData);
+                console.log("iddoctorrHEHE==>", appointmentRequest.doctor);
                 const data = await DoctorApiService.getAppointmentByDoctorID(appointmentRequest);
                 // setAppointmentData(data.appointmentList);
                  // Xử lý lọc và sắp xếp

@@ -47,7 +47,7 @@ const PatientDashboard = () => {
         };
     
         fetchAppointment();
-      }, [patientData]);
+      }, [patientData, appointmentData]);
 
       const updatedApppointmentStatus = async (data, type) => {
         try {

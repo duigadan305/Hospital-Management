@@ -114,7 +114,7 @@ const Treatment = () => {
               <Button type="primary" size="large"
                 onClick={() => next()}>Tiếp tục</Button>)}
 
-            {current === steps.length - 1 && (<Button type="primary" size="large"onClick={handleSubmit}>Kết thúc khám</Button>)}
+            {/* {current === steps.length - 1 && (<Button type="primary" size="large"onClick={handleSubmit}>Kết thúc khám</Button>)} */}
             {current > 0 && (<Button style={{ margin: '0 8px', }} size="large" onClick={() => prev()} >Quay lại</Button>)}
           </div>
         </DashboardLayout>

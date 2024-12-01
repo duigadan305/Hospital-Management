@@ -19,7 +19,7 @@ const TreatmentStep3 = ({treatmentDetail, serviceData, setServiceData, treatDeta
     const [examServiceList, setExamServiceList] = useState([]);
     const [fileUploads, setFileUploads] = useState({});
     const [filteredServiceList, setFilteredServiceList] = useState([]); // Biến mới chứa id, result và file
-
+    const navigate = useNavigate();
     const getTreatmentService = async () => {
         try {
             const dataa = await DoctorApiService.getTreatmentService(treatmentDetail.appointment.id);
@@ -138,7 +138,9 @@ const TreatmentStep3 = ({treatmentDetail, serviceData, setServiceData, treatDeta
                     icon: 'success',
                     text: `Kết thúc khám`,
                     timer: 2000
-                })
+                }).then(() => {
+                    navigate('/dashboard'); // Điều hướng về trang login
+                });
             }
         
         }
@@ -322,7 +324,7 @@ const TreatmentStep3 = ({treatmentDetail, serviceData, setServiceData, treatDeta
                     </div>
                     <div className="" style={{textAlign: 'center' }}>
                         <Button type="primary" htmlType="button" onClick={handleSubmit}>
-                            Lưu
+                            Kết thúc khám
                         </Button>
                     </div>
                 </form>

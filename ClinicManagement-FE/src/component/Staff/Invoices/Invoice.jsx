@@ -46,7 +46,9 @@ const Invoice = () => {
       console.log("servvveee=>", serviceData);
       console.log("presss=>", prescriptionData);
 
-      const totalPrice = serviceData?.reduce((sum, item) => sum + (item.service.cost || 0), 0);
+      const servicePrice = serviceData?.reduce((sum, item) => sum + (item.service.cost || 0), 0);
+      const prescriptionPrice = prescriptionData?.reduce((sum, item) => sum + (100000 || 0), 0);
+      const totalPrice = servicePrice + prescriptionPrice;
 
       const updatedApppointmentPayment = async (data, type) => {
         try {
@@ -169,7 +171,7 @@ const Invoice = () => {
                                         bordered
                                     />
                                 <div style={{ marginTop:'30px'}}>
-                                    <strong className="customer-text" >Tổng tiền:</strong>
+                                    <strong className="customer-text" >Tổng tiền:</strong> <span>{prescriptionPrice} VND</span>
                                 </div>
                             </div>
                         </div>

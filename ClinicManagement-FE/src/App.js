@@ -18,6 +18,7 @@ import PatientInvoiceDetail from "./component/Staff/Invoices/PatientInvoiceDetai
 import Invoice from "./component/Staff/Invoices/Invoice";
 import PatientInvoice from "./component/Staff/Invoices/PatientInvoice";
 import ChangePassword from "./component/Common/Dashboard/ChangePassword";
+import Reviews from "./component/Doctor/Review/Reviews";
 function App() {
   return (
     <Router>
@@ -26,7 +27,7 @@ function App() {
           {/* <Route path='/dashboard/blogs' element={<Blogs />} /> */}
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/my-patients" element={<MyPatients />} />
-          {/* <Route path='/dashboard/reviews' element={<Reviews />} /> */}
+          <Route path="/dashboard/reviews/:id" element={<Reviews />} />
           {/* <Route path='/dashboard/schedule' element={<Schedule />} /> */}
           {/* <Route path='/dashboard/appointments' element={<Appointments />} /> */}
           {/* <Route path='/dashboard/appointments/:id' element={<ViewAppointment />} /> */}

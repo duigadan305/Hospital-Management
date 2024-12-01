@@ -26,7 +26,9 @@ const DoctorDashCard = () => {
     };
     useEffect(() => {
         checkAuthAndSetData();
-    }, [authChecked, data, isAuthenticated]);
+    }, [doctorData]);
+
+    console.log("doccc=>", doctorData);
 
     useEffect(() => {
         const fetchAppointment = async () => {

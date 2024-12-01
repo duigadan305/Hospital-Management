@@ -119,10 +119,10 @@ const AppointmentPage = () => {
             {current < steps.length - 1 && (
               <Button type="primary" size="large"
                 disabled={current === 0 ? ((selectedDoctor && selectTime) ? false : true) : (patientData ? false : true) || !selectTime}
-                onClick={() => next()}>Next</Button>)}
+                onClick={() => next()}>Tiếp</Button>)}
 
-            {current === steps.length - 1 && (<Button type="primary" size="large" onClick={handleConfirmSchedule}>Confirm</Button>)}
-            {current > 0 && (<Button style={{ margin: '0 8px', }} size="large" onClick={() => prev()} >Previous</Button>)}
+            {current === steps.length - 1 && (<Button type="primary" size="large" onClick={handleConfirmSchedule}>Xác nhận</Button>)}
+            {current > 0 && (<Button style={{ margin: '0 8px', }} size="large" onClick={() => prev()} >Quay lại</Button>)}
           </div>
         </div>
       </div>

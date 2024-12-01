@@ -98,7 +98,7 @@ const StaffDashboard = () => {
         };
     
         fetchAppointment();
-      }, [staffData]);
+      }, [staffData, appointmentData]);
 
     console.log("todayy=>", todayAppointment);
     console.log("upcomingg=>", upcomingAppointment);

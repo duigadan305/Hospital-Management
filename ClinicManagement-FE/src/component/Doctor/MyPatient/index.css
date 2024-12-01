@@ -1,0 +1,175 @@
+.doc-img-fluid img {
+    height: 200px;
+    width: 200px;
+    border: 8px solid #e0e0e0;
+    border-radius: 50%;
+    overflow: hidden;
+    object-fit: cover;
+    object-position: top;
+}
+.doc-info a{
+    color: #1977cc !important;
+}
+
+.clinic-booking a {
+    background-color: #fff;
+    border: 2px solid #1977cc;
+    border-radius: 4px;
+    color: #1977cc;
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    padding: 5px 10px;
+    text-align: center;
+    text-transform: uppercase;
+    width: 80%;
+    margin: 5px;
+}
+
+.clinic-details ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.doc-department {color: #1977cc;}
+.doc-department img{
+    width: 1.5rem;
+    margin-right: 2px;
+}
+.clinic-details ul li {
+	display: inline-block;
+	padding-right: 5px;
+}
+.clinic-details ul li:last-child {
+	padding-right: 0;
+}
+.clinic-details ul li a {
+	display: inline-block;
+}
+.clinic-details ul li a img {
+	border-radius: 5px;
+	width: 40px;
+}
+
+.clini-infos {
+    margin-bottom: 15px;
+}
+.clini-infos ul {
+	font-size: 14px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.clini-infos ul li {
+    display: block;
+    line-height: 30px;
+    color: #4E4852;
+}
+.clini-infos ul li i {
+    font-size: 15px;
+    min-width: 30px;
+}
+.clinic-booking a + a {
+	margin-top: 15px;
+}
+/* .clinic-booking a {
+    background-color: #fff;
+    border: 2px solid #1977cc;
+    border-radius: 4px;
+    color: #1977cc;
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    padding: 5px 10px;
+    text-align: center;
+    text-transform: uppercase;
+    width: 100%;
+} */
+.clinic-booking a.view-pro-btn:hover, .clinic-booking a.view-pro-btn:focus {
+	background: #1977cc; 
+	color: #fff;
+}
+.clinic-booking a.apt-btn {
+    background-color: #1977cc;
+    color: #fff;
+}
+.clinic-booking a.apt-btn:hover, .clinic-booking a.apt-btn:focus {
+	background-color: #1977cc;
+	border-color: #1977cc;
+	color: #fff;
+}
+.load-more {
+	margin-bottom: 30px;
+}
+.overview-text {
+    color: #2c4964;
+    font-weight: 600;
+}
+
+.symptoms-section h5{
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.symptoms-section p{
+    font-size: 13px;
+    font-weight: 500;
+    color: #3f3f3f;
+}
+
+.invoice-table-wrap .ant-table {
+    width: 100%;
+    min-width: 800px;
+    margin: 0 auto;
+}
+
+.invoice-table-wrap .ant-table-thead > tr > th {
+    text-align: center;
+    background-color: #f0f2f5;
+    font-weight: bold;
+}
+
+.invoice-table-wrap .ant-table-tbody > tr > td {
+    text-align: center;
+}
+
+.modal-overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8); /* Màu nền tối mờ */
+    z-index: 9999;
+}
+
+.modal-content img {
+    max-width: 60vw; /* Chiều rộng tối đa 60% màn hình */
+    max-height: 60vh; /* Chiều cao tối đa 60% màn hình */
+    object-fit: contain; /* Giữ nguyên tỉ lệ ảnh */
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* Hiệu ứng đổ bóng */
+    transition: transform 0.3s ease-in-out; /* Hiệu ứng thu nhỏ/phóng to */
+}
+
+
+.close-btn {
+    position: absolute;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 30px;
+    color: black;
+    cursor: pointer;
+    padding: 5px;
+    z-index: 10000; /* Đảm bảo nút đóng hiển thị trên ảnh */
+}
+
+.close-btn:hover {
+    color: #f00; /* Thêm màu đỏ khi hover */
+}

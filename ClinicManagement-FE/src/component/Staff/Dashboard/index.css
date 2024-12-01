@@ -1,0 +1,46 @@
+.dash-card-icon{
+	text-align: center;
+    border: 6px solid #1977cc;
+    border-radius: 50%;
+    height: 75px;
+    width: 75px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: #1378bb;
+}
+.dash-card-icon .icon{
+	font-size: 2.5rem;
+}
+.dash-card{
+	border-right: 1px solid #c0bebe;
+}
+
+.custom-modal {
+	width: 1200px !important; /* Độ rộng popup */
+  }
+  
+  .custom-modal .ant-modal-content {
+	border-radius: 10px; /* Bo góc cho popup */
+	padding: 24px;
+  }
+  
+  .custom-modal .ant-modal-header {
+	font-size: 20px;
+	font-weight: bold;
+	text-align: center;
+  }
+  
+  .custom-modal .ant-modal-body {
+	font-size: 16px;
+  }
+  
+  .popup-content p {
+	margin: 8px 0;
+	line-height: 1.6;
+  }
+  
+  .ant-modal-mask {
+	background-color: rgba(0, 0, 0, 0.1) !important; /* Làm mờ nền */
+  }
+  

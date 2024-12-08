@@ -110,4 +110,10 @@ public class DoctorController {
         Response response = doctorService.getAppointmentByPatientAndStatus(appointmentDTO.getPatient().getId(), appointmentDTO.getStatus());
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
+
+    @GetMapping("/getDrugAllergyByPatientId/{id}")
+    public ResponseEntity<Response> getDrugAllergyByPatientId(@PathVariable("id") Long id) {
+        Response response = doctorService.getDrugAllergyByPatientId(id);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
 }

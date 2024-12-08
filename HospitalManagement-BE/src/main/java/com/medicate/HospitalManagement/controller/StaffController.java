@@ -1,10 +1,7 @@
 package com.medicate.HospitalManagement.controller;
 
 
-import com.medicate.HospitalManagement.dto.AppointmentDTO;
-import com.medicate.HospitalManagement.dto.CommentDTO;
-import com.medicate.HospitalManagement.dto.PatientDTO;
-import com.medicate.HospitalManagement.dto.Response;
+import com.medicate.HospitalManagement.dto.*;
 import com.medicate.HospitalManagement.service.Interface.IPatientService;
 import com.medicate.HospitalManagement.service.Interface.IStaffService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,5 +41,9 @@ public class StaffController {
         Response response = staffService.handleAppointmentPayment(appointmentDTO);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
-
+    @PostMapping("/addAppointmentBill")
+    public ResponseEntity<Response> addAppointmentBill(@RequestBody AppointmentBillDTO appointmentBillDTO) {
+        Response response = staffService.addAppointmentBill(appointmentBillDTO);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
 }

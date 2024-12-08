@@ -56,8 +56,17 @@ const Invoice = () => {
                 id: id,
                 payment: type
             }
+            const billrequest = {
+                appointment: {
+                    id: id
+                },
+                serviceCost: servicePrice,
+                prescriptionCost: prescriptionPrice,
+                total: totalPrice
+            }
             // Gọi API và đợi phản hồi
             const response = await StaffApiService.handleAppointmentPayment(apRequest);
+            const response1 = await StaffApiService.addAppointmentBill(billrequest);
     
             // Kiểm tra phản hồi
             if (response.statusCode === 200) {

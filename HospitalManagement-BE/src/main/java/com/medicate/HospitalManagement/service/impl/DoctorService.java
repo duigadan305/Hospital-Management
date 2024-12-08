@@ -36,6 +36,8 @@ public class DoctorService implements IDoctorService {
     private TreatmentServiceRepo treatmentServiceRepository;
     @Autowired
     private PrescriptionRepo prescriptionRepository;
+    @Autowired
+    private DrugAllergyRepo drugAllergyRepository;
 
 
     @Override
@@ -181,6 +183,7 @@ public class DoctorService implements IDoctorService {
             treatmentDetail.setPrescriptionType(treatmentDetailDTO.getPrescriptionType());
             treatmentDetail.setFollowUpDate(treatmentDetailDTO.getFollowUpDate());
             treatmentDetail.setReason(treatmentDetailDTO.getReason());
+            treatmentDetail.setDrugAllergy(treatmentDetailDTO.getDrugAllergy());
             treatmentDetailRepository.save(treatmentDetail);
             ap.setStatus("Treated");
             appointmentRepository.save(ap);
@@ -454,6 +457,29 @@ public class DoctorService implements IDoctorService {
             List<AppointmentDTO> appointmentDTOList = Utils.mapAppointmentListEntityToAppointmentListDTO(appointmentList, treatmentDetailRepository);
             response.setStatusCode(200);
             response.setAppointmentList(appointmentDTOList);
+            response.setMessage("successful");
+
+        } catch (OurException e) {
+            response.setStatusCode(404);
+            response.setMessage(e.getMessage());
+
+        } catch (Exception e) {
+
+            response.setStatusCode(500);
+            response.setMessage("Error getting all users " + e.getMessage());
+        }
+        return response;
+    }
+
+    @Override
+    public Response getDrugAllergyByPatientId(Long id) {
+        Response response = new Response();
+
+        try {
+            List<DrugAllergy> drugAllergyList = drugAllergyRepository.findByPatientId(id);
+            List<DrugAllergyDTO> drugAllergyDTOList = Utils.mapDrugAllergyListEntityToDrugAllergyListDTO(drugAllergyList);
+            response.setStatusCode(200);
+            response.setDrugAllergyList(drugAllergyDTOList);
             response.setMessage("successful");
 
         } catch (OurException e) {

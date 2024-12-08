@@ -17,6 +17,7 @@ import swal from "sweetalert";
 
 const TreatmentStep3 = ({treatmentDetail, serviceData, setServiceData, treatDetail, setTreatDetail, prescript, setPrescript}) => {
     const [examServiceList, setExamServiceList] = useState([]);
+    const [drugAllergyList, setDrugAllergyList] = useState([]);
     const [fileUploads, setFileUploads] = useState({});
     const [filteredServiceList, setFilteredServiceList] = useState([]); // Biến mới chứa id, result và file
     const navigate = useNavigate();
@@ -39,6 +40,19 @@ const TreatmentStep3 = ({treatmentDetail, serviceData, setServiceData, treatDeta
   useEffect(() => {
     getTreatmentService();
   }, [treatmentDetail]);
+
+  const getDrugAllergy = async () => {
+        try {
+            const dataa = await DoctorApiService.getDrugAllergyByPatientId(treatmentDetail.appointment.patient.id);
+            setDrugAllergyList(dataa.drugAllergyList);
+            console.log("druggg=>", dataa.drugAllergyList);
+        } catch (error) {
+            console.error("Error fetching service:", error);
+        }
+    };
+    useEffect(() => {
+        getDrugAllergy();
+    }, [treatmentDetail]);
 
     const [finallyDiagnosis, setFinallyDiagnosis] = useState("");
     const [diseaseCode, setDiseaseCode] = useState("");
@@ -98,7 +112,7 @@ const TreatmentStep3 = ({treatmentDetail, serviceData, setServiceData, treatDeta
             },
             prescriptionType: selectedDirection,
             followUpDate: followUpDate,
-            finallyDiagnosis: `${diseaseCode}-${diseaseName}`
+            finallyDiagnosis: `${diseaseCode}-${diseaseName}`,
         });
         setPrescript(prescriptionList);
     }, [treatmentDetail, examServiceList, diseaseCode, diseaseName, prescriptionList, selectedDirection, followUpDate, filteredServiceList]);
@@ -253,6 +267,18 @@ const TreatmentStep3 = ({treatmentDetail, serviceData, setServiceData, treatDeta
 
                             {(selectedDirection === 'KDCV' || selectedDirection === 'KDTK') && (
                                 <>
+                                    <div style={{display:'flex', width:'500px', justifyContent:'space-between'}}>
+                                        <h5 style={{ fontWeight: 700, color:'red' }}>- Cảnh báo bệnh nhân có tiền sử:</h5>
+                                    </div>
+                                    {
+                                        drugAllergyList?.map((item, index) => (
+                                            <>
+                                                <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word', fontFamily: 'Poppins, sans-serif', fontSize: '16px', marginLeft:'10px', fontStyle:'italic' }}>
+                                                    {item.drugAllergy}
+                                                </pre>
+                                            </>
+                                        ))
+                                    }
                                 {prescriptionList.map((item, index) => (
                                     <div key={item.id}>
                                     <div className="card mb-2 p-3 mt-2">
@@ -314,7 +340,7 @@ const TreatmentStep3 = ({treatmentDetail, serviceData, setServiceData, treatDeta
 
                                 <div className="mb-4" style={{ width: '120px' }}>
                                     <Button type="primary" size="small" htmlType="button" onClick={addPrescriptionList} block icon={<FaPlus />}>
-                                    Add
+                                    Thêm 
                                     </Button>
                                 </div>
                                 </>

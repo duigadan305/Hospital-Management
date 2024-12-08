@@ -38,6 +38,7 @@ public class TreatmentDetail {
     private String prescriptionType;
     private String priliminaryDiagnosis;
     private String finallyDiagnosis;
+    private String drugAllergy;
     private Integer followUpDate;
 
     @JdbcTypeCode(SqlTypes.JSON)

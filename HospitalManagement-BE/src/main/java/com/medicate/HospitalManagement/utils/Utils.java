@@ -167,6 +167,7 @@ public class Utils {
         treatmentDetailDTO.setPriliminaryDiagnosis(treatmentDetail.getPriliminaryDiagnosis());
         treatmentDetailDTO.setAppointment(appointmentDTO);
         treatmentDetailDTO.setFinallyDiagnosis(treatmentDetail.getFinallyDiagnosis());
+        treatmentDetailDTO.setDrugAllergy(treatmentDetail.getDrugAllergy());
         return treatmentDetailDTO;
     }
 
@@ -204,6 +205,26 @@ public class Utils {
         prescriptionDTO.setUnit(prescription.getUnit());
         prescriptionDTO.setUsageInstruction(prescription.getUsageInstruction());
         return prescriptionDTO;
+    }
+
+    public static DrugAllergyDTO mapDrugAllergyEntityToDrugAllergyDTO(DrugAllergy drugAllergy) {
+        DrugAllergyDTO drugAllergyDTO = new DrugAllergyDTO();
+        drugAllergyDTO.setId(drugAllergy.getId());
+        drugAllergyDTO.setDrugAllergy(drugAllergy.getDrugAllergy());
+        PatientDTO patientDTO = mapPatientEntityToPatientDTO(drugAllergy.getPatient());
+        drugAllergyDTO.setPatient(patientDTO);
+        return drugAllergyDTO;
+    }
+
+    public static AppointmentBillDTO mapBillEntityToBillDTO(AppointmentBill appointmentBill) {
+        AppointmentBillDTO appointmentBillDTO = new AppointmentBillDTO();
+        appointmentBillDTO.setId(appointmentBill.getId());
+        appointmentBillDTO.setServiceCost(appointmentBill.getServiceCost());
+        appointmentBillDTO.setPrescriptionCost(appointmentBill.getPrescriptionCost());
+        appointmentBillDTO.setPayDate(appointmentBill.getPayDate());
+        appointmentBillDTO.setTotal(appointmentBill.getTotal());
+        appointmentBillDTO.setAppointment(Utils.mapAppointmentEntityToAppointmentDTO1(appointmentBill.getAppointment()));
+        return appointmentBillDTO;
     }
 
     public static List<UserDTO> mapUserListEntityToUserListDTO(List<User> userList) {
@@ -244,5 +265,12 @@ public class Utils {
 
     public static List<PrescriptionDTO> mapPrescriptionListEntityToPresciptionListDTO(List<Prescription> prescriptionList) {
         return prescriptionList.stream().map(Utils::mapPrescriptionEntityToPresciptionDTO).collect(Collectors.toList());
+    }
+
+    public static List<DrugAllergyDTO> mapDrugAllergyListEntityToDrugAllergyListDTO(List<DrugAllergy> drugAllergyList) {
+        return drugAllergyList.stream().map(Utils::mapDrugAllergyEntityToDrugAllergyDTO).collect(Collectors.toList());
+    }
+    public static List<AppointmentBillDTO> mapBillListEntityToBillListDTO(List<AppointmentBill> appointmentBillList) {
+        return appointmentBillList.stream().map(Utils::mapBillEntityToBillDTO).collect(Collectors.toList());
     }
 }

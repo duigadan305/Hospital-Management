@@ -58,4 +58,10 @@ public class PatientController {
         Response response = patientService.getPatientById(id);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
+
+    @PostMapping("/addDrugAllergy")
+    public ResponseEntity<Response> addDrugAllergy(@RequestBody DrugAllergyDTO drugAllergyDTO) {
+        Response response = patientService.addDrugAllergy(drugAllergyDTO);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
 }

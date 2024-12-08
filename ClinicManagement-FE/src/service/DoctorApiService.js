@@ -161,6 +161,16 @@ export default class DoctorApiService {
     );
     return response.data;
   }
+
+  static async getDrugAllergyByPatientId(id) {
+    const response = await axios.get(
+      `${this.BASE_URL}/doctor/getDrugAllergyByPatientId/${id}`,
+      {
+        headers: this.getHeader(),
+      }
+    );
+    return response.data;
+  }
 }
 
 // export default new ApiService();

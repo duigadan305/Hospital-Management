@@ -6,21 +6,6 @@ import DoctorApiService from "../../../service/DoctorApiService";
 import swal from "sweetalert";
 
 const TreatmentStep2 = (treatmentDetail) => {
-    // const services = [
-    //     { code: "SV001", name: "Khám tổng quát", price: 500000, description: "Dịch vụ khám sức khỏe tổng quát." },
-    //     { code: "SV002", name: "Khám chuyên khoa", price: 700000, description: "Dịch vụ khám chuyên khoa chi tiết." },
-    //     { code: "SV003", name: "Xét nghiệm máu", price: 300000, description: "Xét nghiệm máu định kỳ và chi tiết." },
-    //     { code: "SV004", name: "Chụp X-Quang", price: 400000, description: "Dịch vụ chụp X-Quang hiện đại." },
-    //     { code: "SV005", name: "Khám dinh dưỡng", price: 600000, description: "Tư vấn và khám dinh dưỡng toàn diện." },
-    //     { code: "SV006", name: "Chữa bệnh xương khớp", price: 800000, description: "Chữa trị các bệnh lý về xương khớp." },
-    //     { code: "SV007", name: "Khám phụ khoa", price: 550000, description: "Khám và điều trị các bệnh phụ khoa." },
-    //     { code: "SV008", name: "Khám nha khoa", price: 400000, description: "Khám và điều trị bệnh răng miệng." },
-    //     { code: "SV009", name: "Chữa bệnh tim mạch", price: 900000, description: "Chữa trị bệnh lý tim mạch." },
-    //     { code: "SV010", name: "Khám mắt", price: 350000, description: "Khám và điều trị các bệnh về mắt." },
-    //     { code: "SV011", name: "Khám thần kinh", price: 800000, description: "Khám và điều trị các bệnh thần kinh." },
-    //     { code: "SV012", name: "Khám tai mũi họng", price: 600000, description: "Khám và điều trị các bệnh tai mũi họng." },
-    //     { code: "SV013", name: "Khám da liễu", price: 450000, description: "Khám và điều trị bệnh lý da liễu." },
-    //   ];
     console.log("iddd=>", treatmentDetail.treatmentDetail);
     const [services, setServices] = useState([]);
 

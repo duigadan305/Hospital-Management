@@ -37,6 +37,8 @@ public class PatientService implements IPatientService {
     private AppointmentRepo appointmentRepository;
     @Autowired
     private TreatmentDetailRepo treatmentDetailRepository;
+    @Autowired
+    private DrugAllergyRepo drugAllergyRepository;
 
 
     @Override
@@ -244,6 +246,32 @@ public class PatientService implements IPatientService {
             PatientDTO patientDTO = Utils.mapPatientEntityToPatientDTO(patient);
             response.setStatusCode(200);
             response.setPatient(patientDTO);
+            response.setMessage("successful");
+
+        } catch (OurException e) {
+            response.setStatusCode(404);
+            response.setMessage(e.getMessage());
+
+        } catch (Exception e) {
+
+            response.setStatusCode(500);
+            response.setMessage("Error getting all users " + e.getMessage());
+        }
+        return response;
+    }
+
+    @Override
+    public Response addDrugAllergy(DrugAllergyDTO drugAllergyDTO) {
+        Response response = new Response();
+
+        try {
+            DrugAllergy drugAllergy = new DrugAllergy();
+            Patient patient = patientRepository.findById(drugAllergyDTO.getPatient().getId()).get();
+            drugAllergy.setDrugAllergy(drugAllergyDTO.getDrugAllergy());
+            drugAllergy.setPatient(patient);
+            drugAllergyRepository.save(drugAllergy);
+            response.setStatusCode(200);
+            response.setDrugAllergy(drugAllergyDTO);
             response.setMessage("successful");
 
         } catch (OurException e) {

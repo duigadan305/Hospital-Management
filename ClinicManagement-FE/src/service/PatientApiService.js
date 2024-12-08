@@ -116,6 +116,17 @@ export default class PatientApiService {
     );
     return response.data;
   }
+
+  static async addDrugAllergy(DrugAllergyDTO) {
+    const response = await axios.post(
+      `${this.BASE_URL}/patient/addDrugAllergy`,
+      DrugAllergyDTO,
+      {
+        headers: this.getHeader(),
+      }
+    );
+    return response.data;
+  }
 }
 
 // export default new ApiService();

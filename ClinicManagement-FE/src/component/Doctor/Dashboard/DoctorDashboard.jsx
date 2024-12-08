@@ -11,6 +11,7 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import './index.css'
+import MyPatients from '../MyPatient/MyPatients';
 
 const DoctorDashboard = () => {
     dayjs.extend(customParseFormat);
@@ -369,6 +370,7 @@ const DoctorDashboard = () => {
                 showSizeChanger={true}
             />,
         },
+        
     ];
 
     return (

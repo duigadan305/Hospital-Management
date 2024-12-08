@@ -6,8 +6,10 @@ import { useRef, useState, useEffect} from "react";
 import DashboardLayout from "../../Common/Dashboard/DashboardLayout";
 import PatientApiService from "../../../service/PatientApiService";
 import DoctorApiService from "../../../service/DoctorApiService";
+import useAuthCheck from "../../../service/useAuthCheck";
 
 const PatientDetail = () => {
+    const { role } = useAuthCheck();
     const ref = useRef();
     const { id } = useParams();
     const [patientData, setPatientData] = useState({});
@@ -82,7 +84,7 @@ const PatientDetail = () => {
     if (!patientData) content = <Empty />
     if ( patientData) content =
         <>
-            <div className="col-lg-8 offset-lg-2">
+            <div className="col-lg-8" style={{marginLeft:'10px'}}>
                 <div className="invoice-content">
                     <div className="invoice-item">
                         <div className="row">
@@ -135,10 +137,17 @@ const PatientDetail = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="invoice-item invoice-table-wrap">
-                    <Link to={`/dashboard/my-patients`}>
+                    <div className="invoice-item" style={{display:'flex', justifyContent:'space-between'}}>
+                        <Link to={`/dashboard/my-patients`}>
                             <Button type="primary">Quay lại</Button>
                         </Link>
+                        {role === "DOCTOR"&&
+                        <div>
+                            <Link to={`/dashboard/record-general/${id}`}>
+                                <Button type="primary">Tổng hợp bệnh án</Button>
+                            </Link>
+                        </div>
+                        }
                     </div>
                 </div>
             </div>

@@ -14,4 +14,5 @@ public interface IPatientService {
     Response bookAppointment(AppointmentDTO appointment);
     Response getAllAppointment(AppointmentDTO appointment);
     Response getPatientById(Long id);
+    Response addDrugAllergy(DrugAllergyDTO drugAllergyDTO);
 }

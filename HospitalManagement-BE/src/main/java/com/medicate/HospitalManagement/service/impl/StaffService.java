@@ -24,6 +24,8 @@ public class StaffService implements IStaffService {
     private AppointmentRepo appointmentRepository;
     @Autowired
     private TreatmentDetailRepo treatmentDetailRepository;
+    @Autowired
+    private AppointmentBillRepo billRepository;
 
     @Override
     public Response getEmployeeInfo(String email) {
@@ -74,7 +76,6 @@ public class StaffService implements IStaffService {
     @Override
     public Response handleAppointmentPayment(AppointmentDTO appointmentDTO) {
         Response response = new Response();
-
         try {
             Appointment ap = appointmentRepository.findById(appointmentDTO.getId())
                     .orElseThrow(() -> new OurException("Appointment Not found"));
@@ -82,6 +83,35 @@ public class StaffService implements IStaffService {
                 ap.setPayment(appointmentDTO.getPayment());
             }
             appointmentRepository.save(ap);
+            response.setStatusCode(200);
+            response.setMessage("successful");
+
+        } catch (OurException e) {
+            response.setStatusCode(404);
+            response.setMessage(e.getMessage());
+
+        } catch (Exception e) {
+
+            response.setStatusCode(500);
+            response.setMessage("Error getting all users " + e.getMessage());
+        }
+        return response;
+    }
+
+    @Override
+    public Response addAppointmentBill(AppointmentBillDTO appointmentBillDTO) {
+        Response response = new Response();
+        try {
+            AppointmentBill appointmentBill = new AppointmentBill();
+            Appointment ap = appointmentRepository.findById(appointmentBillDTO.getAppointment().getId())
+                    .orElseThrow(() -> new OurException("Appointment Not found"));
+            appointmentBill.setAppointment(ap);
+            appointmentBill.setServiceCost(appointmentBillDTO.getServiceCost());
+            appointmentBill.setPrescriptionCost(appointmentBillDTO.getPrescriptionCost());
+            appointmentBill.setTotal(appointmentBillDTO.getTotal());
+            appointmentBill.setPayDate(new Timestamp(System.currentTimeMillis()));
+            billRepository.save(appointmentBill);
+            response.setAppointmentBill(appointmentBillDTO);
             response.setStatusCode(200);
             response.setMessage("successful");
 

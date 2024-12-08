@@ -1,6 +1,7 @@
 package com.medicate.HospitalManagement.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.medicate.HospitalManagement.entity.AppointmentBill;
 import lombok.Data;
 import org.w3c.dom.ls.LSException;
 
@@ -27,6 +28,8 @@ public class Response {
     private ExamServiceDTO service;
     private PrescriptionDTO prescription;
     private MedicalRecordDTO medicalRecord;
+    private DrugAllergyDTO drugAllergy;
+    private AppointmentBillDTO appointmentBill;
     private List<UserDTO> userList;
     private List<PatientDTO> patientList;
     private List<EmployeeDTO> employeeList;
@@ -38,6 +41,8 @@ public class Response {
     private List<ExamServiceDTO> serviceList;
     private List<PrescriptionDTO> prescriptionList;
     private List<MedicalRecordDTO> medicalRecordList;
+    private List<DrugAllergyDTO> drugAllergyList;
+    private List<AppointmentBillDTO> appointmentBillList;
     private String otp;
     private LocalDateTime expiryTime;
     private Integer total;

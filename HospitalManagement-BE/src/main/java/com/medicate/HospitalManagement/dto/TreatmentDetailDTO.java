@@ -16,6 +16,7 @@ public class TreatmentDetailDTO {
     private String prescriptionType;
     private String priliminaryDiagnosis;
     private String finallyDiagnosis;
+    private String drugAllergy;
     private Integer followUpDate;
     private List<String> medicalHistory;
     private Map<String, Object> vitalSign;

@@ -19,6 +19,9 @@ import Invoice from "./component/Staff/Invoices/Invoice";
 import PatientInvoice from "./component/Staff/Invoices/PatientInvoice";
 import ChangePassword from "./component/Common/Dashboard/ChangePassword";
 import Reviews from "./component/Doctor/Review/Reviews";
+import MedicalRecordGeneral from "./component/Doctor/MyPatient/MedicalGeneral/MedicalRecordGeneral";
+import AdminDashboard from "./component/Admin/Dashboard/AdminDashboard";
+import Specialites from "./component/Admin/Specialty/Specialites";
 function App() {
   return (
     <Router>
@@ -28,7 +31,10 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/my-patients" element={<MyPatients />} />
           <Route path="/dashboard/reviews/:id" element={<Reviews />} />
-          {/* <Route path='/dashboard/schedule' element={<Schedule />} /> */}
+          <Route
+            path="/dashboard/record-general/:id"
+            element={<MedicalRecordGeneral />}
+          />
           {/* <Route path='/dashboard/appointments' element={<Appointments />} /> */}
           {/* <Route path='/dashboard/appointments/:id' element={<ViewAppointment />} /> */}
           {/* <Route path='/dashboard/prescription' element={<Prescription />} /> */}
@@ -61,14 +67,14 @@ function App() {
           {/* <Route path='/booking/success/:id' element={<BookingSuccess />} /> */}
           {/* <Route path='/booking/invoice/:id' element={<BookingInvoice />} /> */}
 
-          {/* <Route path='/admin/dashboard' element={<AdminDashboard />} /> */}
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
           {/* <Route path='/admin/appointments' element={<AdminAppointments />} /> */}
           {/* <Route path='/admin/doctors' element={<Doctors />} /> */}
           {/* <Route path='/admin/patients' element={<Patients />} /> */}
           {/* <Route path='/admin/profile' element={<Profile />} /> */}
           {/* <Route path='/admin/reviews' element={<AdminReviews />} /> */}
           {/* <Route path='/admin/transaction' element={<Transactions />} /> */}
-          {/* <Route path='/admin/specialites' element={<Specialites />} />  */}
+          <Route path="/admin/specialites" element={<Specialites />} />
         </Route>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<SignInForm />} />

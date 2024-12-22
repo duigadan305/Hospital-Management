@@ -11,6 +11,7 @@ import java.time.LocalDate;
 public class CommentDTO {
 
     private Long id;
+    private String type;
     private String subject;
     private String content;
     private Timestamp sendDate;

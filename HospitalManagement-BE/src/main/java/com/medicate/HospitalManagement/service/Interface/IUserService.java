@@ -1,6 +1,7 @@
 package com.medicate.HospitalManagement.service.Interface;
 
 
+import com.medicate.HospitalManagement.dto.GoogleLoginRequest;
 import com.medicate.HospitalManagement.dto.LoginRequest;
 import com.medicate.HospitalManagement.dto.RegisterRequest;
 import com.medicate.HospitalManagement.dto.Response;
@@ -24,5 +25,5 @@ public interface IUserService {
     Response getMyInfo(String userId);
     Response resetPassword(LoginRequest loginRequest);
     Response changePassword(String oldPass, String newPass);
-
+    Response googleLogin(GoogleLoginRequest loginRequest);
 }

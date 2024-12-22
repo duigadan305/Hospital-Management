@@ -73,28 +73,28 @@ const ChangePassword = () => {
     return (
         <DashboardLayout>
             <div className="w-100 mb-3 rounded p-2" style={{ background: '#f8f9fa' }}>
-                <h5 className='text-title mt-3'>Change Your Password</h5>
+                <h5 className='text-title mt-3'>Thay đổi mật khẩu</h5>
                 <form className='container row form-row px-5 mx-auto my-5'>
                     <div className="col-md-12">
                         <div className="form-group mb-3 card-label">
-                            <label>Old Password</label>
-                            <input onChange={(e) => setOldPass(e.target.value)} type="password" placeholder='Old Password' className="form-control" />
+                            <label>Mật khẩu hiện tại</label>
+                            <input onChange={(e) => setOldPass(e.target.value)} type="password" placeholder='...' className="form-control" />
                         </div>
                     </div>
                     <div className="col-md-12">
                         <div className="form-group mb-3 card-label">
-                            <label>New Password</label>
-                            <input onChange={(e) => setNewPass(e.target.value)} type="password" placeholder='New Password' className="form-control" />
+                            <label>Mật khẩu mới</label>
+                            <input onChange={(e) => setNewPass(e.target.value)} type="password" placeholder='...' className="form-control" />
                         </div>
                     </div>
                     <div className="col-md-12">
                         <div className="form-group mb-2 card-label">
-                            <label>Confirm Password</label>
-                            <input onChange={(e) => setReNewPass(e.target.value)} type="password" placeholder='Confirm Password' className="form-control" />
+                            <label>Xác nhận mật khẩu</label>
+                            <input onChange={(e) => setReNewPass(e.target.value)} type="password" placeholder='...' className="form-control" />
                         </div>
                     </div>
                     <div className='mt-5 text-center'>
-                        <Button onClick={handleChangePass} type="primary" size='large'>Save Changes</Button>
+                        <Button onClick={handleChangePass} type="primary" size='large'>Cập nhật</Button>
                     </div>
                 </form>
             </div>

@@ -7,9 +7,12 @@ import com.medicate.HospitalManagement.exception.OurException;
 import com.medicate.HospitalManagement.repo.*;
 import com.medicate.HospitalManagement.service.Interface.IDoctorService;
 import com.medicate.HospitalManagement.utils.Utils;
+import com.medicate.HospitalManagement.ws.configuration.CustomNotificationHandler;
+import com.medicate.HospitalManagement.ws.configuration.NotificationController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.socket.WebSocketSession;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -38,7 +41,8 @@ public class DoctorService implements IDoctorService {
     private PrescriptionRepo prescriptionRepository;
     @Autowired
     private DrugAllergyRepo drugAllergyRepository;
-
+    @Autowired
+    public NotificationController notificationController;
 
     @Override
     public Response getAppointmentByDoctorID(AppointmentDTO appointment) {
@@ -93,12 +97,21 @@ public class DoctorService implements IDoctorService {
         try {
             Appointment ap = appointmentRepository.findById(appointment.getId())
                     .orElseThrow(() -> new OurException("Appointment Not found"));
+            String status = "";
             if(appointment.getStatus() != null && appointment.getStatus() != ""){
                 ap.setStatus(appointment.getStatus());
+                status = appointment.getStatus();
             }
+            String email = (ap.getPatient().getUser().getEmail()).split("@")[0];;
             appointmentRepository.save(ap);
             response.setStatusCode(200);
             response.setMessage("successful");
+            if(status.equals("Pended")){
+                notificationController.sendAppointmentNotification(email,"Lịch hẹn đã được tiếp nhận");
+            } else if (status.equals("Cancel")) {
+                notificationController.sendAppointmentNotification(email,"Lịch hẹn đã bị hủy");
+            }
+
 
         } catch (OurException e) {
             response.setStatusCode(404);
@@ -236,13 +249,7 @@ public class DoctorService implements IDoctorService {
             if(treatmentServiceDTO.getResult() != null && treatmentServiceDTO.getResult() != ""){
                 treatmentService.setResult(treatmentServiceDTO.getResult());
             }
-            MultipartFile file = treatmentServiceDTO.getFile();
-            if(file != null && !file.isEmpty()){
-                treatmentService.setFileName(file.getName());
-                treatmentService.setFileContent(file.getBytes());
-            }
             treatmentServiceRepository.save(treatmentService);
-
             response.setStatusCode(200);
             response.setTreatmentService(treatmentServiceDTO);
             response.setMessage("successful");
@@ -482,6 +489,29 @@ public class DoctorService implements IDoctorService {
             response.setDrugAllergyList(drugAllergyDTOList);
             response.setMessage("successful");
 
+        } catch (OurException e) {
+            response.setStatusCode(404);
+            response.setMessage(e.getMessage());
+
+        } catch (Exception e) {
+
+            response.setStatusCode(500);
+            response.setMessage("Error getting all users " + e.getMessage());
+        }
+        return response;
+    }
+
+    @Override
+    public Response deleteTreatmentService(Long id) {
+        Response response = new Response();
+
+        try {
+            List<TreatmentService> treatmentServiceList = treatmentServiceRepository.findByAppointmentId(id);
+            for(TreatmentService treatmentService : treatmentServiceList){
+                treatmentServiceRepository.delete(treatmentService);
+            }
+            response.setStatusCode(200);
+            response.setMessage("successful");
         } catch (OurException e) {
             response.setStatusCode(404);
             response.setMessage(e.getMessage());

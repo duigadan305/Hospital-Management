@@ -22,7 +22,7 @@ const Review = () => {
     const [recommend, setRecommend] = useState(null);
     const [showError, setShowError] = useState(false);
     const [{isLoading, isError}]= useState(false);
-    const [formData, setFormData] = useState({});
+    const [formData, setFormData] = useState({type:'Review'});
     const [reviewData, setReviewData] = useState([]);
     const drequest = {id: doctorId};
     const [showAll, setShowAll] = useState(false);
@@ -152,7 +152,7 @@ const Review = () => {
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="form-group mb-3">
                             <div className='d-flex flex-column'>
-                                <label className='form-label'>Your Review {value ? <strong>{desc[value - 1]}</strong> : ''}</label>
+                                {/* <label className='form-label'>Your Review {value ? <strong>{desc[value - 1]}</strong> : ''}</label> */}
                                 <Space>
                                     <Rate name='star' tooltips={desc} onChange={handleOnChangeStar} value={formData.star} />
                                 </Space>
@@ -161,18 +161,18 @@ const Review = () => {
                         <div className="form-group mb-3">
                             <Radio.Group name='subject' onChange={handleOnChange} value={formData.subject}>
                                 <Space direction="vertical">
-                                    <Radio value={"Đề xuất bác sĩ"}>Recommend Doctor</Radio>
-                                    <Radio value={"Không đề xuất bác sĩ"}>Not Recommended Doctor</Radio>
+                                    <Radio value={"Đề xuất bác sĩ"}>Đề xuất bác sĩ</Radio>
+                                    <Radio value={"Không đề xuất bác sĩ"}>Không đề xuất bác sĩ</Radio>
                                 </Space>
                             </Radio.Group>
                         </div>
                         <div className="form-group">
-                            <label className='form-label'>Your review</label>
+                            {/* <label className='form-label'>Your review</label> */}
                             <textarea onInput={(e) => handleOnChange(e)} name='content' className="form-control" {...register("content")} placeholder="Description..." rows={8} />
                         </div>
                         <hr />
                         <div className="submit-section">
-                            <Button htmlType='submit' size='medium' type='primary' disabled={!showError}>Add Review</Button>
+                            <Button htmlType='submit' size='medium' type='primary' disabled={!showError}>Gửi</Button>
                         </div>
                     </form>
                 </div>

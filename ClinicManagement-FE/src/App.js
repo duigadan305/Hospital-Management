@@ -22,6 +22,15 @@ import Reviews from "./component/Doctor/Review/Reviews";
 import MedicalRecordGeneral from "./component/Doctor/MyPatient/MedicalGeneral/MedicalRecordGeneral";
 import AdminDashboard from "./component/Admin/Dashboard/AdminDashboard";
 import Specialites from "./component/Admin/Specialty/Specialites";
+import PatientComment from "./component/Patient/Dashboard/PatientComment";
+import Services from "./component/Admin/Service/Services";
+import AccountManagement from "./component/Admin/UserManage/AccountManagement";
+import ProfileInfor from "./component/Admin/UserManage/ProfileInfor";
+import CommentManagement from "./component/Admin/CommentManage/CommentManagement";
+import AdminProfileSetting from "./component/Admin/Dashboard/AdminProfileSetting";
+import DoctorProfileSetting from "./component/Doctor/Dashboard/DoctorProfileSetting";
+import StaffProfileSetting from "./component/Staff/Dashboard/StaffProfileSetting";
+import AddAppointmentPage from "./component/Staff/AddAppointment/AddAppointmentPage";
 function App() {
   return (
     <Router>
@@ -44,6 +53,7 @@ function App() {
             path="/patient-invoice-detail/:id"
             element={<PatientInvoiceDetail />}
           />
+          <Route path="/patient-comment/:id" element={<PatientComment />} />
           <Route path="/appointment-invoice/:id" element={<Invoice />} />
           <Route path="/treatment/:id" element={<Treatment />} />
           {/* <Route path='/dashboard/appointment/treatment/edit/:id' element={<TreatmentEdit />} /> */}
@@ -55,8 +65,20 @@ function App() {
             path="/dashboard/patient-profile"
             element={<PatientProfileSetting />}
           />
+          <Route
+            path="/dashboard/doctor-profile"
+            element={<DoctorProfileSetting />}
+          />
+          <Route
+            path="/dashboard/staff-profile"
+            element={<StaffProfileSetting />}
+          />
           {/* <Route path='/dashboard/favourite' element={<PatientFavouriteDoctor />} /> */}
           <Route path="/dashboard/invoices" element={<PatientInvoice />} />
+          <Route
+            path="/dashboard/add-appointment"
+            element={<AddAppointmentPage />}
+          />
 
           <Route path="/appointment" element={<AppointmentPage />} />
           {/* <Route path='/track-appointment' element={<TrackAppointment />} /> */}
@@ -71,10 +93,13 @@ function App() {
           {/* <Route path='/admin/appointments' element={<AdminAppointments />} /> */}
           {/* <Route path='/admin/doctors' element={<Doctors />} /> */}
           {/* <Route path='/admin/patients' element={<Patients />} /> */}
-          {/* <Route path='/admin/profile' element={<Profile />} /> */}
-          {/* <Route path='/admin/reviews' element={<AdminReviews />} /> */}
+          <Route path="/admin/profile" element={<AdminProfileSetting />} />
+          <Route path="/admin/reviews" element={<CommentManagement />} />
           {/* <Route path='/admin/transaction' element={<Transactions />} /> */}
-          <Route path="/admin/specialites" element={<Specialites />} />
+          <Route path="/admin/specialities" element={<Specialites />} />
+          <Route path="/admin/services" element={<Services />} />
+          <Route path="/admin/user" element={<AccountManagement />} />
+          <Route path="/admin/profile-info" element={<ProfileInfor />} />
         </Route>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<SignInForm />} />

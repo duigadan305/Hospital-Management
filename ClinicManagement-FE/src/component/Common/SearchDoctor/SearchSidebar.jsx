@@ -58,7 +58,7 @@ const SearchSidebar = ({ setSearchTerm, setSorByGender, setSpecialist, resetFilt
     <div className="col-md-12 col-lg-4 col-xl-3">
 
       <div className="p-3 rounded" style={{ background: '#f3f3f3' }}>
-        <h5 className='text-center mb-3' style={{ color: '#05335c' }}>Điều kiện lọc</h5>
+        <h5 className='text-center mb-3' style={{ color: '#05335c' }}>Điều kiện tìm kiếm</h5>
         <div className="mb-3">
           <Search placeholder="Search..." onSearch={onSearch} enterButton allowClear />
         </div>
@@ -74,7 +74,7 @@ const SearchSidebar = ({ setSearchTerm, setSorByGender, setSpecialist, resetFilt
 
         <div className='mb-3'>
           <h6 style={{ color: '#05335c' }}>Giới tính</h6>
-          <div className='d-flex flex-column'>
+          <div className='d-flex flex-column' style={{alignItems: 'baseline'}}>
             <Radio.Group options={options} onChange={onSelectGender} />
           </div>
         </div>
@@ -86,8 +86,8 @@ const SearchSidebar = ({ setSearchTerm, setSorByGender, setSpecialist, resetFilt
 
         <div className='mb-3'>
           <h6 style={{ color: '#05335c' }}>Chọn chuyên khoa</h6>
-          <div className='d-flex flex-column'>
-            <Radio.Group options={doctorSpecialistOptions} onChange={onSelectSepcialist} />
+          <div className='d-flex flex-column' >
+            <Radio.Group style={{alignItems: 'baseline'}} options={doctorSpecialistOptions} onChange={onSelectSepcialist} />
           </div>
         </div>
 

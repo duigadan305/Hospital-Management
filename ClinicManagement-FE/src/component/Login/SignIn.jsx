@@ -8,6 +8,7 @@ import swal from 'sweetalert';
 import authApiService from '../../service/authApiService';
 
 const SignIn = ({state }) => {
+
     const handleResponse = useState();
     const [showForgotPassword, setShowForgotPassword] = useState(false);
     const [isForgotPassword, setIsForgotPassword] = useState(true);
@@ -156,7 +157,7 @@ const SignIn = ({state }) => {
                     from ? (navigate(from , { replace: true })) : (navigate('/dashboard' , { replace: true }));
                 }
                  else {
-                    from ? (navigate(from , { replace: true })) : (navigate('/admin/dashboards' , { replace: true }));
+                    from ? (navigate(from , { replace: true })) : (navigate('/admin/dashboard' , { replace: true }));
                 }
                 setEmail("");
                 setPassword("")
@@ -164,7 +165,7 @@ const SignIn = ({state }) => {
         } catch (error) {
             swal({
                 icon: 'error',
-                text: `Failed! Email or password is incorrect`,
+                text: `Email hoặc mật khẩu không đúng!`,
                 timer: 2000
             });
             setLoading(false);
@@ -178,58 +179,61 @@ const SignIn = ({state }) => {
                     ?
                     <form className="sign-in-form" onSubmit={onHandleForgotPassword}>
                         <h2 className="title">Quên mật khẩu?</h2>
-                        <div>To Forgot Your Password Please Enter your email</div>
+                        <div>Nhập email đã đăng ký</div>
                         <div className="input-field">
                             <span className="fIcon"><FaEnvelope /></span>
-                            <input name='email' value={formData.email} onChange={(e) => hanldeOnChange(e)} placeholder="Enter Your Email" type="email" required />
+                            <input name='email' value={formData.email} onChange={(e) => hanldeOnChange(e)} placeholder="Nhập email" type="email" required />
                         </div>
                        
                         {isForgotPassword ? 
                             <>
                                 <div className="input-field">
                                     <span className="fIcon"><FaKeyboard /></span>
-                                    <input name='otp' value={formData.otp} onChange={(e) => hanldeOnChange(e)} placeholder="Enter OTP" type="number" required />
+                                    <input name='otp' value={formData.otp} onChange={(e) => hanldeOnChange(e)} placeholder="Nhập OTP" type="number" required />
                                 </div>
                                 <div className="input-field">
                                     <span className="fIcon"><FaKey /></span>
-                                    <input name='password' value={formData.password} onChange={(e) => hanldeOnChange(e)} placeholder="Enter new password" type="password" required />
+                                    <input name='password' value={formData.password} onChange={(e) => hanldeOnChange(e)} placeholder="Nhập mật khẩu mới" type="password" required />
                                 </div>
-                                <div className="password-validatity mx-auto">
-                                    <div style={passwordValidation.carLength ? { color: "green" } : { color: "red" }}>
-                                        <p>{passwordValidation.numeric ? <FaCheck /> : <FaTimes />}
-                                            <span className="ms-2">Mật khẩu phải có ít nhất 8 ký tự</span></p>
-                                    </div>
+                                {
+                                    formData.password && 
+                                    <div className="password-validatity mx-auto">
+                                        <div style={passwordValidation.carLength ? { color: "green" } : { color: "red" }}>
+                                            <p>{passwordValidation.numeric ? <FaCheck /> : <FaTimes />}
+                                                <span className="ms-2">Mật khẩu phải có ít nhất 8 ký tự</span></p>
+                                        </div>
 
-                                    <div style={passwordValidation.specailChar ? { color: "green" } : { color: "red" }}>
-                                        <p>{passwordValidation.numeric ? <FaCheck /> : <FaTimes />}
-                                            <span className="ms-2">Mật khẩu phải có ký tự đặc biệt</span></p>
-                                    </div>
+                                        <div style={passwordValidation.specailChar ? { color: "green" } : { color: "red" }}>
+                                            <p>{passwordValidation.numeric ? <FaCheck /> : <FaTimes />}
+                                                <span className="ms-2">Mật khẩu phải có ký tự đặc biệt</span></p>
+                                        </div>
 
-                                    <div style={passwordValidation.upperLowerCase ? { color: "green" } : { color: "red" }}>
-                                        <p>{passwordValidation.numeric ? <FaCheck /> : <FaTimes />}
-                                            <span className="ms-2">Mật khẩu phải có chữ hoa và chữ thường</span></p>
-                                    </div>
+                                        <div style={passwordValidation.upperLowerCase ? { color: "green" } : { color: "red" }}>
+                                            <p>{passwordValidation.numeric ? <FaCheck /> : <FaTimes />}
+                                                <span className="ms-2">Mật khẩu phải có chữ hoa và chữ thường</span></p>
+                                        </div>
 
-                                    <div style={passwordValidation.numeric ? { color: "green" } : { color: "red" }}>
-                                        <p>{passwordValidation.numeric ? <FaCheck /> : <FaTimes />}
-                                            <span className="ms-2">Mật khẩu phải có ký tự số</span></p>
+                                        <div style={passwordValidation.numeric ? { color: "green" } : { color: "red" }}>
+                                            <p>{passwordValidation.numeric ? <FaCheck /> : <FaTimes />}
+                                                <span className="ms-2">Mật khẩu phải có ký tự số</span></p>
+                                        </div>
                                     </div>
-                                </div>
+                                }
                                 <button onClick={handleNewPass}
                                     className="btn btn-primary btn-block mt-2 iBtn"
                                     disabled={
                                         passwordValidation.carLength && passwordValidation.numeric && passwordValidation.upperLowerCase && passwordValidation.specailChar ? "" : true
                                     }
                                 >
-                                    {loading ? <Spinner animation="border" variant="info" /> : "Submit"}
+                                    {loading ? <Spinner animation="border" variant="info" /> : "Lưu"}
                                 </button>
                             </> : 
                             <button className="iBtn" type="submit" value="sign In" >
-                                {loading ? <Spinner animation="border" variant="info" /> : "Send OTP"}
+                                {loading ? <Spinner animation="border" variant="info" /> : "Gửi OTP"}
                             </button>
 
                         } 
-                         <div onClick={handleShowForgotPassword} className='text-bold' style={{ cursor: "pointer", color: '#4C25F5' }}>Stil Remember Password ?</div>
+                         <div onClick={handleShowForgotPassword} className='text-bold' style={{ cursor: "pointer", color: '#4C25F5' }}>Vẫn nhớ mật khẩu?</div>
                     </form>
                     :
                     <form className="sign-in-form" onSubmit={handleSubmit}>
@@ -251,7 +255,7 @@ const SignIn = ({state }) => {
                             {loading ? <Spinner animation="border" variant="info" /> : "Đăng nhập"}
                         </button>
                         <p className="social-text">Đăng nhập bằng Google</p>
-                        <SocialSignUp handleResponse={handleResponse} />
+                        <SocialSignUp  handleResponse={handleResponse} />
                     </form>
             }
         </>

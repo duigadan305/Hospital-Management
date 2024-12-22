@@ -270,3 +270,12 @@ html.menu-opened body {
     left: 0;
     position: absolute;
 }
+
+.dropdown:hover .dropdown-menu {
+	display: block; /* Hiển thị dropdown khi hover */
+  }
+
+  .nav-item.dropdown:hover .dropdown-menu {
+	display: block !important;/* Hiển thị dropdown */
+  }
+  

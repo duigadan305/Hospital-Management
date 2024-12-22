@@ -15,15 +15,6 @@ public class StaffController {
     @Autowired
     private IStaffService staffService;
 
-
-//    @PostMapping("/updatePatientInfo")
-//    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('USER')")
-//    public ResponseEntity<Response> updatePatientInfo(@RequestBody PatientDTO patientDTO) {
-//        Response response = patientService.updatePatientInfo(patientDTO);
-//        return ResponseEntity.status(response.getStatusCode()).body(response);
-//    }
-
-
     @GetMapping("/getStaffByEmail/{email}")
     public ResponseEntity<Response> getStaffByEmail(@PathVariable("email") String email) {
         Response response = staffService.getEmployeeInfo(email);

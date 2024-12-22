@@ -41,10 +41,25 @@ const TreatmentStep1 = ({treatmentDetail}) => {
     // const [medicalHistory, setMedicalHistory] = useState(treatmentDetail.medicalHistory || {});
     const [bodyExamination, setBodyExamination] = useState(treatmentDetail.bodyExamination || []);
     const [partExamination, setPartExamination] = useState(treatmentDetail.partExamination || []);
-    const [vitalSign, setVitalSign] = useState(treatmentDetail.vitalSign || {});
+    const [vitalSign, setVitalSign] = useState(() => {
+        const savedData = sessionStorage.getItem("vitalSign");
+        return savedData ? JSON.parse(savedData) : treatmentDetail.vitalSign || {};
+    });
     const [priliminaryDiagnosis, setPriliminaryDiagnosis] = useState(treatmentDetail?.priliminaryDiagnosis || "");
-    const [diseaseCode, setDiseaseCode] = useState("");
-    const [diseaseName, setDiseaseName] = useState("");
+    const [diseaseCode, setDiseaseCode] = useState(() => {
+        const savedData = sessionStorage.getItem("diseaseCode");
+        return savedData ? (savedData) : "";
+    });
+    useEffect(() => {
+        sessionStorage.setItem("diseaseCode", diseaseCode);
+    }, [diseaseCode]);
+    const [diseaseName, setDiseaseName] = useState(() => {
+        const savedData = sessionStorage.getItem("diseaseName");
+        return savedData ? (savedData) : "";
+    });
+    useEffect(() => {
+        sessionStorage.setItem("diseaseName", diseaseName);
+    }, [diseaseName]);
     
     // Tách chuỗi và lưu vào state
     useEffect(() => {
@@ -55,38 +70,33 @@ const TreatmentStep1 = ({treatmentDetail}) => {
         }
     }, [priliminaryDiagnosis]);
 
-    const [medicalHistoryList, setMedicalHistoryList] = useState(
-        treatmentDetail.medicalHistory?.map((item, index) => ({ id: index + 1, value: item })) || [{ id: 1, value: '' }]
-    );
+    const [medicalHistoryList, setMedicalHistoryList] = useState(() => {
+        const savedData = sessionStorage.getItem("medicalHistoryList");
+        return savedData
+            ? JSON.parse(savedData)
+            : treatmentDetail.medicalHistory?.map((item, index) => ({ id: index + 1, value: item })) || [{ id: 1, value: '' }];
+    });
     console.log("medii=>", medicalHistoryList);
-    const [bodyExaminationList, setBodyExaminationList] = useState(
-        treatmentDetail.bodyExamination
-            ? treatmentDetail.bodyExamination.map((item, index) => {
-                // Lấy key và value từ đối tượng trong mảng
-                const [name, value] = Object.entries(item)[0];
-                return {
-                    id: index + 1, // tạo ID tự động cho mỗi mục
-                    name: name,
-                    value: value,
-                };
-            })
-            : []
-    );
+    const [bodyExaminationList, setBodyExaminationList] = useState(() => {
+        const savedList = sessionStorage.getItem('bodyExaminationList');
+        return savedList
+            ? JSON.parse(savedList)
+            : treatmentDetail.bodyExamination?.map((item, index) => {
+                  const [name, value] = Object.entries(item)[0];
+                  return { id: index + 1, name, value };
+              }) || [];
+    });
     
-    const [partExaminationList, setPartExaminationList] = useState(
-        treatmentDetail.partExamination
-            ? treatmentDetail.partExamination.map((item, index) => {
-                // Lấy key và value từ đối tượng trong mảng
-                const [name, value] = Object.entries(item)[0];
-                return {
-                    id: index + 1, // tạo ID tự động cho mỗi mục
-                    name: name,
-                    value: value,
-                };
-            })
-            : []
-    );
-    console.log("bodyy=>", bodyExaminationList);
+    const [partExaminationList, setPartExaminationList] = useState(() => {
+        const savedList = sessionStorage.getItem('partExaminationList');
+        return savedList
+            ? JSON.parse(savedList)
+            : treatmentDetail.partExamination?.map((item, index) => {
+                  const [name, value] = Object.entries(item)[0];
+                  return { id: index + 1, name, value };
+              }) || [];
+    });
+
     //medicalHistory
     const addMedicalHistoryList = (e) => {
         e.preventDefault();
@@ -102,8 +112,11 @@ const TreatmentStep1 = ({treatmentDetail}) => {
             medicalHistoryList.map((item) => (item.id === id ? { ...item, value: newValue } : item))
         );
     };
+    useEffect(() => {
+        sessionStorage.setItem("medicalHistoryList", JSON.stringify(medicalHistoryList));
+    }, [medicalHistoryList]);
 
-    //
+    //body exam
     const addBodyExaminationItem = () => {
         const newId = bodyExaminationList.length + 1;
         setBodyExaminationList([
@@ -126,8 +139,12 @@ const TreatmentStep1 = ({treatmentDetail}) => {
             )
         );
     };
+
+    useEffect(() => {
+        sessionStorage.setItem('bodyExaminationList', JSON.stringify(bodyExaminationList));
+    }, [bodyExaminationList]);
     
-    //
+    //part exam
     const addPartExaminationItem = () => {
         const newId = partExaminationList.length + 1;
         setPartExaminationList([
@@ -150,6 +167,11 @@ const TreatmentStep1 = ({treatmentDetail}) => {
         );
     };
 
+    useEffect(() => {
+        sessionStorage.setItem('partExaminationList', JSON.stringify(partExaminationList));
+    }, [partExaminationList]);
+
+    //save data
     const saveTreatmentData = async (e) => {
         e.preventDefault();
         const priDiagnosis = `${diseaseCode} - ${diseaseName}`;
@@ -190,6 +212,11 @@ const TreatmentStep1 = ({treatmentDetail}) => {
          catch (error) {
         }
     }
+
+    //Vital sign
+    useEffect(() => {
+        sessionStorage.setItem("vitalSign", JSON.stringify(vitalSign));
+    }, [vitalSign]);
 
     const changeVitalSign = (e) => {
         const { name, value } = e.target;

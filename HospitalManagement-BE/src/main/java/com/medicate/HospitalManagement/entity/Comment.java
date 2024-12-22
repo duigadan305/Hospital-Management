@@ -16,7 +16,7 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    private String type; //Contact or Review
     private String subject;
     private String content;
     private Timestamp sendDate;

@@ -8,4 +8,5 @@ public interface IStaffService {
     Response getAllAppointment();
     Response handleAppointmentPayment(AppointmentDTO appointmentDTO);
     Response addAppointmentBill(AppointmentBillDTO appointmentBillDTO);
+
 }

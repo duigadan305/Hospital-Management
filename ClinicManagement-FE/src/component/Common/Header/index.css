@@ -28,7 +28,7 @@
     background: #fff;
     transition: all 0.5s;
     z-index: 997;
-    top: 40px;
+    top: 5px;
     box-shadow: 0px 2px 15px rgba(25, 119, 204, 0.1);
 }
 
@@ -235,4 +235,39 @@
 }
 .ant-drawer-body{
     background-color: #d2d2ff;
+}
+
+.notification-bell {
+    position: relative;
+    display: inline-block;
+    margin-left: 20px;
+}
+
+.notification-icon {
+    color: #f39c12;
+}
+
+.notification-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+.notification-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.notification-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.notification-item:hover {
+    background-color: #f0f0f0;
 }

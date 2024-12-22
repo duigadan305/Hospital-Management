@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export default class DoctorApiService {
-  static BASE_URL = "http://localhost:4000";
+  static BASE_URL = process.env.REACT_APP_API_URL;
 
   static getHeader() {
     const token = localStorage.getItem("token");
@@ -165,6 +165,16 @@ export default class DoctorApiService {
   static async getDrugAllergyByPatientId(id) {
     const response = await axios.get(
       `${this.BASE_URL}/doctor/getDrugAllergyByPatientId/${id}`,
+      {
+        headers: this.getHeader(),
+      }
+    );
+    return response.data;
+  }
+
+  static async deleteTreatmentService(id) {
+    const response = await axios.delete(
+      `${this.BASE_URL}/doctor/deleteTreatmentService/${id}`,
       {
         headers: this.getHeader(),
       }

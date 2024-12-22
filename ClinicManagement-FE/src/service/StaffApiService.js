@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export default class StaffApiService {
-  static BASE_URL = "http://localhost:4000";
+  static BASE_URL = process.env.REACT_APP_API_URL;
 
   static getHeader() {
     const token = localStorage.getItem("token");

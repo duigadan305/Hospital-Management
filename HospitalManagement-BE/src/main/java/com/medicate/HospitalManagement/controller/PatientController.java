@@ -64,4 +64,22 @@ public class PatientController {
         Response response = patientService.addDrugAllergy(drugAllergyDTO);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
+
+    @GetMapping("/getAllPatientComment/{id}")
+    public ResponseEntity<Response> getAllPatientComment(@PathVariable("id") Long id) {
+        Response response = patientService.getAllPatientComment(id);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
+    @PostMapping("/updateComment")
+    public ResponseEntity<Response> updateComment(@RequestBody CommentDTO commentDTO) {
+        Response response = patientService.updateComment(commentDTO);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
+    @DeleteMapping("/deleteComment/{id}")
+    public ResponseEntity<Response> deleteUSer(@PathVariable("id") Long id) {
+        Response response = patientService.deleteComment(id);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
 }

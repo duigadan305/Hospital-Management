@@ -101,7 +101,7 @@ const SignUp = ({ setSignUp }) => {
                 // }, 3000);
                 swal({
                     icon: 'success',
-                    text: `Check your email to verify your account!`,
+                    text: `Kiểm tra email để xác thực tài khoản!`,
                     timer: 2000
                 })
                 setLoading(false)
@@ -138,11 +138,11 @@ const SignUp = ({ setSignUp }) => {
             <h2 className="title">Đăng ký</h2>
             <div className="input-field">
                 <span className="fIcon"><FaUser /></span>
-                <input placeholder="Full Name" name="name" type="text" onChange={(e) => hanldeOnChange(e)} value={formData.name} required />
+                <input placeholder="Tên đầy đủ" name="name" type="text" onChange={(e) => hanldeOnChange(e)} value={formData.name} required />
             </div>
             <div className="input-field">
                 <span className="fIcon"><FaPhone /></span>
-                <input placeholder="Phone number" name="phone" type="text" onChange={(e) => hanldeOnChange(e)} value={formData.phone} required />
+                <input placeholder="Số điện thoại" name="phone" type="text" onChange={(e) => hanldeOnChange(e)} value={formData.phone} required />
             </div>
             <div className="input-field">
                 <span className="fIcon"><FaEnvelope /></span>
@@ -150,7 +150,7 @@ const SignUp = ({ setSignUp }) => {
             </div>
             <div className="input-field">
                 <span className="fIcon"><FaLock /></span>
-                <input type="password" name="password" placeholder="password" onChange={(e) => hanldeOnChange(e)} value={formData.password} required/>
+                <input type="password" name="password" placeholder="Mật khẩu" onChange={(e) => hanldeOnChange(e)} value={formData.password} required/>
             </div>
             {error.length && <h6 className="text-danger text-center">{error}</h6>}
             {infoError && <h6 className="text-danger text-center">{infoError}</h6>}

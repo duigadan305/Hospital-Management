@@ -6,13 +6,16 @@ import com.medicate.HospitalManagement.entity.*;
 import com.medicate.HospitalManagement.exception.OurException;
 import com.medicate.HospitalManagement.repo.*;
 import com.medicate.HospitalManagement.service.Interface.IPatientService;
+import com.medicate.HospitalManagement.utils.DateUtils;
 import com.medicate.HospitalManagement.utils.JWTUtils;
 import com.medicate.HospitalManagement.utils.Utils;
+import com.medicate.HospitalManagement.ws.configuration.NotificationController;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -39,14 +43,15 @@ public class PatientService implements IPatientService {
     private TreatmentDetailRepo treatmentDetailRepository;
     @Autowired
     private DrugAllergyRepo drugAllergyRepository;
-
+    @Autowired
+    public NotificationController notificationController;
 
     @Override
     public Response updatePatientInfo(PatientDTO patientDTO) {
         Response response = new Response();
         try {
 
-            Patient patient = patientRepository.findByUserId(patientDTO.getUser().getId())
+            Patient patient = patientRepository.findById(patientDTO.getId())
                     .orElseThrow(() -> new OurException("Patient Not found"));
 
             // Cập nhật thông tin của bảng patient nếu giá trị trong patientDTO không null hoặc rỗng
@@ -158,6 +163,7 @@ public class PatientService implements IPatientService {
             }
 
             com.setSubject(comment.getSubject());
+            com.setType(comment.getType());
             com.setContent(comment.getContent());
             com.setStar(comment.getStar());
             com.setSendDate(Timestamp.from(Instant.now()));
@@ -286,5 +292,101 @@ public class PatientService implements IPatientService {
         return response;
     }
 
+    @Override
+    public Response getAllPatientComment(Long id) {
+        Response response = new Response();
+
+        try {
+            List<Comment> commentList= commentRepository.findByPatientId(id);
+            List<CommentDTO> commentDTOList = Utils.mapCommentListEntityToCommentListDTO(commentList);
+            response.setStatusCode(200);
+            response.setCommentList(commentDTOList);
+            response.setMessage("successful");
+
+        } catch (OurException e) {
+            response.setStatusCode(404);
+            response.setMessage(e.getMessage());
+
+        } catch (Exception e) {
+
+            response.setStatusCode(500);
+            response.setMessage("Error getting all users " + e.getMessage());
+        }
+        return response;
+    }
+
+    @Override
+    public Response updateComment(CommentDTO commentDTO) {
+        Response response = new Response();
+
+        try {
+            Comment comment= commentRepository.findById(commentDTO.getId()).get();
+            if(commentDTO.getType().equals("Review")){
+                comment.setStar(commentDTO.getStar());
+            }
+            comment.setSubject(commentDTO.getSubject());
+            comment.setContent(commentDTO.getContent());
+            response.setStatusCode(200);
+            response.setComment(commentDTO);
+            response.setMessage("successful");
+            commentRepository.save(comment);
+        } catch (OurException e) {
+            response.setStatusCode(404);
+            response.setMessage(e.getMessage());
+
+        } catch (Exception e) {
+
+            response.setStatusCode(500);
+            response.setMessage("Error getting all users " + e.getMessage());
+        }
+        return response;
+    }
+
+    @Override
+    public Response deleteComment(Long id) {
+        Response response = new Response();
+
+        try {
+            Comment comment= commentRepository.findById(id).get();
+            commentRepository.delete(comment);
+            response.setStatusCode(200);
+            response.setMessage("successful");
+        } catch (OurException e) {
+            response.setStatusCode(404);
+            response.setMessage(e.getMessage());
+
+        } catch (Exception e) {
+
+            response.setStatusCode(500);
+            response.setMessage("Error getting all users " + e.getMessage());
+        }
+        return response;
+    }
+
+    @Scheduled(cron = "0 12 22 * * ?") // Chạy lúc 9:00 sáng mỗi ngày
+    public void notifyUpcomingAppointments() {
+        LocalDate today = LocalDate.now();
+        LocalDate tomorrow = today.plusDays(1);
+
+        List<Appointment> appointments = appointmentRepository.findAll(); // Lấy tất cả lịch hẹn
+
+        for (Appointment appointment : appointments) {
+            // Chuyển đổi appointmentTime từ String sang LocalDateTime
+            Optional<LocalDateTime> optionalDateTime = DateUtils.parseStringToDateTime(appointment.getAppointmentTime());
+
+            if (optionalDateTime.isPresent()) {
+                LocalDateTime appointmentDateTime = optionalDateTime.get();
+
+                // Kiểm tra nếu lịch hẹn rơi vào ngày mai
+                if (appointmentDateTime.toLocalDate().equals(tomorrow)) {
+                    String patientEmail = (appointment.getPatient().getUser().getEmail()).split("@")[0];
+                    String message = "Bạn có lịch hẹn vào ngày " + appointment.getAppointmentTime() + ". Vui lòng đến đúng giờ.";
+                    notificationController.sendAppointmentNotification(patientEmail,message);
+                }
+            } else {
+                System.err.println("Lỗi: Không thể phân tích appointmentTime cho ID " + appointment.getId());
+            }
+        }
+    }
 
 }

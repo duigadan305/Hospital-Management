@@ -6,7 +6,7 @@
     position: fixed;
     top: 60px;	
     transition: all 0.2s ease-in-out 0s;
-    width: 240px;
+    width: 260px;
     z-index: 1001;
 }
 .sidebar.opened {
@@ -181,4 +181,17 @@
 }
 .sidebar-menu li a > .badge {
     color: #fff;
+}
+
+.sidebar-menu .submenu > a {
+    cursor: pointer;
+}
+
+.sidebar-menu .submenu ul {
+    display: none;
+    margin-left: 20px;
+}
+
+.sidebar-menu .submenu ul.open {
+    display: block;
 }

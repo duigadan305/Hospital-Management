@@ -47,7 +47,7 @@ const DoctorDashCard = () => {
         };
     
         fetchAppointment();
-        }, [doctorData]
+        }, [data]
     );
     
     const getUniquePatientsCount = (appointmentData) => {

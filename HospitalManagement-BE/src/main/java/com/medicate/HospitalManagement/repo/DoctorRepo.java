@@ -15,9 +15,11 @@ public interface DoctorRepo extends JpaRepository<Doctor, Long> {
 
     @Query("SELECT d FROM Doctor d JOIN FETCH d.user u JOIN FETCH d.specialty s WHERE "
             + "(:name IS NULL OR d.user.name LIKE %:name%) AND "
+            + "(:email IS NULL OR d.user.email LIKE %:email%) AND "
             + "(:gender IS NULL OR d.gender = :gender) AND "
             + "(:specialtyId IS NULL OR d.specialty.id = :specialtyId)")
     List<Doctor> findDoctorsByCriteria(@Param("name") String name,
+                                       @Param("email") String email,
                                        @Param("gender") String gender,
                                        @Param("specialtyId") Long specialtyId);
 

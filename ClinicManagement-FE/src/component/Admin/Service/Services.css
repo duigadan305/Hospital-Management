@@ -1,0 +1,261 @@
+.dash-widget-icon {
+    align-items: center;
+    display: inline-flex;
+    font-size: 1.875rem;
+    height: 50px;
+    justify-content: center;
+    line-height: 48px;
+    text-align: center;
+    width: 50px;
+	border: 3px solid;
+    border-radius: 50px;
+    padding: 28px;
+}
+.avatar-img{
+    height: 20px;
+    width: 20px;
+    object-fit: cover;
+}
+.table-avatar a{
+    font-size: 14px;
+    text-decoration: none;
+    color: inherit;
+}
+.dash-count {
+    font-size: 18px;
+    margin-left: auto;
+}
+.dash-widget-info h3 {
+    margin-bottom: 10px;
+}
+.dash-widget-header {
+    align-items: center;
+    display: flex;
+    margin-bottom: 15px;
+}
+.card-chart .card-body {
+	padding: 8px;
+}
+#morrisArea > svg, #morrisLine > svg  {
+	width: 100%;
+}
+.activity-feed {
+    list-style: none;
+    margin-bottom: 0;
+    margin-left: 5px;
+    padding: 0;
+}
+.activity-feed .feed-item {
+    border-left: 2px solid #e4e8eb;
+    padding-bottom: 19px;
+    padding-left: 20px;
+    position: relative;
+}
+.activity-feed .feed-item:last-child {
+	border-color: transparent;
+	padding-bottom: 0;
+}
+.activity-feed .feed-item:after {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -7px;
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+	background-color: #177dff;
+}
+.activity-feed .feed-item .feed-date {
+	display: block;
+	position: relative;
+	color: #777;
+	text-transform: uppercase;
+	font-size: 13px;
+ }
+.activity-feed .feed-item .feed-text {
+	color: #777;
+	position: relative;
+}
+.activity-feed .feed-item .feed-text a {
+    color: #333;
+    font-weight: 600;
+}
+
+/* Toàn bộ giao diện */
+body {
+    font-family: "Arial", sans-serif;
+    background-color: #f7f8fa;
+    margin: 0;
+    padding: 0;
+  }
+  
+  h1 {
+    text-align: center;
+    margin: 20px 0;
+    font-size: 24px;
+    color: #333;
+  }
+  
+  /* Container */
+  /* .ant-table-wrapper {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+  } */
+  
+  .ant-input-search {
+    max-width: 400px;
+    margin: 0 auto 20px;
+    display: block;
+  }
+  
+  .ant-btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    font-weight: bold;
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+  
+  .ant-btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+  }
+  
+  /* Bảng */
+  .ant-table-wrapper .ant-table-thead >tr>th {
+    /* background-color: #e6f7ff; */
+    color: #1890ff;
+    font-weight: bold;
+    text-align: center; /* Căn giữa tiêu đề cột */
+    font-size: 16px;
+  }
+
+  .ant-table-cell {
+    text-align: center;
+  }
+  
+  .ant-table-tbody > tr > td {
+    text-align: center;
+  }
+  
+  .ant-table-tbody > tr:hover > td {
+    background-color: #f0f9ff;
+  }
+  
+  /* Nút */
+  button {
+    cursor: pointer;
+  }
+  
+  .ant-btn-link {
+    color: #007bff;
+  }
+  
+  .ant-btn-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+  }
+  
+  .ant-btn-danger {
+    color: #ff4d4f;
+  }
+  
+  .ant-btn-danger:hover {
+    color: #cf1322;
+  }
+  
+  /* Phân trang */
+  .ant-pagination {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 20px;
+  }
+  
+  /* Modal */
+  .ant-modal-content {
+    border-radius: 10px;
+  }
+  
+  .ant-modal-header {
+    background-color: #007bff;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 10px 10px 0 0;
+  }
+  
+  .ant-modal-footer {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .ant-modal-footer .ant-btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+  
+  .ant-modal-footer .ant-btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+  }
+  
+  /* Form */
+  .ant-form-item {
+    margin-bottom: 20px;
+  }
+  
+  .ant-form-item-label > label {
+    font-weight: bold;
+  }
+  
+  .ant-input,
+  .ant-input-textarea {
+    border-radius: 5px;
+  }
+  
+  .ant-input:hover,
+  .ant-input-textarea:hover {
+    border-color: #007bff;
+  }
+  
+
+/* Nút Sửa */
+.edit-button {
+    background-color: #52c41a; /* Màu xanh */
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .edit-button:hover {
+    background-color: #389e0d; /* Xanh đậm hơn khi hover */
+  }
+  
+  /* Nút Xóa */
+  .delete-button {
+    background-color: #ff4d4f; /* Màu đỏ */
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .delete-button:hover {
+    background-color: #cf1322; /* Đỏ đậm hơn khi hover */
+  }
+  
+  /* Hiệu ứng hover trên dòng bảng */
+  .ant-table-tbody > tr:hover > td {
+    background-color: #f0f9ff;
+    transition: background-color 0.3s;
+  }

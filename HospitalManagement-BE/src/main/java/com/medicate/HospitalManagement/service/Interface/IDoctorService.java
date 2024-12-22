@@ -23,4 +23,5 @@ public interface IDoctorService {
     Response getAllTreatedPatient();
     Response getAppointmentByPatientAndStatus(Long id, String status);
     Response getDrugAllergyByPatientId(Long id);
+    Response deleteTreatmentService(Long id);
 }

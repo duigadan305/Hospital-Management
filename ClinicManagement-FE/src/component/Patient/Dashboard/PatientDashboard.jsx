@@ -47,7 +47,7 @@ const PatientDashboard = () => {
         };
     
         fetchAppointment();
-      }, [patientData, appointmentData]);
+      }, [patientData]);
 
       const updatedApppointmentStatus = async (data, type) => {
         try {
@@ -130,17 +130,31 @@ const PatientDashboard = () => {
             width: 50,
             render: function (appointmentData) {
                 return <div style={{ textAlign: 'left' }}>
-                <Tag color="#f50">{
-                    appointmentData?.status === "Pending" 
-                    ? "Chờ tiếp nhận" 
-                    : appointmentData?.status === "Accepted" 
-                    ? "Chấp nhận" 
-                    : appointmentData?.status === "Pended" 
-                    ? "Tiếp nhận" 
-                    : appointmentData?.status === "Treated" 
-                    ? "Đã khám"
-                    : "Hủy"
-                }</Tag>
+                <Tag 
+                    color={
+                        appointmentData?.status === "Pending" 
+                        ? "#FFA500" // Màu cam cho "Chờ tiếp nhận"
+                        : appointmentData?.status === "Accepted" 
+                        ? "#008000" // Màu xanh lá cho "Chấp nhận"
+                        : appointmentData?.status === "Pended" 
+                        ? "#1E90FF" // Màu xanh dương cho "Tiếp nhận"
+                        : appointmentData?.status === "Treated" 
+                        ? "#6A5ACD" // Màu tím cho "Đã khám"
+                        : "#FF0000" // Màu đỏ cho "Hủy"
+                    }
+                >
+                    {appointmentData?.status === "Pending" 
+                        ? "Chờ tiếp nhận" 
+                        : appointmentData?.status === "Accepted" 
+                        ? "Chấp nhận" 
+                        : appointmentData?.status === "Pended" 
+                        ? "Tiếp nhận" 
+                        : appointmentData?.status === "Treated" 
+                        ? "Đã khám"
+                        : "Hủy"
+                    }
+                </Tag>
+
             </div>
             }
         },
@@ -152,7 +166,7 @@ const PatientDashboard = () => {
                 return (
                     <div style={{ display: 'flex', justifyContent:'space-between' }}>
                         
-                        {(appointmentData?.status == 'Pending'||appointmentData?.status == 'Pended') &&<Button type='primary'  onClick={() => showConfirmCancel(appointmentData, 'Cancel')}>Hủy</Button>}
+                        {(appointmentData?.status == 'Pending'||appointmentData?.status == 'Pended') &&<Button type='primary' style={{backgroundColor:'#FF0000'}} onClick={() => showConfirmCancel(appointmentData, 'Cancel')}>Hủy</Button>}
                         {(appointmentData?.status == 'Treated') &&
                          <Link 
                             to={`/medical-record/${appointmentData.id}`}

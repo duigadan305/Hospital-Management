@@ -34,8 +34,9 @@ public class GeneralService implements IGeneralService {
         Response response = new Response();
         String name = doctorRequest.getUser() != null ? doctorRequest.getUser().getName() : null;
         String gender = doctorRequest.getGender();
+        String email = doctorRequest.getUser() != null ? doctorRequest.getUser().getEmail() : null;
         Long specialtyId = doctorRequest.getSpecialty() != null ? doctorRequest.getSpecialty().getId() : null;
-        List<Doctor> doctorList =  doctorRepository.findDoctorsByCriteria(name, gender, specialtyId);
+        List<Doctor> doctorList =  doctorRepository.findDoctorsByCriteria(name, email, gender, specialtyId);
         List<DoctorDTO> doctorDTOList = new ArrayList<>();
         for (Doctor doctor : doctorList){
             DoctorDTO doctorDTO = Utils.mapDoctorEntityToDoctorDTO(doctor);

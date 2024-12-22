@@ -116,4 +116,10 @@ public class DoctorController {
         Response response = doctorService.getDrugAllergyByPatientId(id);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
+
+    @DeleteMapping("/deleteTreatmentService/{id}")
+    public ResponseEntity<Response> deleteUser(@PathVariable("id") Long id) {
+        Response response = doctorService.deleteTreatmentService(id);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
 }

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export default class PatientApiService {
-  static BASE_URL = "http://localhost:4000";
+  static BASE_URL = process.env.REACT_APP_API_URL;
 
   static getHeader() {
     const token = localStorage.getItem("token");
@@ -121,6 +121,37 @@ export default class PatientApiService {
     const response = await axios.post(
       `${this.BASE_URL}/patient/addDrugAllergy`,
       DrugAllergyDTO,
+      {
+        headers: this.getHeader(),
+      }
+    );
+    return response.data;
+  }
+
+  static async getAllPatientComment(id) {
+    const response = await axios.get(
+      `${this.BASE_URL}/patient/getAllPatientComment/${id}`,
+      {
+        headers: this.getHeader(),
+      }
+    );
+    return response.data;
+  }
+
+  static async updateComment(commentDTO) {
+    const response = await axios.post(
+      `${this.BASE_URL}/patient/updateComment`,
+      commentDTO,
+      {
+        headers: this.getHeader(),
+      }
+    );
+    return response.data;
+  }
+
+  static async deleteComment(id) {
+    const response = await axios.delete(
+      `${this.BASE_URL}/patient/deleteComment/${id}`,
       {
         headers: this.getHeader(),
       }

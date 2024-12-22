@@ -74,7 +74,7 @@ const BookingConfirm = ({ patientData, selectedDoctor, selectTime, reason }) => 
                         
                         <div className="terms-accept">
                             <div className="custom-checkbox">
-                                <label htmlFor="terms_accept"> Tôi đã đọc và chấp nhận các <a className='text-primary' style={{ cursor: 'pointer', textDecoration: 'none' }}>Điều khoản &amp; Điều kiện</a></label>
+                                <label htmlFor="terms_accept"> Tôi đã đọc và chấp nhận các&nbsp;<a className='text-primary' style={{ cursor: 'pointer', textDecoration: 'none' }}> Điều khoản &amp; Điều kiện</a></label>
                             </div>
                         </div>
                     </div>

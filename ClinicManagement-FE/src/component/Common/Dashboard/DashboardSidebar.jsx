@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 // import img from '../../images/avatar.jpg';
 import './DashboardSidebar.css';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import useAuthCheck from '../../../service/useAuthCheck';
 import PatientApiService from '../../../service/PatientApiService';
 import {
@@ -11,14 +11,20 @@ import {
     FaHourglassStart,
     FaSignOutAlt,
     FaLock,
-    FaHouseUser
+    FaHouseUser,
+    FaEnvelope,
+    FaFileInvoice
 } from "react-icons/fa";
 import DoctorApiService from '../../../service/DoctorApiService';
+import { FaFileLines } from 'react-icons/fa6';
+import authApiService from '../../../service/authApiService';
+import { message } from 'antd';
 
 const DashboardSidebar = () => {
     const { data, role } = useAuthCheck();
     const [patientData, setPatientData] = useState({});
     const [doctorData, setDoctorData] = useState({});
+    const navigate = useNavigate();
     const checkAuthAndSetData = async () => {
         if (role == "USER"&&data) {
             try {
@@ -42,6 +48,12 @@ const DashboardSidebar = () => {
     useEffect(() => {
         checkAuthAndSetData();
     }, [data, role]);
+
+    const hanldeSignOut = () => {
+        authApiService.logout();
+        message.success("Successfully Logged Out")
+        navigate('/login')
+    }
 
     return (
         <div className="profile-sidebar p-3 rounded">
@@ -81,14 +93,20 @@ const DashboardSidebar = () => {
                             </li>
                             { <li>
                                 <NavLink to={`/patient-detail/${patientData?.id}`} activeClassName="active">
-                                    <FaHouseUser className="icon" />
+                                    <FaFileLines className="icon" />
                                     <span>Hồ sơ bệnh án</span>
                                 </NavLink>
                             </li> }
                             <li>
                                 <NavLink to={`/patient-invoice-detail/${patientData?.id}`} activeClassName="active">
-                                    <FaUserCog className="icon" />
+                                    <FaFileInvoice className="icon" />
                                     <span>Hóa đơn</span>
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink to={`/patient-comment/${patientData?.id}`} activeClassName="active">
+                                    <FaEnvelope className="icon" />
+                                    <span>Bình luận</span>
                                 </NavLink>
                             </li>
                             <li>
@@ -105,8 +123,8 @@ const DashboardSidebar = () => {
                                 </NavLink>
                             </li>
                             <li>
-                                <NavLink to={'/'}>
-                                    <FaSignOutAlt className="icon" />
+                                <NavLink to={'/login'} onClick={hanldeSignOut}>
+                                    <FaSignOutAlt className="icon" end />
                                     <span>Đăng xuất</span>
                                 </NavLink>
                             </li>
@@ -126,7 +144,7 @@ const DashboardSidebar = () => {
                                     </NavLink>
                                 </li>
                                 <li>
-                                    <NavLink to={'/dashboard/profile-setting'} activeClassName="active" end>
+                                    <NavLink to={'/dashboard/staff-profile'} activeClassName="active" end>
                                         <FaUserCog className="icon" />
                                         <span>Thông tin cá nhân</span>
                                     </NavLink>
@@ -138,7 +156,7 @@ const DashboardSidebar = () => {
                                     </NavLink>
                                 </li>
                                 <li>
-                                    <NavLink to={'/'}>
+                                    <NavLink to={'/login'} onClick={hanldeSignOut}>
                                         <FaSignOutAlt className="icon" end />
                                         <span>Đăng xuất</span>
                                     </NavLink>
@@ -179,7 +197,7 @@ const DashboardSidebar = () => {
                                 </NavLink>
                             </li>
                             <li>
-                                <NavLink to={'/'}>
+                                <NavLink to={'/login'} onClick={hanldeSignOut}>
                                     <FaSignOutAlt className="icon" end />
                                     <span>Đăng xuất</span>
                                 </NavLink>

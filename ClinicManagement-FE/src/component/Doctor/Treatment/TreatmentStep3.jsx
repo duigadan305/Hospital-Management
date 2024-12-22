@@ -55,11 +55,45 @@ const TreatmentStep3 = ({treatmentDetail, serviceData, setServiceData, treatDeta
     }, [treatmentDetail]);
 
     const [finallyDiagnosis, setFinallyDiagnosis] = useState("");
-    const [diseaseCode, setDiseaseCode] = useState("");
-    const [diseaseName, setDiseaseName] = useState("");
-    const [selectedDirection, setSelectedDirection] = useState(''); // Quản lý giá trị của select
-    const [followUpDate, setFollowUpDate] = useState(0);
-    const [prescriptionList, setPrescriptionList] = useState([{ id: 1, drugName: '', dosage: '', quantity: '', unit: '', usageInstruction: '', appointment: {id: treatmentDetail.appointment.id} }]);
+    const [prescriptionList, setPrescriptionList] = useState(() => {
+        const savedList = sessionStorage.getItem("prescriptionList");
+        return savedList
+            ? JSON.parse(savedList)
+            : [{ id: 1, drugName: '', dosage: '', quantity: '', unit: '', usageInstruction: '', appointment: { id: treatmentDetail.appointment.id } }];
+    });
+    useEffect(() => {
+        sessionStorage.setItem("prescriptionList", JSON.stringify(prescriptionList));
+    }, [prescriptionList]);
+
+
+    const [followUpDate, setFollowUpDate] = useState(() => {
+        const savedData = sessionStorage.getItem("followUpDate");
+        return savedData ? (savedData) : "";
+    });
+    useEffect(() => {
+        sessionStorage.setItem("followUpDate", followUpDate);
+    }, [followUpDate]);
+    const [selectedDirection, setSelectedDirection] = useState(() => {
+        const savedData = sessionStorage.getItem("selectedDirection");
+        return savedData ? (savedData) : "";
+    });
+    useEffect(() => {
+        sessionStorage.setItem("selectedDirection", selectedDirection);
+    }, [selectedDirection]);
+    const [diseaseCode, setDiseaseCode] = useState(() => {
+        const savedData = sessionStorage.getItem("finalDiseaseCode");
+        return savedData ? (savedData) : "";
+    });
+    useEffect(() => {
+        sessionStorage.setItem("finalDiseaseCode", diseaseCode);
+    }, [diseaseCode]);
+    const [diseaseName, setDiseaseName] = useState(() => {
+        const savedData = sessionStorage.getItem("finalDiseaseName");
+        return savedData ? (savedData) : "";
+    });
+    useEffect(() => {
+        sessionStorage.setItem("finalDiseaseName", diseaseName);
+    }, [diseaseName]);
 
     const handleFileUpload = (e, index) => {
         const file = e.target.files[0];
@@ -147,7 +181,7 @@ const TreatmentStep3 = ({treatmentDetail, serviceData, setServiceData, treatDeta
             }
             if (response1.statusCode === 200) {
                 // Clear the form fields after successful registration
-                
+                sessionStorage.clear();
                 swal({
                     icon: 'success',
                     text: `Kết thúc khám`,
@@ -221,14 +255,14 @@ const TreatmentStep3 = ({treatmentDetail, serviceData, setServiceData, treatDeta
                                 <div className="col-md-6 mb-3">
                                     <div className="form-group mb-2" style={{display: 'flex'}}>
                                         <label style={{width:'100px'}}>Mã bệnh</label>
-                                        <input  onChange={(e) => setDiseaseCode(e.target.value)}  style={{marginRight: '10px', marginLeft:'10px'}} defaultValue='' className="form-control"/>
+                                        <input value={diseaseCode}  onChange={(e) => setDiseaseCode(e.target.value)}  style={{marginRight: '10px', marginLeft:'10px'}} defaultValue='' className="form-control"/>
                                         
                                     </div>
                                 </div>
                                 <div className="col-md-6 mb-3">
                                     <div className="form-group mb-2" style={{display: 'flex'}}>
                                         <label style={{width:'100px'}}>Tên bệnh</label>
-                                        <input onChange={(e) => setDiseaseName(e.target.value)}  style={{marginRight: '10px', marginLeft:'10px'}} defaultValue='' className="form-control"/> 
+                                        <input value={diseaseName} onChange={(e) => setDiseaseName(e.target.value)}  style={{marginRight: '10px', marginLeft:'10px'}} defaultValue='' className="form-control"/> 
                                         
                                     </div>
                                 </div>
@@ -257,7 +291,7 @@ const TreatmentStep3 = ({treatmentDetail, serviceData, setServiceData, treatDeta
                                     <label style={{width:'200px', marginLeft: '50px'}} className="mb-2">Số ngày hẹn khám lại:</label>
                                     <input
                                         style={{ width: '70px' }}
-                                        defaultValue=''
+                                        defaultValue={followUpDate}
                                         onChange={(e) => setFollowUpDate(e.target.value)}
                                         className="form-control mb-3"
                                     />

@@ -1,6 +1,10 @@
 package com.medicate.HospitalManagement.controller;
 
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.medicate.HospitalManagement.dto.GoogleLoginRequest;
 import com.medicate.HospitalManagement.dto.LoginRequest;
 import com.medicate.HospitalManagement.dto.RegisterRequest;
 import com.medicate.HospitalManagement.dto.Response;
@@ -9,6 +13,9 @@ import com.medicate.HospitalManagement.service.Interface.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+
+import java.util.Collections;
 
 @RestController
 @RequestMapping("/auth")
@@ -57,5 +64,12 @@ public class AuthController {
     public ResponseEntity<Response> registerConfirm(@RequestBody User user) {
         Response response = userService.confirmEmail(user);
         return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
+
+    @PostMapping("/google-login")
+    public ResponseEntity<Response> googleLogin(@RequestBody GoogleLoginRequest request) {
+        Response response = userService.googleLogin(request);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+
     }
 }

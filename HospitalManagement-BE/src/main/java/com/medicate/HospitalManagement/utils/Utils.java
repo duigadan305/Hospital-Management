@@ -110,14 +110,17 @@ public class Utils {
     public static CommentDTO mapCommentEntityToCommentDTO(Comment comment) {
         CommentDTO commentDTO = new CommentDTO();
         PatientDTO patientDTO = Utils.mapPatientEntityToPatientDTO(comment.getPatient());
-        DoctorDTO doctorDTO = Utils.mapDoctorEntityToDoctorDTO(comment.getDoctor());
+        if(comment.getType().equals("Review")){
+            DoctorDTO doctorDTO = Utils.mapDoctorEntityToDoctorDTO(comment.getDoctor());
+            commentDTO.setDoctor(doctorDTO);
+        }
         commentDTO.setId(comment.getId());
+        commentDTO.setType(comment.getType());
         commentDTO.setSubject(comment.getSubject());
         commentDTO.setContent(comment.getContent());
         commentDTO.setSendDate(comment.getSendDate());
         commentDTO.setStar(comment.getStar());
         commentDTO.setPatient(patientDTO);
-        commentDTO.setDoctor(doctorDTO);
         return commentDTO;
     }
 

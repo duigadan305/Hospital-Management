@@ -1,10 +1,12 @@
 package com.medicate.HospitalManagement.service.impl;
 
 
-import com.medicate.HospitalManagement.dto.LoginRequest;
-import com.medicate.HospitalManagement.dto.RegisterRequest;
-import com.medicate.HospitalManagement.dto.Response;
-import com.medicate.HospitalManagement.dto.UserDTO;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.client.testing.json.MockJsonFactory;
+import com.medicate.HospitalManagement.dto.*;
 import com.medicate.HospitalManagement.entity.Patient;
 import com.medicate.HospitalManagement.entity.Specialty;
 import com.medicate.HospitalManagement.entity.User;
@@ -21,6 +23,8 @@ import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailAuthenticationException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -36,6 +40,10 @@ import java.util.*;
 
 @Service
 public class UserService implements IUserService {
+    @Value("${backend.url}")
+    private String backendUrl;
+    @Value("${frontend.url}")
+    private String frontendUrl;
     @Autowired
     private UserRepo userRepository;
     @Autowired
@@ -70,7 +78,7 @@ public class UserService implements IUserService {
             claims.put("name", user.getName());
             claims.put("phone", user.getPhone());
             var token = jwtUtils.generateRegisterToken(claims);
-            String confirmationUrl = "http://localhost:4000/auth/register?token=" + token;
+            String confirmationUrl = backendUrl+ "/auth/register?token=" + token;
             sendEmailConfirm(user.getEmail(), confirmationUrl, "Confirm you email");
             response.setStatusCode(200);
             response.setUser(userDTO);
@@ -113,7 +121,8 @@ public class UserService implements IUserService {
             patientRepository.save(patient);
             response.setStatusCode(200);
             response.setUser(userDTO);
-            httpServletResponse.sendRedirect("http://localhost:3000/login");
+            String direct = frontendUrl + "/login";
+            httpServletResponse.sendRedirect(direct);
         } catch (OurException e) {
             response.setStatusCode(400);
             response.setMessage(e.getMessage());
@@ -210,23 +219,6 @@ public class UserService implements IUserService {
         }
         return response;
     }
-
-   /* @Override
-    public Response getAllUsers() {
-        Response response = new Response();
-        try {
-            List<User> userList = userRepository.findAll();
-            List<UserDTO> userDTOList = Utils.mapUserListEntityToUserListDTO(userList);
-            response.setStatusCode(200);
-            response.setMessage("successful");
-            response.setUserList(userDTOList);
-
-        } catch (Exception e) {
-            response.setStatusCode(500);
-            response.setMessage("Error getting all users " + e.getMessage());
-        }
-        return response;
-    }*/
 
     /*@Override
     public Response deleteUser(String userId) {
@@ -341,16 +333,19 @@ public class UserService implements IUserService {
         return String.valueOf(otp);
     }
 
-    private void sendEmailWithOtp(String email, String content, String condition) {
+    public void sendEmailWithOtp(String email, String content, String condition) {
         // Tạo email mới
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
         if(condition.equals("sendOtp")){
-            message.setSubject("Your OTP Code");
-            message.setText("Your OTP code is: " + content + "\nThis OTP will expire in 5 minutes.");
+            message.setSubject("Mã OTP");
+            message.setText("Mã OTP là: " + content + "\nOTP sẽ hết hiệu lực sau 5 phút");
         } else if (condition.equals("confirmEmail")) {
             message.setSubject("Confirm your email");
             message.setText("Please click the link to confirm your registration:" + content + "\nThis notification will expire in 5 minutes.");
+        } else if (condition.equals("addUser")) {
+            message.setSubject("Thông báo cấp tài khoản");
+            message.setText("Tài khoản của bạn đã được tạo:" + "\nMật khẩu mặc định: 123456" + "\nVui lòng cập nhật lại mật khẩu!");
         }
 
 
@@ -424,6 +419,57 @@ public class UserService implements IUserService {
         return response;
     }
 
+    @Override
+    public Response googleLogin(GoogleLoginRequest loginRequest) {
+        Response response = new Response();
+        try {
+            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
+                    new NetHttpTransport(),
+                    GsonFactory.getDefaultInstance()
+            ).setAudience(Collections.singletonList("YOUR_GOOGLE_CLIENT_ID")).build();
+
+            GoogleIdToken idToken = verifier.verify(loginRequest.getIdToken());
+            if (idToken == null) {
+                throw new RuntimeException("Invalid ID token");
+            }
+
+            // Trích xuất thông tin người dùng từ token
+            GoogleIdToken.Payload payload = idToken.getPayload();
+            String email = payload.getEmail();
+            String name = (String) payload.get("name");
+
+            // Kiểm tra nếu người dùng đã tồn tại
+            User user = userRepository.findByEmail(email).orElse(null);
+            if (user == null) {
+                // Nếu chưa tồn tại, tạo mới
+                user = new User();
+                user.setEmail(email);
+                user.setName(name);
+                user.setRole("USER"); // Role mặc định
+                userRepository.save(user);
+            }
+
+            // Tạo token hệ thống
+            String token = jwtUtils.generateToken(user);
+
+            // Trả token và thông tin cần thiết
+            response.setToken(token);
+            response.setRole(user.getRole());
+            response.setExpirationTime("7 Days");
+            response.setMessage("Login with Google successful");
+            response.setStatusCode(200);
+            response.setMessage("Đổi mật khẩu thành công.");
+        } catch (OurException e) {
+            response.setStatusCode(400);
+            response.setMessage("Mật khẩu cũ không đúng");
+        } catch (Exception e) {
+            response.setStatusCode(500);
+            response.setMessage("Lỗi khi đổi mật khẩu: " + e.getMessage());
+        }
+
+        return response;
+    }
+
     public void sendEmailConfirm(String to, String confirmationUrl, String subject) {
         // Sử dụng lớp SimpleMailMessage hoặc MimeMessageHelper để gửi email
         MimeMessage message = mailSender.createMimeMessage();
@@ -434,10 +480,10 @@ public class UserService implements IUserService {
             helper.setSubject(subject);
 
             // Tạo nội dung email với HTML
-            String htmlContent = "<p>Dear user,</p>"
-                    + "<p>Please click the link below to confirm your registration:</p>"
-                    + "<a href=\"" + confirmationUrl + "\">Confirm your email</a>"
-                    + "<p>If you did not request this, please ignore this email.</p>";
+            String htmlContent = "<p>Gửi người dùng,</p>"
+                    + "<p>Vui lòng click vào link dưới đây để xác thực đăng ký tài khoản:</p>"
+                    + "<a href=\"" + confirmationUrl + "\">Xác thực email</a>"
+                    + "<p>Nếu không phải bạn hãy bỏ qua email này.</p>";
 
             // Set nội dung dưới dạng HTML
             helper.setText(htmlContent, true);  // 'true' cho phép gửi email với HTML

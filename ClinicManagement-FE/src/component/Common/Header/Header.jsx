@@ -9,8 +9,10 @@ import HeaderNav from './HeaderNav';
 import authApiService from '../../../service/authApiService';
 
 const Header = () => {
+    const BASE_URL = process.env.REACT_APP_API_URL;
+    console.log("urllll=>",BASE_URL);
     const navigate = useNavigate();
-    const { authChecked, data } = useAuthCheck();
+    const { data } = useAuthCheck();
     const [isLoggedIn, setIsLogged] = useState(false);
     const [show, setShow] = useState(true);
     const [open, setOpen] = useState(false);

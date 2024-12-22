@@ -9,6 +9,8 @@ import com.medicate.HospitalManagement.service.Interface.IPatientService;
 import com.medicate.HospitalManagement.service.Interface.IStaffService;
 import com.medicate.HospitalManagement.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -26,6 +28,8 @@ public class StaffService implements IStaffService {
     private TreatmentDetailRepo treatmentDetailRepository;
     @Autowired
     private AppointmentBillRepo billRepository;
+    @Autowired
+    private JavaMailSender mailSender;
 
     @Override
     public Response getEmployeeInfo(String email) {
@@ -111,6 +115,13 @@ public class StaffService implements IStaffService {
             appointmentBill.setTotal(appointmentBillDTO.getTotal());
             appointmentBill.setPayDate(new Timestamp(System.currentTimeMillis()));
             billRepository.save(appointmentBill);
+            String email = ap.getPatient().getUser().getEmail();
+            String subject = "Thanh toán hóa đơn thành công";
+            String content = "Thông tin hóa đơn:" + "\nPhí dịch vụ xét nghiệm: " + appointmentBillDTO.getServiceCost() + " (VND)"
+                    + "\n Chi phí đơn thuốc: " + appointmentBillDTO.getPrescriptionCost() + " (VND)"
+                    + "\n Tổng chi phí:" + appointmentBillDTO.getTotal() + " (VND)"
+                    + "\nVui lòng truy cập hệ thống để xem hóa đơn chi tiết!";
+            sendEmail(email, subject, content);
             response.setAppointmentBill(appointmentBillDTO);
             response.setStatusCode(200);
             response.setMessage("successful");
@@ -125,5 +136,15 @@ public class StaffService implements IStaffService {
             response.setMessage("Error getting all users " + e.getMessage());
         }
         return response;
+    }
+
+    public void sendEmail(String email, String subject, String content) {
+        // Tạo email mới
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject(subject);
+        message.setText(content);
+        // Gửi email
+        mailSender.send(message);
     }
 }

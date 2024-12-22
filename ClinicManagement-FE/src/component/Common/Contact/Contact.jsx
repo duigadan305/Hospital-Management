@@ -16,7 +16,7 @@ const Contact = () => {
     const isUser = authApiService.isUser();
     const [{isLoading}]= useState(false);
     const {register, handleSubmit, reset } = useForm({});
-    const [formData, setFormData] = useState({});
+    const [formData, setFormData] = useState({type: 'Contact'});
     
     const checkAuthAndSetData = async () => {
         if (isAuthenticated && data?.id) {
@@ -107,14 +107,14 @@ const Contact = () => {
                                     </div>
 
                                     <div className="col-md-12">
-                                        <div className="form-group">
-                                            <label className='form-label'>Lời nhắn</label>
+                                        <div className="form-group mb-2 card-label">
+                                            <label >Lời nhắn</label>
                                             <textarea {...register('message')}  name='content' required onChange={(e) => handleOnChange(e)} className="form-control mb-3" cols="30" rows="10" placeholder="Nhập lời nhắn"/>
                                         </div>
                                     </div>
 
-                                    <div className="text-center mt-3 mb-5">
-                                        <button disabled={isLoading} type='submit' className="appointment-btn">Gửi</button>
+                                    <div className="text-center mt-3 mb-5" >
+                                        <button style={{width:'120px', height:'45px', fontSize:'18px'}} disabled={isLoading} type='submit' className="appointment-btn">Gửi</button>
                                     </div>
                                 </form>
                             </div>

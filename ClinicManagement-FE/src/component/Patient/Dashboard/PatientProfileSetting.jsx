@@ -20,6 +20,7 @@ const PatientProfileSetting = () => {
     const [file, setFile] = useState(null);
     const [patient, setPatient] = useState(null);
     const [formData, setFormData] = useState({
+        id: '',
         address: '',
         bloodGroup: '',
         city: '',
@@ -43,6 +44,7 @@ const PatientProfileSetting = () => {
                 setPatient(response.patient); // Gán dữ liệu vào biến patient
                 const patientt = response.patient;
                 setFormData({
+                    id: patientt.id || '',
                     address: patientt.address || '',
                     bloodGroup: patientt.bloodGroup || '',
                     city: patientt.city || '',
@@ -208,7 +210,7 @@ const PatientProfileSetting = () => {
                                 <option value={''}>Chọn</option>
                                 {
                                     bloodGrupOptions.map((option, index) => (
-                                        <option key={index} value={option.value} className='text-capitalize'>{option.label}</option>
+                                        <option key={index} value={option} className='text-capitalize'>{option}</option>
                                     ))
                                 }
                             </select>

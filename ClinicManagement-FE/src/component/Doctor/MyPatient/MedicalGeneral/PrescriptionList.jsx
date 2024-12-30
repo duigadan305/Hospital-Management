@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 
 const PrescriptionList = ({ prescriptionData }) => {
-    const groupedData = prescriptionData.reduce((acc, item) => {
-        const time = item.appointment.appointmentTime;
-        if (!acc[time]) {
-          acc[time] = [];
-        }
-        acc[time].push(item);
-        return acc;
-      }, {});
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 5;
+  const groupedData = prescriptionData.reduce((acc, item) => {
+    const time = item?.appointment?.appointmentTime;
+    if (!acc[time]) {
+      acc[time] = [];
+    }
+    acc[time].push(item);
+    return acc;
+  }, {});
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   // Lấy danh sách các mốc thời gian
   const timeKeys = Object.keys(groupedData);
@@ -48,7 +48,8 @@ const PrescriptionList = ({ prescriptionData }) => {
               <td>
                 {groupedData[time].map((item, index) => (
                   <div key={index} className="prescription-item">
-                    <strong>{item.drugName}</strong> - {item.dosage} - {item.quantity} {item.unit}
+                    <strong>{item?.drugName}</strong> - {item?.dosage} -{" "}
+                    {item?.quantity} {item?.unit}
                     <br />
                     {/* <em>Hướng dẫn: {item.usageInstruction || "Không có"}</em> */}
                   </div>

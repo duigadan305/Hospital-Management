@@ -44,6 +44,17 @@ public class Utils {
         return userDTO;
     }
 
+    public static User mapUserDTOToUserEntity(UserDTO userDTO) {
+        User user = new User();
+
+        user.setId(userDTO.getId());
+        user.setName(userDTO.getName());
+        user.setEmail(userDTO.getEmail());
+        user.setPhone(userDTO.getPhone());
+        user.setRole(userDTO.getRole());
+        return user;
+    }
+
     public static SpecialtyDTO mapSpecialtyEntityToSpecialtyDTO(Specialty specialty) {
         SpecialtyDTO specialtyDTO = new SpecialtyDTO();
 
@@ -71,6 +82,26 @@ public class Utils {
         patientDTO.setHealthInsuranceNumber(patient.getHealthInsuranceNumber());
         patientDTO.setUser(userDTO);
         return patientDTO;
+    }
+
+    public static Patient mapPatientDTOToPatientEntity(PatientDTO patientDTO) {
+        Patient patient= new Patient();
+        User user = Utils.mapUserDTOToUserEntity(patientDTO.getUser());
+        patient.setId(patientDTO.getId());
+//        patient.setName(patient.getUser().getName());
+        patient.setAvatar(patientDTO.getAvatar());
+        patient.setDob(patientDTO.getDob());
+        patient.setGender(patientDTO.getGender());
+        patient.setBloodGroup(patientDTO.getBloodGroup());
+        patient.setCity(patientDTO.getCity());
+        patient.setCountry(patientDTO.getCountry());
+        patient.setAddress(patientDTO.getAddress());
+        patient.setEthnicity(patientDTO.getEthnicity());
+        patient.setJob(patientDTO.getJob());
+        patient.setWorkPlace(patientDTO.getWorkPlace());
+        patient.setHealthInsuranceNumber(patientDTO.getHealthInsuranceNumber());
+        patient.setUser(user);
+        return patient;
     }
 
     public static EmployeeDTO mapEmployeeEntityToEmployeeDTO(Employee employee) {

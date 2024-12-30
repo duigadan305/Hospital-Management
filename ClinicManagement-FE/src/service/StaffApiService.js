@@ -63,6 +63,17 @@ export default class StaffApiService {
     );
     return response.data;
   }
+
+  static async addAppointment(AppointmentDTO) {
+    const response = await axios.post(
+      `${this.BASE_URL}/staff/addAppointment`,
+      AppointmentDTO,
+      {
+        headers: this.getHeader(),
+      }
+    );
+    return response.data;
+  }
 }
 
 // export default new ApiService();

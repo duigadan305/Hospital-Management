@@ -6,12 +6,15 @@ import { useRef, useState, useEffect } from "react";
 import DashboardLayout from "../../Common/Dashboard/DashboardLayout";
 import PatientApiService from "../../../service/PatientApiService";
 import DoctorApiService from "../../../service/DoctorApiService";
+import useAuthCheck from "../../../service/useAuthCheck";
 
 const PatientInvoiceDetail = () => {
+  const { role } = useAuthCheck();
   const ref = useRef();
   const { id } = useParams();
   const [patientData, setPatientData] = useState({});
   const [appointmentData, setAppointmentData] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAppointment = async () => {
@@ -209,11 +212,13 @@ const PatientInvoiceDetail = () => {
                 </div>
               </div>
             </div>
-            <div className="invoice-item invoice-table-wrap">
-              <Link to={`/dashboard/my-patients`}>
-                <Button type="primary">Quay lại</Button>
-              </Link>
-            </div>
+            {role === "STAFF" && (
+              <div className="invoice-item invoice-table-wrap">
+                <Button type="primary" onClick={() => navigate(-1)}>
+                  Quay lại
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </>

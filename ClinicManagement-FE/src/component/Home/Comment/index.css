@@ -1,0 +1,29 @@
+.slider-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 200px; /* Chiều rộng cố định cho từng item */
+    margin: 10px; /* Khoảng cách giữa các item */
+  }
+  
+  .slider-image img {
+    border-radius: 50%; /* Làm tròn ảnh */
+    width: 100px;
+    height: 100px;
+    object-fit: cover; /* Đảm bảo ảnh không bị méo */
+    margin-bottom: 10px;
+  }
+  
+  .slider-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .slider-content {
+    font-size: 14px;
+    color: #555;
+  }
+  

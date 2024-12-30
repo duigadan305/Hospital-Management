@@ -3,6 +3,7 @@ package com.medicate.HospitalManagement.service.impl;
 
 import com.medicate.HospitalManagement.dto.*;
 import com.medicate.HospitalManagement.entity.*;
+import com.medicate.HospitalManagement.exception.OurException;
 import com.medicate.HospitalManagement.repo.*;
 import com.medicate.HospitalManagement.service.Interface.IGeneralService;
 import com.medicate.HospitalManagement.utils.Utils;
@@ -77,6 +78,28 @@ public class GeneralService implements IGeneralService {
         List<ExamServiceDTO> serviceDTOList = Utils.mapServiceListEntityToServiceListDTO(serviceList);
         response.setStatusCode(200);
         response.setServiceList(serviceDTOList);
+        return response;
+    }
+
+    @Override
+    public Response getAllReviewContact() {
+        Response response = new Response();
+
+        try {
+            List<Comment> commentList = commentRepository.findByType("Contact");
+            List<CommentDTO> commentDTOList = Utils.mapCommentListEntityToCommentListDTO(commentList);
+            response.setStatusCode(200);
+            response.setCommentList(commentDTOList);
+            response.setMessage("successful");
+        } catch (OurException e) {
+            response.setStatusCode(404);
+            response.setMessage(e.getMessage());
+
+        } catch (Exception e) {
+
+            response.setStatusCode(500);
+            response.setMessage("Error getting all users " + e.getMessage());
+        }
         return response;
     }
 }

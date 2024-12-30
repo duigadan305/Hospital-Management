@@ -47,6 +47,13 @@ export default class CategoryApiService {
     const response = await axios.get(`${this.BASE_URL}/general/allService`);
     return response.data;
   }
+
+  static async getAllReviewContact() {
+    const response = await axios.get(
+      `${this.BASE_URL}/general/getAllReviewContact`
+    );
+    return response.data;
+  }
 }
 
 // export default new ApiService();

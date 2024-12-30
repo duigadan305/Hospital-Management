@@ -12,6 +12,7 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import "./index.css";
 import MyPatients from "../MyPatient/MyPatients";
+import swal from "sweetalert";
 
 const DoctorDashboard = () => {
   dayjs.extend(customParseFormat);
@@ -61,15 +62,12 @@ const DoctorDashboard = () => {
       const todayAppointments = response.appointmentList
         .filter(
           (app) =>
-            dayjs(app.appointmentTime, "DD/MM/YYYY hh:mm A").isSame(
-              today,
-              "day"
-            ) // Kiểm tra ngày hôm nay
+            dayjs(app.appointmentTime, "DD/MM/YYYY hh:mm").isSame(today, "day") // Kiểm tra ngày hôm nay
         )
         .sort(
           (a, b) =>
-            dayjs(a.appointmentTime, "DD/MM/YYYY hh:mm A").diff(
-              dayjs(b.appointmentTime, "DD/MM/YYYY hh:mm A")
+            dayjs(a.appointmentTime, "DD/MM/YYYY hh:mm").diff(
+              dayjs(b.appointmentTime, "DD/MM/YYYY hh:mm")
             ) // Sắp xếp theo thời gian
         );
 
@@ -77,22 +75,22 @@ const DoctorDashboard = () => {
       const upcomingAppointments = response.appointmentList
         .filter(
           (app) =>
-            dayjs(app.appointmentTime, "DD/MM/YYYY hh:mm A").isSameOrAfter(
+            dayjs(app.appointmentTime, "DD/MM/YYYY hh:mm").isSameOrAfter(
               tomorrow,
               "day"
             ) // Kiểm tra ngày >= ngày mai
         )
         .sort(
           (a, b) =>
-            dayjs(a.appointmentTime, "DD/MM/YYYY hh:mm A").diff(
-              dayjs(b.appointmentTime, "DD/MM/YYYY hh:mm A")
+            dayjs(a.appointmentTime, "DD/MM/YYYY hh:mm").diff(
+              dayjs(b.appointmentTime, "DD/MM/YYYY hh:mm")
             ) // Sắp xếp theo thời gian
         );
 
       const appData = response.appointmentList.sort(
         (a, b) =>
-          dayjs(b.appointmentTime, "DD/MM/YYYY hh:mm A").diff(
-            dayjs(a.appointmentTime, "DD/MM/YYYY hh:mm A")
+          dayjs(b.appointmentTime, "DD/MM/YYYY hh:mm").diff(
+            dayjs(a.appointmentTime, "DD/MM/YYYY hh:mm")
           ) // Sắp xếp theo thời gian
       );
 
@@ -107,74 +105,6 @@ const DoctorDashboard = () => {
   useEffect(() => {
     checkAuthAndSetData();
   }, [data]);
-
-  //   console.log("doctorData=>", doctorData);
-  //   const fetchAppointment = async () => {
-  //     try {
-  //       const appointmentRequest = {
-  //         doctor: { id: doctorData?.id || undefined },
-  //       };
-
-  //       console.log("iddoctorrHEHE==>", appointmentRequest.doctor);
-  //       const data = await DoctorApiService.getAppointmentByDoctorID(
-  //         appointmentRequest
-  //       );
-  //       console.log("dataheheh=>", data);
-  //       // setAppointmentData(data.appointmentList);
-  //       // Xử lý lọc và sắp xếp
-  //       const today = dayjs().startOf("day");
-  //       const tomorrow = dayjs().add(1, "day").startOf("day");
-
-  //       // Lọc danh sách cuộc hẹn hôm nay
-  //       const todayAppointments = data.appointmentList
-  //         .filter(
-  //           (app) =>
-  //             dayjs(app.appointmentTime, "DD/MM/YYYY hh:mm A").isSame(
-  //               today,
-  //               "day"
-  //             ) // Kiểm tra ngày hôm nay
-  //         )
-  //         .sort(
-  //           (a, b) =>
-  //             dayjs(a.appointmentTime, "DD/MM/YYYY hh:mm A").diff(
-  //               dayjs(b.appointmentTime, "DD/MM/YYYY hh:mm A")
-  //             ) // Sắp xếp theo thời gian
-  //         );
-
-  //       // Lọc danh sách cuộc hẹn tương lai (từ ngày mai trở đi)
-  //       const upcomingAppointments = data.appointmentList
-  //         .filter(
-  //           (app) =>
-  //             dayjs(app.appointmentTime, "DD/MM/YYYY hh:mm A").isSameOrAfter(
-  //               tomorrow,
-  //               "day"
-  //             ) // Kiểm tra ngày >= ngày mai
-  //         )
-  //         .sort(
-  //           (a, b) =>
-  //             dayjs(a.appointmentTime, "DD/MM/YYYY hh:mm A").diff(
-  //               dayjs(b.appointmentTime, "DD/MM/YYYY hh:mm A")
-  //             ) // Sắp xếp theo thời gian
-  //         );
-
-  //       const appData = data.appointmentList.sort(
-  //         (a, b) =>
-  //           dayjs(b.appointmentTime, "DD/MM/YYYY hh:mm A").diff(
-  //             dayjs(a.appointmentTime, "DD/MM/YYYY hh:mm A")
-  //           ) // Sắp xếp theo thời gian
-  //       );
-
-  //       // Cập nhật state
-  //       setAppointmentData(appData);
-  //       setTodayAppointment(todayAppointments);
-  //       setUpcomingAppointment(upcomingAppointments);
-  //     } catch (error) {
-  //       console.error("Error fetching appointment:", error);
-  //     }
-  //   };
-  //   useEffect(() => {
-  //     fetchAppointment();
-  //   }, [doctorData]);
 
   console.log("todayy=>", todayAppointment);
   console.log("upcomingg=>", upcomingAppointment);
@@ -204,6 +134,32 @@ const DoctorDashboard = () => {
     }
   };
 
+  const handlePatientClick = async (e, id) => {
+    e.preventDefault();
+    try {
+      const apRequest = {
+        patient: { id: id },
+        status: "Treated",
+      };
+      const apData = await DoctorApiService.getAppointmentByPatientAndStatus(
+        apRequest
+      );
+      if (apData.appointmentList.length > 0) {
+        // Điều hướng tới trang chi tiết bệnh nhân
+        window.location.href = `/patient-detail/${id}`;
+      } else {
+        // Hiển thị thông báo bằng SweetAlert2
+        swal({
+          icon: "warning",
+          text: `Không có thông tin bệnh án`,
+          timer: 5000,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching patient:", error);
+    }
+  };
+
   const upcomingColumns = [
     {
       title: "Bệnh nhân",
@@ -214,7 +170,12 @@ const DoctorDashboard = () => {
         return (
           <>
             <div className="table-avatar">
-              <a className="avatar avatar-sm mr-2 d-flex gap-2">
+              <a
+                className="avatar avatar-sm mr-2 d-flex gap-2"
+                onClick={(e) =>
+                  handlePatientClick(e, appointmentData?.patient?.id)
+                }
+              >
                 <div>
                   <p
                     style={{ textAlign: "left" }}

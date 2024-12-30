@@ -9,8 +9,10 @@ import com.medicate.HospitalManagement.service.Interface.IPatientService;
 import com.medicate.HospitalManagement.service.Interface.IStaffService;
 import com.medicate.HospitalManagement.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -30,6 +32,16 @@ public class StaffService implements IStaffService {
     private AppointmentBillRepo billRepository;
     @Autowired
     private JavaMailSender mailSender;
+    @Autowired
+    private PatientRepo patientRepository;
+    @Autowired
+    private DoctorRepo doctorRepository;
+    @Autowired
+    private UserRepo userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Value("${frontend.url}")
+    private String frontendUrl;
 
     @Override
     public Response getEmployeeInfo(String email) {
@@ -147,4 +159,121 @@ public class StaffService implements IStaffService {
         // Gửi email
         mailSender.send(message);
     }
+
+    @Override
+    public Response addAppointment(AppointmentDTO appointmentDTO) {
+        Response response = new Response();
+        Appointment appointment = new Appointment();
+        TreatmentDetail treatmentDetail = new TreatmentDetail();
+        Patient patient = new Patient();
+        try {
+            if(null == appointmentDTO.getPatient().getId() || appointmentDTO.getPatient().getId().equals("")){
+                patient = Utils.mapPatientDTOToPatientEntity(appointmentDTO.getPatient());
+                User user = Utils.mapUserDTOToUserEntity(appointmentDTO.getPatient().getUser());
+                user.setPassword(passwordEncoder.encode("123456"));
+                user.setRole("USER");
+                user = userRepository.save(user);
+                patient.setUser(user);
+                patient = patientRepository.save(patient);
+                String email = patient.getUser().getEmail();
+                String subject = "Thông báo cấp tài khoản cho bệnh nhân mới";
+                String content = "Bệnh nhân lần đầu đến khám tại phòng khám sẽ được cấp tài khoản mới trên hệ thống"
+                        + "\n Link truy cập hệ thống: " + frontendUrl
+                        + "\n Tên đăng nhập: " + email
+                        + "\n Mật khẩu mặc định: 123456"
+                        + "\nVui lòng truy cập hệ thống và đổi lại mật khẩu!";
+                sendEmail(email, subject, content);
+            } else {
+                patient = patientRepository.findById(appointmentDTO.getPatient().getId()).get();
+                updatePatientInfo(appointmentDTO.getPatient());
+            }
+
+            appointment.setPatient(patient);
+            var doctor = doctorRepository.findById(appointmentDTO.getDoctor().getId());
+            appointment.setDoctor(doctor.get());
+            appointment.setAppointmentTime(appointmentDTO.getAppointmentTime());
+            appointment.setStatus("Pending");
+            appointment.setType("First");
+            appointment.setPayment("No");
+            Appointment ap = appointmentRepository.save(appointment);
+            treatmentDetail.setAppointment(ap);
+            treatmentDetail.setReason(appointmentDTO.getReason());
+            treatmentDetailRepository.save(treatmentDetail);
+            response.setStatusCode(200);
+            response.setAppointment(appointmentDTO);
+            response.setMessage("successful");
+
+        } catch (OurException e) {
+            response.setStatusCode(404);
+            response.setMessage(e.getMessage());
+
+        } catch (Exception e) {
+
+            response.setStatusCode(500);
+            response.setMessage("Error getting all users " + e.getMessage());
+        }
+        return response;
+    }
+
+    public void updatePatientInfo(PatientDTO patientDTO) {
+        try {
+
+            Patient patient = patientRepository.findById(patientDTO.getId())
+                    .orElseThrow(() -> new OurException("Patient Not found"));
+
+            // Cập nhật thông tin của bảng patient nếu giá trị trong patientDTO không null hoặc rỗng
+            if (patientDTO.getGender() != null && !patientDTO.getGender().isEmpty()) {
+                patient.setGender(patientDTO.getGender());
+            }
+            if (patientDTO.getBloodGroup() != null && !patientDTO.getBloodGroup().isEmpty()) {
+                patient.setBloodGroup(patientDTO.getBloodGroup());
+            }
+            if (patientDTO.getCity() != null && !patientDTO.getCity().isEmpty()) {
+                patient.setCity(patientDTO.getCity());
+            }
+            if (patientDTO.getCountry() != null && !patientDTO.getCountry().isEmpty()) {
+                patient.setCountry(patientDTO.getCountry());
+            }
+            if (patientDTO.getAddress() != null && !patientDTO.getAddress().isEmpty()) {
+                patient.setAddress(patientDTO.getAddress());
+            }
+            if (patientDTO.getDob() != null) { // Assuming dob is a date, check only for null
+                patient.setDob(patientDTO.getDob());
+            }
+            if (patientDTO.getEthnicity() != null) { // Assuming dob is a date, check only for null
+                patient.setEthnicity(patientDTO.getEthnicity());
+            }
+            if (patientDTO.getJob() != null) { // Assuming dob is a date, check only for null
+                patient.setJob(patientDTO.getJob());
+            }
+            if (patientDTO.getWorkPlace() != null) { // Assuming dob is a date, check only for null
+                patient.setWorkPlace(patientDTO.getWorkPlace());
+            }
+            if (patientDTO.getHealthInsuranceNumber() != null) { // Assuming dob is a date, check only for null
+                patient.setHealthInsuranceNumber(patientDTO.getHealthInsuranceNumber());
+            }
+
+            // Cập nhật thông tin của bảng user
+            User user = patient.getUser();
+            if (patientDTO.getUser().getName() != null && !patientDTO.getUser().getName().isEmpty()) {
+                user.setName(patientDTO.getUser().getName());
+            }
+            if (patientDTO.getUser().getPhone() != null && !patientDTO.getUser().getPhone().isEmpty()) {
+                user.setPhone(patientDTO.getUser().getPhone());
+            }
+
+            UserDTO userDTO = Utils.mapUserEntityToUserDTO(user);
+
+            // Lưu lại thông tin
+            userRepository.save(user);
+            patientRepository.save(patient);
+
+
+        } catch (OurException e) {
+
+        } catch (Exception e) {
+        }
+    }
 }
+
+

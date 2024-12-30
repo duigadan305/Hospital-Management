@@ -54,4 +54,10 @@ public class GeneralController {
         Response response = generalService.getAllService();
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
+
+    @GetMapping("/getAllReviewContact")
+    public ResponseEntity<Response> getAllReviewContact() {
+        Response response = generalService.getAllReviewContact();
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
 }

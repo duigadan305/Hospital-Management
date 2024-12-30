@@ -29,6 +29,7 @@
     "react-star-ratings": "^2.3.0",
     "sockjs-client": "^1.6.1",
     "sweetalert": "^2.1.2",
+    "swiper": "^11.1.15",
     "web-vitals": "^2.1.4",
     "xlsx": "^0.18.5"
   },

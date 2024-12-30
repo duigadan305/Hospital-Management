@@ -72,15 +72,12 @@ const StaffDashboard = () => {
       const todayAppointments = data.appointmentList
         .filter(
           (app) =>
-            dayjs(app.appointmentTime, "DD/MM/YYYY hh:mm A").isSame(
-              today,
-              "day"
-            ) // Kiểm tra ngày hôm nay
+            dayjs(app.appointmentTime, "DD/MM/YYYY hh:mm").isSame(today, "day") // Kiểm tra ngày hôm nay
         )
         .sort(
           (a, b) =>
-            dayjs(a.appointmentTime, "DD/MM/YYYY hh:mm A").diff(
-              dayjs(b.appointmentTime, "DD/MM/YYYY hh:mm A")
+            dayjs(a.appointmentTime, "DD/MM/YYYY hh:mm").diff(
+              dayjs(b.appointmentTime, "DD/MM/YYYY hh:mm")
             ) // Sắp xếp theo thời gian
         );
 
@@ -88,22 +85,22 @@ const StaffDashboard = () => {
       const upcomingAppointments = data.appointmentList
         .filter(
           (app) =>
-            dayjs(app.appointmentTime, "DD/MM/YYYY hh:mm A").isSameOrAfter(
+            dayjs(app.appointmentTime, "DD/MM/YYYY hh:mm").isSameOrAfter(
               tomorrow,
               "day"
             ) // Kiểm tra ngày >= ngày mai
         )
         .sort(
           (a, b) =>
-            dayjs(a.appointmentTime, "DD/MM/YYYY hh:mm A").diff(
-              dayjs(b.appointmentTime, "DD/MM/YYYY hh:mm A")
+            dayjs(a.appointmentTime, "DD/MM/YYYY hh:mm").diff(
+              dayjs(b.appointmentTime, "DD/MM/YYYY hh:mm")
             ) // Sắp xếp theo thời gian
         );
 
       const appData = data.appointmentList.sort(
         (a, b) =>
-          dayjs(b.appointmentTime, "DD/MM/YYYY hh:mm A").diff(
-            dayjs(a.appointmentTime, "DD/MM/YYYY hh:mm A")
+          dayjs(b.appointmentTime, "DD/MM/YYYY hh:mm").diff(
+            dayjs(a.appointmentTime, "DD/MM/YYYY hh:mm")
           ) // Sắp xếp theo thời gian
       );
 

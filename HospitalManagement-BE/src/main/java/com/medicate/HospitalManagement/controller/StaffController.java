@@ -37,4 +37,10 @@ public class StaffController {
         Response response = staffService.addAppointmentBill(appointmentBillDTO);
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
+
+    @PostMapping("/addAppointment")
+    public ResponseEntity<Response> addAppointment(@RequestBody AppointmentDTO appointmentDTO) {
+        Response response = staffService.addAppointment(appointmentDTO);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
+    }
 }

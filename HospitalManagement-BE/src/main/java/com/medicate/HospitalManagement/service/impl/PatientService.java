@@ -193,6 +193,7 @@ public class PatientService implements IPatientService {
         try {
 
             var patient = patientRepository.findById(appointmentDTO.getPatient().getId());
+            updatePatientInfo(appointmentDTO.getPatient());
             appointment.setPatient(patient.get());
             var doctor = doctorRepository.findById(appointmentDTO.getDoctor().getId());
             appointment.setDoctor(doctor.get());

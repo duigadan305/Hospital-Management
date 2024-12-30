@@ -14,6 +14,7 @@ const PatientDetail = () => {
   const { id } = useParams();
   const [patientData, setPatientData] = useState({});
   const [appointmentData, setAppointmentData] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAppointment = async () => {
@@ -54,13 +55,13 @@ const PatientDetail = () => {
       title: "Lý do khám",
       dataIndex: "reason",
       key: "reason",
-      width: "30%",
+      width: "40%",
     },
     {
       title: "Thời gian khám",
       dataIndex: "appointmentTime",
       key: "appointmentTime",
-      width: "30%",
+      width: "20%",
     },
     {
       title: "Hành động",
@@ -84,7 +85,7 @@ const PatientDetail = () => {
   if (patientData)
     content = (
       <>
-        <div className="col-lg-12" style={{ marginLeft: "10px" }}>
+        <div className="col-lg-12">
           <div className="invoice-content">
             <div className="invoice-item">
               <div className="row">
@@ -189,7 +190,7 @@ const PatientDetail = () => {
                 className="row border-top border-2"
                 style={{ paddingLeft: "12px" }}
               >
-                <div className="col-md-12 col-xl-9 px-0">
+                <div className="col-md-12 px-0">
                   <div style={{ marginTop: "30px" }}>
                     <strong className="customer-text text-secondary">
                       LỊCH SỬ KHÁM
@@ -209,15 +210,14 @@ const PatientDetail = () => {
                 </div>
               </div>
             </div>
-            <div
-              className="invoice-item"
-              style={{ display: "flex", justifyContent: "space-between" }}
-            >
-              <Link to={`/dashboard/my-patients`}>
-                <Button type="primary">Quay lại</Button>
-              </Link>
+            <div className="invoice-item">
               {role === "DOCTOR" && (
-                <div>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <Button type="primary" onClick={() => navigate(-1)}>
+                    Quay lại
+                  </Button>
                   <Link to={`/dashboard/record-general/${id}`}>
                     <Button type="primary">Tổng hợp bệnh án</Button>
                   </Link>

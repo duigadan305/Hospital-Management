@@ -10,6 +10,8 @@ import com.medicate.HospitalManagement.utils.Utils;
 import com.medicate.HospitalManagement.ws.configuration.CustomNotificationHandler;
 import com.medicate.HospitalManagement.ws.configuration.NotificationController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.socket.WebSocketSession;
@@ -43,7 +45,8 @@ public class DoctorService implements IDoctorService {
     private DrugAllergyRepo drugAllergyRepository;
     @Autowired
     public NotificationController notificationController;
-
+    @Autowired
+    private JavaMailSender mailSender;
     @Override
     public Response getAppointmentByDoctorID(AppointmentDTO appointment) {
         Response response = new Response();
@@ -103,13 +106,23 @@ public class DoctorService implements IDoctorService {
                 status = appointment.getStatus();
             }
             String email = (ap.getPatient().getUser().getEmail()).split("@")[0];;
+            String emaill = ap.getPatient().getUser().getEmail();
+            String subject = "Thông báo về lịch hẹn khám";
             appointmentRepository.save(ap);
             response.setStatusCode(200);
             response.setMessage("successful");
             if(status.equals("Pended")){
-                notificationController.sendAppointmentNotification(email,"Lịch hẹn đã được tiếp nhận");
+                String mess = "Lịch hẹn vào lúc " + ap.getAppointmentTime() + " đã được tiếp nhận";
+                notificationController.sendAppointmentNotification(email,mess);
+                sendEmail(emaill, subject, mess);
             } else if (status.equals("Cancel")) {
-                notificationController.sendAppointmentNotification(email,"Lịch hẹn đã bị hủy");
+                String mess = "Lịch hẹn vào lúc " + ap.getAppointmentTime() + " đã bị hủy";
+                notificationController.sendAppointmentNotification(email,mess);
+                sendEmail(emaill, subject, mess);
+            } else if (status.equals("Accepted")) {
+                String mess = "Lịch hẹn vào lúc " + ap.getAppointmentTime() + " đã được bác sĩ chấp nhận";
+                notificationController.sendAppointmentNotification(email,mess);
+                sendEmail(emaill, subject, mess);
             }
 
 
@@ -200,7 +213,7 @@ public class DoctorService implements IDoctorService {
             treatmentDetailRepository.save(treatmentDetail);
             ap.setStatus("Treated");
             appointmentRepository.save(ap);
-            if(treatmentDetailDTO.getFollowUpDate() > 0){
+            if(null != treatmentDetailDTO.getFollowUpDate() && treatmentDetailDTO.getFollowUpDate() > 0){
                 Appointment followUpAp = new Appointment();
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a");
                 LocalDateTime oldDateTime = LocalDateTime.parse(ap.getAppointmentTime(), formatter);
@@ -522,5 +535,15 @@ public class DoctorService implements IDoctorService {
             response.setMessage("Error getting all users " + e.getMessage());
         }
         return response;
+    }
+
+    public void sendEmail(String email, String subject, String content) {
+        // Tạo email mới
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject(subject);
+        message.setText(content);
+        // Gửi email
+        mailSender.send(message);
     }
 }

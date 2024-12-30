@@ -15,5 +15,6 @@ public interface IGeneralService {
     Response getDoctorById(DoctorDTO doctorRequest);
 
     Response getAllReviewDoctor(DoctorDTO doctorRequest);
-   Response getAllService();
+    Response getAllService();
+    Response getAllReviewContact();
 }
